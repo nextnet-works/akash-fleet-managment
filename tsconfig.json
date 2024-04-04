@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "Node",
+        "outDir": "dir",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "experimentalDecorators": true,
+        "target": "ESNext",
+        "module": "CommonJS"
+    },
+    "include": ["src/**/*.ts"]
+}
