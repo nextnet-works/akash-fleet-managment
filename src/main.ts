@@ -1,18 +1,29 @@
 import "dotenv/config";
 import express from "express";
-import akash from "@akashnetwork/akashjs";
+import { Status } from "./type";
+import { getAllProvidesUrl, getClusterStatus } from "./utils";
 
 const app = express();
 const port = 3000;
 
 app.listen(port, async () => {
-    console.log(`Server is running on port ${port} :)`);
+  try {
+    const providersUrls = await getAllProvidesUrl();
+    const providersData: Array<Status> = [];
+    const batchSize = 20;
 
-    try {
-        const res = await akash.rpc.getQueryClient("https://akash-api.polkachu.com")
-
-        console.log(res)
-    } catch (error:any) {
-        console.log(`Akash Transport : ${error.message}`);
+    for (let i = 0; i < providersUrls.length; i += batchSize) {
+      const batchUrls = providersUrls.slice(i, i + batchSize);
+      const batchData = await Promise.all(
+        batchUrls.map((url) => getClusterStatus(url))
+      );
+      providersData.push(
+        ...batchData.filter((data): data is Status => data !== undefined)
+      );
     }
+
+    console.log(providersData);
+  } catch (error: any) {
+    console.error("Error: " + error);
+  }
 });
