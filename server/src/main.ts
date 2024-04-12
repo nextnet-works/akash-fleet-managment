@@ -12,12 +12,6 @@ app.use(express.json());
 
 app.use("/deploy", deployRouter);
 
-app.get("/akash-coin-price", async (req, res) => {
-  const price = await getAkashCoinPrice();
-  res.json(price);
-}
-);
+app.get("/akash-coin-price", async (_, res) => res.json(await getAkashCoinPrice()));
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
