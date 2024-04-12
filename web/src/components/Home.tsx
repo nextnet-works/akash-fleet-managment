@@ -11,8 +11,10 @@ import { Bid } from "@/types/bid";
 import { DeployButton } from "./DeployButton";
 import { Deployments } from "./Deployemnts";
 import { queryKeys } from "@/lib/consts";
+import { useCoinPrice } from "@/hooks/useCoinPrice";
 
 export const Home = () => {
+  const coinPrice = useCoinPrice();
   const {
     data: bids,
     isPending,
@@ -23,7 +25,7 @@ export const Home = () => {
     mutationFn: async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       const response = await axios.post<Bid[]>(
-        `${import.meta.env.VITE_NODE_SERVER}/deploy/create`,
+        `${import.meta.env.VITE_NODE_SERVER}/deploy/create`
       );
       return response.data;
     },
@@ -36,6 +38,7 @@ export const Home = () => {
         alignItems: "center",
       }}
     >
+      <span className="text-2xl">Akash Coin Price: ${coinPrice}</span>
       <Tabs defaultValue="list">
         <TabsList className="grid  mx-auto w-[400px] grid-cols-2 ">
           <TabsTrigger value="list">Active Deployments</TabsTrigger>
