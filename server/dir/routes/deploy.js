@@ -1,76 +1,34 @@
 "use strict";
-var __createBinding =
-  (this && this.__createBinding) ||
-  (Object.create
-    ? function (o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        var desc = Object.getOwnPropertyDescriptor(m, k);
-        if (
-          !desc ||
-          ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)
-        ) {
-          desc = {
-            enumerable: true,
-            get: function () {
-              return m[k];
-            },
-          };
-        }
-        Object.defineProperty(o, k2, desc);
-      }
-    : function (o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        o[k2] = m[k];
-      });
-var __setModuleDefault =
-  (this && this.__setModuleDefault) ||
-  (Object.create
-    ? function (o, v) {
-        Object.defineProperty(o, "default", { enumerable: true, value: v });
-      }
-    : function (o, v) {
-        o["default"] = v;
-      });
-var __importStar =
-  (this && this.__importStar) ||
-  function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null)
-      for (var k in mod)
-        if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
-          __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-  };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const yaml_1 = require("yaml");
-const fs = __importStar(require("fs"));
 const mock_1 = require("../assets/mock");
+const child_process_1 = require("child_process");
+const cli_1 = require("../utils/cli");
+const db_1 = require("../utils/db");
 const router = (0, express_1.Router)();
-router.post("/create", (req, res) => {
-  console.log("Deploy request received:", req.body);
-  loadYAMLFile("src/assets/deploy.sdl.yaml");
-  res.status(201).json(mock_1.bids);
+router.post("/create", async (req, res) => {
+    (0, child_process_1.exec)(cli_1.COMMANDS.DEPLOY, (error, stdout, stderr) => { });
+    (0, child_process_1.exec)(cli_1.COMMANDS.BIDS, (error, stdout, stderr) => { });
+    await (0, db_1.saveBidsToDB)(mock_1.bids);
+    res.status(201).json(mock_1.bids);
 });
-router.post("/accept", (req, res) => {
-  const bidId = req.body.body.bidId;
-  if (!bidId) {
-    return res.status(400).send("bid ID is required");
-  }
-  console.log(`Accept bid request received for bid ID: ${bidId}`);
-  res.status(201).json(`Bid for bid ID ${bidId} accepted`);
+router.post("/accept", async (req, res) => {
+    const bidId = req.body.body.bidId;
+    if (!bidId) {
+        return res.status(400).send("bid ID is required");
+    }
+    (0, child_process_1.exec)(cli_1.COMMANDS.ACCEPT_BID, (error, stdout, stderr) => { });
+    (0, child_process_1.exec)(cli_1.COMMANDS.SEND_DEPLOYMENT_MANIFEST, (error, stdout, stderr) => { });
+    (0, child_process_1.exec)(cli_1.COMMANDS.GET_DEPLOYMENT_STATUS, (error, stdout, stderr) => { });
+    res.status(201).json(`Bid for bid ID ${bidId} accepted`);
+});
+router.post("/delete", async (req, res) => {
+    const id = req.body.body.id;
+    if (!id) {
+        return res.status(400).send("id is required");
+    }
+    (0, child_process_1.exec)(cli_1.COMMANDS.CLOSE_DEPLOYMENT, (error, stdout, stderr) => { });
+    res.status(201).json(`Deployment for id ${id} deleted`);
 });
 exports.default = router;
-async function loadYAMLFile(filePath) {
-  try {
-    const fileContents = fs.readFileSync(filePath);
-    const data = (0, yaml_1.stringify)(fileContents);
-    return data;
-  } catch (error) {
-    console.error("Error reading or parsing YAML file:", error);
-    throw error;
-  }
-}
 //# sourceMappingURL=deploy.js.map
