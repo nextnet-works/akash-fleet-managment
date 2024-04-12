@@ -2,6 +2,7 @@ import { Bid } from "@/types/bid";
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios";
 import { DeployButton } from "./DeployButton";
+import { Deployments } from "./Deployemnts";
 
 export const Deploy = () => {
     const { data : bids, isPending, error, mutateAsync: deploy } = useMutation({
@@ -20,6 +21,7 @@ export const Deploy = () => {
 
     return (
         <div style={{display: "flex", flexDirection: "column", gap: "15px", padding: "10px", alignItems: "center"}}>
+          <Deployments />
             <button onClick={deploy}>Create Deployment</button>
           {!bids || bids.length === 0 ? <h1>No Bids</h1> : 
           <>
