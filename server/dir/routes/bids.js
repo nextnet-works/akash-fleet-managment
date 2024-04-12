@@ -1,8 +1,7 @@
-import { Router } from 'express';
-
-const router = Router()
-
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const router = (0, express_1.Router)();
 router.get('/', (req, res) => {
     console.log('Fetch bids request received');
     // Example data returned
@@ -12,5 +11,5 @@ router.get('/', (req, res) => {
     ];
     res.status(200).json(bids);
 });
-
-export default router;
+exports.default = router;
+//# sourceMappingURL=bids.js.map

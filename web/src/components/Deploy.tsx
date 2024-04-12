@@ -1,15 +1,18 @@
 import { Bid } from "@/types/bid";
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios";
+import { DeployButton } from "./DeployButton";
 
 export const Deploy = () => {
     const { data : bids, isPending, error, mutateAsync: deploy } = useMutation({
         mutationKey: ["Create_Deployment"],
         mutationFn: async (e: any) => {
-            const response =  await axios.post<Bid[]>("http://localhost:3001/deploy");
+            const response =  await axios.post<Bid[]>("http://localhost:3001/deploy/create");
             return response.data
         }
     })
+
+
 
     if(isPending) return <div>Loading...</div>
 
@@ -25,7 +28,7 @@ export const Deploy = () => {
             <div key={bid.bid.bid_id.dseq} style={{border: "1px solid black", display: "flex", gap: "15px", padding: "10px", alignItems: "center", width: "fit-content", borderRadius: "10px"}}>
               <h2>{bid.bid.price.amount}</h2>
               <h2>{bid.bid.state}</h2>
-              <button> Accept Bid </button>
+              <DeployButton bidId={bid.bid.bid_id.dseq} />
             </div>
           ))}
         </>
