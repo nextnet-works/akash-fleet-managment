@@ -1,0 +1,5 @@
+export AKASH_DSEQ='15847861'
+export AKASH_GSEQ='1'
+export AKASH_OSEQ='1'
+export AKASH_OWNER='akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa'
+export AKASH_RECEIVER='akash14pphss726thpwws3yc458hggufynm9x77l4l2u'
