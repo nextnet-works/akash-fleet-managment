@@ -1,111 +1,111 @@
 interface DeploymentId {
-    owner: string;
-    dseq: string;
+  owner: string;
+  dseq: string;
 }
 
 interface ResourceQuantity {
-    val: string;
+  val: string;
 }
 
 interface Resource {
-    id: number;
-    cpu: {
-        units: ResourceQuantity;
-        attributes: any[];
-    };
-    memory: {
-        quantity: ResourceQuantity;
-        attributes: any[];
-    };
-    storage: {
-        name: string;
-        quantity: ResourceQuantity;
-        attributes: any[];
-    }[];
-    gpu: {
-        units: ResourceQuantity;
-        attributes: any[];
-    };
-    endpoints: {
-        kind: string;
-        sequence_number: number;
-    }[];
+  id: number;
+  cpu: {
+    units: ResourceQuantity;
+    attributes: any[];
+  };
+  memory: {
+    quantity: ResourceQuantity;
+    attributes: any[];
+  };
+  storage: {
+    name: string;
+    quantity: ResourceQuantity;
+    attributes: any[];
+  }[];
+  gpu: {
+    units: ResourceQuantity;
+    attributes: any[];
+  };
+  endpoints: {
+    kind: string;
+    sequence_number: number;
+  }[];
 }
 
 interface GroupSpec {
-    name: string;
-    requirements: {
-        signed_by: {
-            all_of: string[];
-            any_of: string[];
-        };
-        attributes: any[];
+  name: string;
+  requirements: {
+    signed_by: {
+      all_of: string[];
+      any_of: string[];
     };
-    resources: {
-        resource: Resource;
-        count: number;
-        price: {
-            denom: string;
-            amount: string;
-        };
-    }[];
+    attributes: any[];
+  };
+  resources: {
+    resource: Resource;
+    count: number;
+    price: {
+      denom: string;
+      amount: string;
+    };
+  }[];
 }
 
 interface GroupId {
-    owner: string;
-    dseq: string;
-    gseq: number;
+  owner: string;
+  dseq: string;
+  gseq: number;
 }
 
 interface Group {
-    group_id: GroupId;
-    state: string;
-    group_spec: GroupSpec;
-    created_at: string;
+  group_id: GroupId;
+  state: string;
+  group_spec: GroupSpec;
+  created_at: string;
 }
 
 interface EscrowAccount {
-    id: {
-        scope: string;
-        xid: string;
-    };
-    owner: string;
-    state: string;
-    balance: {
-        denom: string;
-        amount: string;
-    };
-    transferred: {
-        denom: string;
-        amount: string;
-    };
-    settled_at: string;
-    depositor: string;
-    funds: {
-        denom: string;
-        amount: string;
-    };
+  id: {
+    scope: string;
+    xid: string;
+  };
+  owner: string;
+  state: string;
+  balance: {
+    denom: string;
+    amount: string;
+  };
+  transferred: {
+    denom: string;
+    amount: string;
+  };
+  settled_at: string;
+  depositor: string;
+  funds: {
+    denom: string;
+    amount: string;
+  };
 }
 
 interface Deployment {
-    deployment_id: DeploymentId;
-    state: string;
-    version: string;
-    created_at: string;
+  deployment_id: DeploymentId;
+  state: string;
+  version: string;
+  created_at: string;
 }
 
 interface DeploymentData {
-    deployment: Deployment;
-    groups: Group[];
-    escrow_account: EscrowAccount;
+  deployment: Deployment;
+  groups: Group[];
+  escrow_account: EscrowAccount;
 }
 
 interface Pagination {
-    next_key: string | null;
-    total: string;
+  next_key: string | null;
+  total: string;
 }
 
 export interface DeploymentsResponse {
-    deployments: DeploymentData[];
-    pagination: Pagination;
+  deployments: DeploymentData[];
+  pagination: Pagination;
 }

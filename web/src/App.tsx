@@ -1,10 +1,9 @@
 import { Deploy } from "./components/Deploy";
 
-export const  App = () => {
+export const App = () => {
   return (
     <div>
-    <Deploy/>
+      <Deploy />
     </div>
-  )
-}
-
+  );
+};

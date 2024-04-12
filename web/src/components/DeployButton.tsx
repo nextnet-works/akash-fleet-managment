@@ -1,27 +1,34 @@
-import { useMutation } from "@tanstack/react-query"
 import axios from "axios";
 
+import { useMutation } from "@tanstack/react-query";
+
 type Props = {
-    bidId: string;
-}
+  bidId: string;
+};
 
 export const DeployButton = ({ bidId }: Props) => {
-    const {  isPending, error, mutateAsync: handleBid } = useMutation({
-        mutationKey: ["Accept_Deployment"],
-        mutationFn: async (e: any) => {
-            const response =  await axios.post("http://localhost:3001/deploy/accept", {
-                body: { bidId }
-            });
-            return response.data
-        }
-    })
+  const {
+    isPending,
+    error,
+    mutateAsync: handleBid,
+  } = useMutation({
+    mutationKey: ["Accept_Deployment"],
+    mutationFn: async (e: any) => {
+      const response = await axios.post("http://localhost:3001/deploy/accept", {
+        body: { bidId },
+      });
+      return response.data;
+    },
+  });
 
-    const buttonText = isPending ? "Loading..." : "Accept Bid " + bidId
+  const buttonText = isPending ? "Loading..." : "Accept Bid " + bidId;
 
-    if(error) return <div>Error</div>
+  if (error) return <div>Error</div>;
 
-
-    return (
-        <button disabled={isPending} onClick={handleBid}> {buttonText} </button>
-    )
-}
+  return (
+    <button disabled={isPending} onClick={handleBid}>
+      {" "}
+      {buttonText}{" "}
+    </button>
+  );
+};

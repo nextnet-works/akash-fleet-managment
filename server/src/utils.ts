@@ -7,7 +7,7 @@ import { ProvidersResponse, Status } from "./type";
  */
 export async function getAllProvidesUrl() {
   const providers = await axios.get<ProvidersResponse>(
-    "https://akash-api.polkachu.com/akash/provider/v1beta3/providers"
+    "https://akash-api.polkachu.com/akash/provider/v1beta3/providers",
   );
   return providers.data.providers.map(({ host_uri }) => host_uri);
 }
@@ -29,5 +29,3 @@ export async function getClusterStatus(providerUrl: string) {
     console.error("Error getting status for: " + providerUrl);
   }
 }
-
-
