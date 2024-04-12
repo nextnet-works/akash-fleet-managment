@@ -3,55 +3,58 @@ import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { DeploymentsResponse } from "@/types/deployment";
+import { Card, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { queryKeys } from "@/lib/consts";
 
 export const Deployments = () => {
   const { data, isPending, isError } = useQuery({
-    queryKey: ["Deployments"],
+    queryKey: [queryKeys.deployments],
     queryFn: async () => {
-      const response = await axios.get<DeploymentsResponse>("https://akash-api.polkachu.com/akash/deployment/v1beta3/deployments/list", {
-        params: {
-          ["filters.owner"]: "akash1d8zv92ex2chz29gyje8a8c9rtza6qs5pxyvjdc",
-          ["filters.state"]: "active",
+      const response = await axios.get<DeploymentsResponse>(
+        "https://akash-api.polkachu.com/akash/deployment/v1beta3/deployments/list",
+        {
+          params: {
+            ["filters.owner"]: "akash1d8zv92ex2chz29gyje8a8c9rtza6qs5pxyvjdc",
+            ["filters.state"]: "active",
+          },
         },
-      });
+      );
       return response.data;
     },
   });
 
   const { mutateAsync: handleCloseDeployment } = useMutation({
-    mutationKey: ["Close_Deployment"],
+    mutationKey: [queryKeys.close_deployment],
     mutationFn: async (id: string) =>
-      await axios.post(`http://localhost:3001/deploy/delete`, {
+      await axios.post(`${import.meta.env.VITE_NODE_SERVER}/deploy/delete`, {
         body: {
           id,
         },
       }),
   });
 
-  if (isPending) return <div>Loading...</div>;
-
   if (isError) return <div>Error</div>;
 
   return (
-    <div>
-      <h1>Deployments</h1>
+    <div className="flex flex-col gap-4">
       {data?.deployments.map((deployment) => (
-        <div
+        <Card
           key={deployment.escrow_account.id.xid}
-          style={{
-            border: "1px solid black",
-            display: "flex",
-            gap: "15px",
-            padding: "10px",
-            alignItems: "center",
-            width: "fit-content",
-            borderRadius: "10px",
-          }}
+          className="p-4 flex gap-4 justify-center items-center"
         >
-          <h2>{deployment.escrow_account.id.xid}</h2>
-          <h2>{deployment.deployment.state}</h2>
-          <button onClick={() => handleCloseDeployment(deployment.escrow_account.id.xid)}>Close Deployment</button>
-        </div>
+          <CardTitle>{deployment.escrow_account.id.xid}</CardTitle>
+          <Badge>{deployment.deployment.state}</Badge>
+          <Button
+            variant="secondary"
+            onClick={() =>
+              handleCloseDeployment(deployment.escrow_account.id.xid)
+            }
+          >
+            {isPending ? "Closing..." : "Close Deployment"}
+          </Button>
+        </Card>
       ))}
     </div>
   );

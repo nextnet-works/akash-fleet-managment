@@ -1,9 +1,9 @@
-import { Deploy } from "./components/Deploy";
+import { Home } from "./components/Home";
 
 export const App = () => {
   return (
     <div>
-      <Deploy />
+      <Home />
     </div>
   );
 };

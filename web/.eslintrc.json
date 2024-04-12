@@ -17,7 +17,13 @@
       "jsx": true
     }
   },
-  "plugins": ["react", "react-hooks", "@typescript-eslint", "import", "unused-imports"],
+  "plugins": [
+    "react",
+    "react-hooks",
+    "@typescript-eslint",
+    "import",
+    "unused-imports"
+  ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "react/react-in-jsx-scope": "off",
