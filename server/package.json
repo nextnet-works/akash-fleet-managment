@@ -9,6 +9,7 @@
     "serve": "ts-node src/main.ts",
     "pm2": "pm2 start dir/main.js --name server",
     "monitor": "pm2 monitor server",
+    "stop": "pm2 stop server",
     "watch": "nodemon --exec ts-node src/main.ts"
   },
   "author": "",
