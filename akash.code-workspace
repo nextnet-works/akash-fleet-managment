@@ -1,0 +1,29 @@
+{
+    "folders": [
+      {
+        "name": "root",
+        "path": "./"
+      },
+      {
+        "name": "web",
+        "path": "web"
+      },
+      {
+        "name": "server",
+        "path": "server"
+      }
+    ],
+    "settings": {
+      "files.exclude": {
+        "node_modules/": true,
+        "web/": true,
+        "server/": true
+      },
+      "cSpell.words": [
+        "deso",
+        "Nanos",
+        "supabase",
+        "tanstack"
+      ]
+    }
+  }
