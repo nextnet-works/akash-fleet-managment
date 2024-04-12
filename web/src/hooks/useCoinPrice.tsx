@@ -2,14 +2,6 @@ import { queryKeys } from "@/lib/consts";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-type CoinGeckoResponse = {
-  market_data: {
-    current_price: {
-      usd: number;
-    };
-  };
-};
-
 export const useCoinPrice = () => {
   const { data } = useQuery({
     queryKey: [queryKeys.coin_price],
