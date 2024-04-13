@@ -1,3 +1,4 @@
+"use strict";
 // import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing";
 // import {
 //   getAkashTypeRegistry,
@@ -15,10 +16,8 @@
 //         prefix: "akash",
 //       }
 //     );
-
 //     // get first account
 //     const [account] = await wallet.getAccounts();
-
 //     // Use the encode method for the message to wrap the data
 //     const dseq = deploymentId.split("/")[1];
 //     const message = MsgCloseDeployment.fromPartial({
@@ -27,16 +26,13 @@
 //         owner: account.address,
 //       },
 //     });
-
 //     // Set the appropriate typeUrl and attach the encoded message as the value
 //     const msgAny = {
 //       typeUrl: getTypeUrl(MsgCloseDeployment),
 //       value: message,
 //     };
-
 //     const nodes = await network.getEndpoints("mainnet", "rpc");
 //     const myRegistry = new Registry(getAkashTypeRegistry());
-
 //     const client = await SigningStargateClient.connectWithSigner(
 //       nodes[0].address,
 //       wallet,
@@ -44,7 +40,6 @@
 //         registry: myRegistry,
 //       }
 //     );
-
 //     const fee = {
 //       amount: [
 //         {
@@ -54,16 +49,13 @@
 //       ],
 //       gas: "80000",
 //     };
-
 //     const signedMessage = await client.signAndBroadcast(
 //       account.address,
 //       [msgAny],
 //       fee,
 //       "take down deployment"
 //     );
-
 //     console.log(signedMessage);
-
 //     if (signedMessage.code === 200) {
 //       return "Deployment closed successfully";
 //     }
@@ -73,3 +65,4 @@
 //     return e;
 //   }
 // }
+//# sourceMappingURL=closeDeployment.js.map

@@ -4,7 +4,7 @@ import { exec } from "child_process";
 
 import { COMMANDS } from "../utils/cli";
 import { saveBidsToDB } from "../utils/db";
-import { closeDeployment } from "../utils/akash/closeDeployment";
+// import { closeDeployment } from "../utils/akash/closeDeployment";
 
 const router = Router();
 
@@ -44,10 +44,10 @@ router.post("/delete", async (req, res) => {
   if (!id) {
     return res.status(400).send("id is required");
   }
-  const output = await closeDeployment(id);
+  // const output = await closeDeployment(id);
   // exec(COMMANDS.CLOSE_DEPLOYMENT, (error, stdout, stderr) => {});
 
-  res.status(201).json(output);
+  res.status(201).json(`Deployment with ID ${id} deleted`);
 });
 
 export default router;
