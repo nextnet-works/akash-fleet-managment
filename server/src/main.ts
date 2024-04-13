@@ -8,7 +8,8 @@ const app = express();
 const port = 3001;
 
 app.use(
-  cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
+  // cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
+  cors()
 );
 
 app.use(express.json());
