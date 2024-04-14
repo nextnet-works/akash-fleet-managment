@@ -12,9 +12,6 @@ router.post("/create", async (req, res) => {
   exec(COMMANDS.DEPLOY, (error, stdout, stderr) => {
     console.log({ error, stdout, stderr, name: "DEPLOY" });
   });
-  exec(COMMANDS.BIDS, (error, stdout, stderr) => {
-    console.log({ error, stdout, stderr, name: "BIDS" });
-  });
 
   await saveBidsToDB(bids);
   res.status(201).json(bids);
