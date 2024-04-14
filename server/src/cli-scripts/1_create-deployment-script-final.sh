@@ -3,7 +3,7 @@
 source env_vars.sh
 
 # Running the provider-services command and capturing its output
-output=$(provider-services tx deployment create morpheus-deploy.yml -y --from "$AKASH_KEY_NAME" --home "/Users/aleza/.Akash")
+output=$(provider-services tx deployment create morpheus-deploy.yml -y --from "$AKASH_KEY_NAME")
 
 # Parsing values from the command output
 DSEQ=$(echo "$output" | jq -r '.logs[0].events[] | select(.type == "akash.v1").attributes[] | select(.key == "dseq") | .value' | head -n 1)
