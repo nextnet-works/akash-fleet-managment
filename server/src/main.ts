@@ -3,7 +3,8 @@ import express from "express";
 import cors from "cors";
 import deployRouter from "./routes/deploy";
 import { getAkashCoinPrice } from "./utils/price";
-
+import https from "https";
+import fs from "fs";
 const app = express();
 const port = 3001;
 
@@ -20,4 +21,11 @@ app.get("/akash-coin-price", async (_, res) =>
   res.json(await getAkashCoinPrice())
 );
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const options = {
+  key: fs.readFileSync("./src/assets/key.cer"),
+  cert: fs.readFileSync("./src/assets/cert.cer"),
+};
+
+https
+  .createServer(options, app)
+  .listen(port, () => console.log(`Server running on port ${port}`));
