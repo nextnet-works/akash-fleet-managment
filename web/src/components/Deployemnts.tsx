@@ -45,6 +45,13 @@ export const Deployments = () => {
 
   if (isError) return <div>Error</div>;
 
+  const sortedDploymentsByDesc =
+    data?.deployments.sort(
+      (a, b) =>
+        Number(b.deployment.deployment_id.dseq) -
+        Number(a.deployment.deployment_id.dseq)
+    ) || [];
+
   return (
     <div className="flex flex-col gap-4 w-full">
       <Input
@@ -56,16 +63,16 @@ export const Deployments = () => {
         <div>Loading...</div>
       ) : (
         <>
-          {data?.deployments.map((deployment) => (
+          {sortedDploymentsByDesc.map((deployment) => (
             <Card
               key={deployment.escrow_account.id.xid}
-              className="p-4 flex gap-4 justify-center items-center"
+              className="p-4 flex gap-4 items-center"
             >
-              <CardTitle>{deployment.escrow_account.id.xid}</CardTitle>
-              <Badge>{deployment.deployment.state}</Badge>
+              <CardTitle>{deployment.deployment.created_at}</CardTitle>
               {deployment.deployment.state === "active" && (
                 <Button
                   variant="secondary"
+                  className="ml-auto"
                   onClick={() =>
                     handleCloseDeployment(deployment.escrow_account.id.xid)
                   }
@@ -73,6 +80,15 @@ export const Deployments = () => {
                   {isPending ? "Closing..." : "Close Deployment"}
                 </Button>
               )}
+              <Badge
+                className={`${
+                  deployment.deployment.state === "active"
+                    ? "bg-green-500"
+                    : "bg-slate-500"
+                } ml-auto`}
+              >
+                {deployment.deployment.state}
+              </Badge>
             </Card>
           ))}
         </>
