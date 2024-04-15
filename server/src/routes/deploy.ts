@@ -8,13 +8,13 @@ import { saveBidsToDB } from "../utils/db";
 const router = Router();
 
 router.post("/create", async (req, res) => {
-  const akashKeyName = process.env.AKASH_KEY_NAME!;
+  // const akashKeyName = process.env.AKASH_KEY_NAME!;
   const fileName = req.body.body.fileName;
 
   if (!fileName) {
     return res.status(400).send("fileName is required");
   }
-  const command = `provider-services tx deployment create ${fileName}.yml -y --from ${akashKeyName}`;
+  const command = `provider-services tx deployment create ${fileName}.yml -y --from myWallet-akt`;
 
   exec(command, (error, stdout, stderr) => {
     console.log({ error, stdout, stderr, name: "DEPLOY" });
@@ -28,10 +28,10 @@ router.post("/accept", async (req, res) => {
   if (!req.body.body.dseq || !req.body.body.provider) {
     return res.status(400).send("dseq and provider are required");
   }
-  const akashKeyName = process.env.AKASH_KEY_NAME!;
+  // const akashKeyName = process.env.AKASH_KEY_NAME!;
   const AKASH_DSEQ = req.body.body.dseq;
   const AKASH_PROVIDER = req.body.body.provider;
-  const command = `provider-services tx market lease create -y --dseq ${AKASH_DSEQ} --provider ${AKASH_PROVIDER} --from ${akashKeyName}`;
+  const command = `provider-services tx market lease create -y --dseq ${AKASH_DSEQ} --provider ${AKASH_PROVIDER} --from myWallet-akt`;
   exec(command, (error, stdout, stderr) => {
     console.log({ error, stdout, stderr, name: "ACCEPT_BID" });
   });
