@@ -12,20 +12,28 @@ import { DeployButton } from "./DeployButton";
 import { Deployments } from "./Deployemnts";
 import { queryKeys } from "@/lib/consts";
 import { useCoinPrice } from "@/hooks/useCoinPrice";
+import { Input } from "./ui/input";
+import { useState } from "react";
 
 export const Home = () => {
   const coinPrice = useCoinPrice();
+  const [fileName, setFileName] = useState<string>("");
   const {
     data: bids,
     isPending,
     error,
     mutateAsync: deploy,
   } = useMutation({
-    mutationKey: [queryKeys.create_deployment],
+    mutationKey: [queryKeys.create_deployment, fileName],
     mutationFn: async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       const response = await axios.post<Bid[]>(
-        `${import.meta.env.VITE_NODE_SERVER}/deploy/create`
+        `${import.meta.env.VITE_NODE_SERVER}/deploy/create`,
+        {
+          body: {
+            fileName,
+          },
+        }
       );
       return response.data;
     },
@@ -46,11 +54,14 @@ export const Home = () => {
         </TabsList>
         <TabsContent
           value="list"
-          className="p-4 flex-col gap-4 align-items-center w-full"
+          className="flex flex-col gap-4 align-items-center w-full"
         >
           <Deployments />
         </TabsContent>
-        <TabsContent value="create" className="text-center">
+        <TabsContent
+          value="create"
+          className="flex flex-col gap-4 align-items-center w-full text-center"
+        >
           {isPending ? <h1>Loading...</h1> : null}
           {error ? <h1>Error</h1> : null}
           {!bids || bids.length === 0 ? (
@@ -72,7 +83,12 @@ export const Home = () => {
               </div>
             </>
           )}
-          <Button onClick={deploy}>Create Deployment</Button>
+          <Input
+            placeholder="Type the <xxx>.sdl.yaml file"
+            onChange={(e) => setFileName(e.target.value)}
+            value={fileName}
+          />
+          <Button onClick={deploy}>Create Deployment for {fileName}</Button>
         </TabsContent>
       </Tabs>
     </div>
