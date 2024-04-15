@@ -17,7 +17,7 @@ import { useState } from "react";
 
 export const Home = () => {
   const coinPrice = useCoinPrice();
-  const [fileName, setFileName] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("morpheus-deploy");
   const {
     data: bids,
     isPending,

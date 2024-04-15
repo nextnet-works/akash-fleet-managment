@@ -36,6 +36,8 @@ router.post("/accept", async (req, res) => {
     console.log({ error, stdout, stderr, name: "ACCEPT_BID" });
   });
 
+  console.log("Deploy sent to Akash Network");
+
   res
     .status(201)
     .json(`Bid with dseq ${AKASH_PROVIDER + "/" + AKASH_DSEQ} accepted`);
