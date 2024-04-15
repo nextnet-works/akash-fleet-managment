@@ -77,7 +77,10 @@ export const Home = () => {
                   >
                     {bid.bid.bid_id.dseq}
                     <h2>{bid.bid.state}</h2>
-                    <DeployButton bidId={bid.bid.bid_id.dseq} />
+                    <DeployButton
+                      dseq={bid.bid.bid_id.dseq}
+                      provider={bid.bid.bid_id.provider}
+                    />
                   </Card>
                 ))}
               </div>

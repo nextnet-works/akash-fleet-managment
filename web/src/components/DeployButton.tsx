@@ -5,10 +5,11 @@ import { Button } from "./ui/button";
 import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
 
 type Props = {
-  bidId: string;
+  provider: string;
+  dseq: string;
 };
 
-export const DeployButton = ({ bidId }: Props) => {
+export const DeployButton = ({ provider, dseq }: Props) => {
   const {
     isPending,
     error,
@@ -18,7 +19,7 @@ export const DeployButton = ({ bidId }: Props) => {
     mutationFn: async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       const response = await axios.post(`${NODE_SERVER_API}/deploy/accept`, {
-        body: { bidId },
+        body: { dseq, provider },
       });
       return response.data;
     },
