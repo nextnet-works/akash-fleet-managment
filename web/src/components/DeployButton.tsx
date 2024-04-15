@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "./ui/button";
-import { queryKeys } from "@/lib/consts";
+import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
 
 type Props = {
   bidId: string;
@@ -17,12 +17,9 @@ export const DeployButton = ({ bidId }: Props) => {
     mutationKey: [queryKeys.approve_bid],
     mutationFn: async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
-      const response = await axios.post(
-        `${import.meta.env.VITE_NODE_SERVER}/deploy/accept`,
-        {
-          body: { bidId },
-        },
-      );
+      const response = await axios.post(`${NODE_SERVER_API}/deploy/accept`, {
+        body: { bidId },
+      });
       return response.data;
     },
   });

@@ -5,3 +5,6 @@ export const queryKeys = {
   approve_bid: "approve_bid",
   coin_price: "coin_price",
 } as const;
+
+export const NODE_SERVER_API = "https://mor-control.nextnet.zone:3001";
+// export const NODE_SERVER_API = "http://localhost:3001";

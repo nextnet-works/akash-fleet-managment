@@ -1,4 +1,4 @@
-import { queryKeys } from "@/lib/consts";
+import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -9,7 +9,7 @@ export const useCoinPrice = () => {
     queryFn: async () => {
       try {
         const response = await axios.get<number>(
-          `${import.meta.env.VITE_NODE_SERVER}/akash-coin-price`
+          `${NODE_SERVER_API}/akash-coin-price`
         );
         return response.data;
       } catch (error) {

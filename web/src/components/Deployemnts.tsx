@@ -6,14 +6,14 @@ import { DeploymentsResponse } from "@/types/deployment";
 import { Card, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { queryKeys } from "@/lib/consts";
+import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
 import { Input } from "./ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useState } from "react";
 
 export const Deployments = () => {
   const [akashKey, setAkashKey] = useState<string>(
-    "akash1d8zv92ex2chz29gyje8a8c9rtza6qs5pxyvjdc"
+    "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa"
   );
   const debouncedKey = useDebounce(akashKey, 500);
 
@@ -36,7 +36,7 @@ export const Deployments = () => {
   const { mutateAsync: handleCloseDeployment } = useMutation({
     mutationKey: [queryKeys.close_deployment],
     mutationFn: async (id: string) =>
-      await axios.post(`${import.meta.env.VITE_NODE_SERVER}/deploy/delete`, {
+      await axios.post(`${NODE_SERVER_API}/deploy/delete`, {
         body: {
           id,
         },

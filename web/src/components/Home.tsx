@@ -10,7 +10,7 @@ import { Bid } from "@/types/bid";
 
 import { DeployButton } from "./DeployButton";
 import { Deployments } from "./Deployemnts";
-import { queryKeys } from "@/lib/consts";
+import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
 import { useCoinPrice } from "@/hooks/useCoinPrice";
 import { Input } from "./ui/input";
 import { useState } from "react";
@@ -28,7 +28,7 @@ export const Home = () => {
     mutationFn: async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       const response = await axios.post<Bid[]>(
-        `${import.meta.env.VITE_NODE_SERVER}/deploy/create`,
+        `${NODE_SERVER_API}/deploy/create`,
         {
           body: {
             fileName,
