@@ -1,5 +1,6 @@
 // import fs from "fs";
 // import https from "https";
+// import { OfflineSigner } from "@cosmjs/proto-signing";
 
 // import { SigningStargateClient } from "@cosmjs/stargate";
 // import { DirectSecp256k1HdWallet, Registry } from "cosmwasm";
@@ -23,7 +24,7 @@
 
 // // update this with your wallet mnemonic
 // const rpcEndpoint = "https://rpc.akashnet.net:443";
-// const rawSDL = fs.readFileSync("./fixtures/example.sdl.yaml", "utf8");
+// const rawSDL = fs.readFileSync("./src/routes/morpheus-deploy.yml", "utf8");
 // const certificatePath = "./fixtures/cert.json";
 
 // type Deployment = {
@@ -442,7 +443,7 @@
 //   throw new Error(`Could not start deployment. Timeout reached.`);
 // }
 
-// async function deploy() {
+// export async function deploy() {
 //   const { wallet, client, certificate, sdl } = await loadPrerequisites();
 
 //   console.log("Creating deployment...");

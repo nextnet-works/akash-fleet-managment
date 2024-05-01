@@ -1,42 +1,55 @@
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 
 import { Card } from "@/components/ui/card";
 
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Bid } from "@/types/bid";
+import { Provider } from "@/types/akash";
 
-import { DeployButton } from "./DeployButton";
+// import { DeployButton } from "./DeployButton";
 import { Deployments } from "./Deployemnts";
 import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
 import { useCoinPrice } from "@/hooks/useCoinPrice";
-import { Input } from "./ui/input";
+// import { Input } from "./ui/input";
 import { useState } from "react";
+import { PriceChart } from "./PriceChart";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 
 export const Home = () => {
   const coinPrice = useCoinPrice();
-  const [fileName, setFileName] = useState<string>("morpheus-deploy");
+  const [activeTShirts, setActiveTShirts] = useState<string[]>([]);
+  // const [fileName, setFileName] = useState<string>("morpheus-deploy");
   const {
-    data: bids,
+    data: providers,
     isPending,
     error,
-    mutateAsync: deploy,
-  } = useMutation({
-    mutationKey: [queryKeys.create_deployment, fileName],
-    mutationFn: async (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      const response = await axios.post<Bid[]>(
+  } = useQuery({
+    queryKey: [queryKeys.create_deployment, activeTShirts],
+    queryFn: async () => {
+      const response = await axios.post<Provider[]>(
         `${NODE_SERVER_API}/deploy/create`,
         {
           body: {
-            fileName,
+            fileName: activeTShirts,
           },
         }
       );
       return response.data;
     },
+  });
+
+  const handleButtonClick = async (c: string) => {
+    setActiveTShirts((ps) => {
+      if (ps.includes(c)) {
+        return ps.filter((p) => p !== c);
+      }
+      return [...ps, c];
+    });
+  };
+
+  const sortedProviders = providers?.sort((a, b) => {
+    return a.price - b.price;
   });
 
   return (
@@ -47,7 +60,7 @@ export const Home = () => {
       }}
     >
       <span className="text-2xl">Akash Coin Price: ${coinPrice}</span>
-      <Tabs defaultValue="list">
+      <Tabs defaultValue="create">
         <TabsList className="grid  mx-auto w-[400px] grid-cols-2 ">
           <TabsTrigger value="list">Active Deployments</TabsTrigger>
           <TabsTrigger value="create">Create new Deploy</TabsTrigger>
@@ -62,36 +75,93 @@ export const Home = () => {
           value="create"
           className="flex flex-col gap-4 align-items-center w-full text-center"
         >
+          <ToggleGroup type="multiple" value={activeTShirts}>
+            <ToggleGroupItem value="A" onClick={() => handleButtonClick("A")}>
+              TShirt-A
+            </ToggleGroupItem>
+            <ToggleGroupItem value="B" onClick={() => handleButtonClick("B")}>
+              TShirt-B
+            </ToggleGroupItem>
+            <ToggleGroupItem value="C" onClick={() => handleButtonClick("C")}>
+              TShirt-C
+            </ToggleGroupItem>
+            <ToggleGroupItem value="D" onClick={() => handleButtonClick("D")}>
+              TShirt-D
+            </ToggleGroupItem>
+          </ToggleGroup>
+
           {isPending ? <h1>Loading...</h1> : null}
           {error ? <h1>Error</h1> : null}
-          {!bids || bids.length === 0 ? (
+          {!sortedProviders || sortedProviders.length === 0 ? (
             <h1>No Bids</h1>
           ) : (
             <>
-              <h1>Bids</h1>
-              <div className="flex flex-col justify-between p-4 gap-4">
-                {bids.map((bid) => (
+              <h1>Providers</h1>
+              <PriceChart providers={sortedProviders} coinPrice={coinPrice} />
+              <div className="flex flex-col justify-between p-4 align-center">
+                <Card className="flex justify-between p-4">
+                  <div className="w-[200px]">Provider</div>
+                  <div className="w-[200px]">Price (USD/hr)</div>
+
+                  <div className="w-[200px]">CPU (Units)</div>
+                  <div className="w-[200px]">GPU (Units)</div>
+                  <div className="w-[200px]">Memory (GB)</div>
+                  <div className="w-[200px]">Storage (TB)</div>
+                  <div className="w-[200px]">GPU type</div>
+                </Card>
+                {sortedProviders.map((provider) => (
                   <Card
-                    key={bid.bid.bid_id.dseq}
+                    key={provider.createdHeight}
                     className="flex justify-between p-4"
                   >
-                    {bid.bid.bid_id.dseq}
-                    <h2>{bid.bid.state}</h2>
-                    <DeployButton
+                    <div className="w-[200px]">
+                      {provider?.name?.replace("provider.", "")}
+                    </div>
+                    <div className="w-[200px]">
+                      {(
+                        ((provider.price * 438000) / 1000000) *
+                        coinPrice
+                      ).toFixed(1)}
+                    </div>
+                    <div className="w-[200px]">
+                      {provider.availableStats.cpu / 1000}
+                    </div>
+                    <div className="w-[200px]">
+                      {provider.availableStats.gpu}
+                    </div>
+                    <div className="w-[200px]">
+                      {Math.round(provider.availableStats.memory / 1000000000)}
+                    </div>
+                    <div className="w-[200px]">
+                      {Math.round(
+                        provider.availableStats.storage / 1000000000000
+                      )}
+                    </div>
+                    <div className="w-[200px] flex flex-col gap-2">
+                      {provider.gpuModels.map((gpu) => (
+                        <Card key={gpu.model} className="flex gap-2 p-2">
+                          <span>{gpu.vendor}</span>
+                          <span>{gpu.model}</span>
+                          <span>{gpu.ram}</span>
+                          <span>{gpu.interface}</span>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {/* <DeployButton
                       dseq={bid.bid.bid_id.dseq}
                       provider={bid.bid.bid_id.provider}
-                    />
+                    /> */}
                   </Card>
                 ))}
               </div>
             </>
           )}
-          <Input
+          {/* <Input
             placeholder="Type the <xxx>.sdl.yaml file"
             onChange={(e) => setFileName(e.target.value)}
             value={fileName}
-          />
-          <Button onClick={deploy}>Create Deployment for {fileName}</Button>
+          /> */}
         </TabsContent>
       </Tabs>
     </div>

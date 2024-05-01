@@ -26,6 +26,8 @@ const options = {
   cert: fs.readFileSync("./src/assets/cert.cer"),
 };
 
-https
-  .createServer(options, app)
-  .listen(port, () => console.log(`Server running on port ${port}`));
+// https
+//   .createServer(options, app)
+//   .listen(port, () => console.log(`Server running on port ${port}`));
+
+app.listen(port, () => console.log(`Server running on port ${port}`));

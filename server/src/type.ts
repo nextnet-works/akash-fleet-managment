@@ -131,3 +131,43 @@ export type Status = {
   cluster_public_hostname: string;
   address: string;
 };
+
+type Stats = {
+  cpu: number;
+  gpu: number;
+  memory: number;
+  storage: number;
+};
+
+type Attribute = {
+  key: string;
+  value: string;
+  auditedBy: string[];
+};
+
+export type Provider = {
+  owner: string;
+  name: string;
+  uptime1d: number;
+  uptime7d: number;
+  uptime30d: number;
+  createdHeight: number;
+  deploymentCount: number;
+  leaseCount: number;
+  activeStats: Stats;
+  pendingStats: Stats;
+  availableStats: Stats;
+  gpuModels: string[];
+  isAudited: boolean;
+  attributes: Attribute[];
+  hardwareCpu: string[];
+  hardwareCpuArch: string[];
+  hardwareGpuVendor: string[];
+  hardwareGpuModels: string[];
+  hardwareDisk: string[];
+  featPersistentStorage: boolean;
+  featPersistentStorageType: string[];
+  hardwareMemory: string[];
+  tier: string[];
+  featEndpointIp: boolean;
+};

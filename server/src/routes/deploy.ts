@@ -4,24 +4,54 @@ import { exec } from "child_process";
 
 import { COMMANDS } from "../utils/cli";
 import { saveBidsToDB } from "../utils/db";
+import axios from "axios";
+// import { deploy } from "../utils/akash/createDeployment";
 
 const router = Router();
 
 router.post("/create", async (req, res) => {
   // const akashKeyName = process.env.AKASH_KEY_NAME!;
-  const fileName = req.body.body.fileName;
+  // const fileName = req.body.body.fileName;
 
-  if (!fileName) {
-    return res.status(400).send("fileName is required");
-  }
-  const command = `provider-services tx deployment create ${fileName}.yml -y --from myWallet-akt`;
+  // if (!fileName) {
+  //   return res.status(400).send("fileName is required");
+  // }
+  // const command = `provider-services tx deployment create ${fileName}.yml -y --from myWallet-akt`;
 
-  exec(command, (error, stdout, stderr) => {
-    console.log({ error, stdout, stderr, name: "DEPLOY" });
+  // exec(command, (error, stdout, stderr) => {
+  //   console.log({ error, stdout, stderr, name: "DEPLOY" });
+  // });
+
+  // await saveBidsToDB(bids);
+
+  const providersPrices = bids.map((bid) => ({
+    price: bid.bid.price.amount,
+    provider: bid.bid.bid_id.provider,
+  }));
+
+  const promisesAvailability = providersPrices.map(async (provider) => {
+    let output = null;
+    try {
+      const res = await axios.get(
+        `https://api.cloudmos.io/v1/providers/${provider.provider}`
+      );
+      output = {
+        ...res.data,
+        // name: provider.provider,
+        price: Number(provider.price).toFixed(5),
+      };
+    } catch (error) {
+      console.error(error);
+    } finally {
+      return output;
+    }
   });
 
-  await saveBidsToDB(bids);
-  res.status(201).json(bids);
+  const validProviders = (await Promise.all(promisesAvailability)).filter(
+    (provider) => provider !== null
+  );
+
+  res.status(201).json(validProviders);
 });
 
 router.post("/accept", async (req, res) => {
