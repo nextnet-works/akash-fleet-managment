@@ -37,7 +37,6 @@ router.post("/create", async (req, res) => {
       );
       output = {
         ...res.data,
-        // name: provider.provider,
         price: Number(provider.price).toFixed(5),
       };
     } catch (error) {
