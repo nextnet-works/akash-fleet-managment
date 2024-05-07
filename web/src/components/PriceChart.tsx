@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { ProviderResources } from "@/types/akash";
 
 // Register the chart components
 ChartJS.register(
@@ -23,7 +24,7 @@ export function PriceChart({
   providers,
   coinPrice,
 }: {
-  providers: { name: string; price: number }[];
+  providers: ProviderResources[];
   coinPrice: number;
 }) {
   const averagePrice =
@@ -44,7 +45,7 @@ export function PriceChart({
   ).length;
   const data = {
     labels: providers.map((provider) =>
-      provider?.name?.replace("provider.", "")
+      provider?.provider?.replace("akash", "").slice(0, 10)
     ),
     datasets: [
       {
@@ -89,7 +90,7 @@ export function PriceChart({
         <div>Median Price: {medianPrice.toFixed(1)}</div>
         <div>Count until median: {countUntilMedian}</div>
       </div>
-      <Bar data={data} options={options} />;
+      <Bar data={data} options={options} />
     </div>
   );
 }

@@ -5,13 +5,11 @@ import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Provider } from "@/types/akash";
+import { ProviderResources } from "@/types/akash";
 
-// import { DeployButton } from "./DeployButton";
 import { Deployments } from "./Deployemnts";
 import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
 import { useCoinPrice } from "@/hooks/useCoinPrice";
-// import { Input } from "./ui/input";
 import { useState } from "react";
 import { PriceChart } from "./PriceChart";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
@@ -19,7 +17,6 @@ import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 export const Home = () => {
   const coinPrice = useCoinPrice();
   const [activeTShirts, setActiveTShirts] = useState<string[]>([]);
-  // const [fileName, setFileName] = useState<string>("morpheus-deploy");
   const {
     data: providers,
     isPending,
@@ -27,16 +24,17 @@ export const Home = () => {
   } = useQuery({
     queryKey: [queryKeys.create_deployment, activeTShirts],
     queryFn: async () => {
-      const response = await axios.post<Provider[]>(
+      const response = await axios.post<ProviderResources[]>(
         `${NODE_SERVER_API}/deploy/create`,
         {
           body: {
-            fileName: activeTShirts,
+            deployment: activeTShirts[0],
           },
         }
       );
       return response.data;
     },
+    enabled: activeTShirts.length > 0,
   });
 
   const handleButtonClick = async (c: string) => {
@@ -50,7 +48,21 @@ export const Home = () => {
 
   const sortedProviders = providers?.sort((a, b) => {
     return a.price - b.price;
-  });
+  })
+    ? providers
+    : [];
+
+  const totalDeployments = sortedProviders?.reduce(
+    (acc, curr) => {
+      return {
+        cpu: acc.cpu + curr.cpu,
+        gpu: acc.gpu + curr.gpu,
+        memory: acc.memory + curr.memory,
+        storage: acc.storage + curr.storage,
+      };
+    },
+    { cpu: 0, gpu: 0, memory: 0, storage: 0 }
+  );
 
   return (
     <div
@@ -76,94 +88,100 @@ export const Home = () => {
           className="flex flex-col gap-4 align-items-center w-full text-center"
         >
           <ToggleGroup type="multiple" value={activeTShirts}>
-            <ToggleGroupItem value="A" onClick={() => handleButtonClick("A")}>
-              TShirt-A
+            <ToggleGroupItem
+              value="MORPHEUS"
+              onClick={() => handleButtonClick("MORPHEUS")}
+            >
+              Mopheus
             </ToggleGroupItem>
-            <ToggleGroupItem value="B" onClick={() => handleButtonClick("B")}>
+            <ToggleGroupItem
+              value="B"
+              onClick={() => handleButtonClick("B")}
+              disabled
+            >
               TShirt-B
             </ToggleGroupItem>
-            <ToggleGroupItem value="C" onClick={() => handleButtonClick("C")}>
+            <ToggleGroupItem
+              value="C"
+              onClick={() => handleButtonClick("C")}
+              disabled
+            >
               TShirt-C
             </ToggleGroupItem>
-            <ToggleGroupItem value="D" onClick={() => handleButtonClick("D")}>
+            <ToggleGroupItem
+              value="D"
+              onClick={() => handleButtonClick("D")}
+              disabled
+            >
               TShirt-D
             </ToggleGroupItem>
           </ToggleGroup>
-
-          {isPending ? <h1>Loading...</h1> : null}
-          {error ? <h1>Error</h1> : null}
-          {!sortedProviders || sortedProviders.length === 0 ? (
-            <h1>No Bids</h1>
-          ) : (
+          {isPending && <h2>Loading...</h2>}
+          {error && <h1>Error</h1>}
+          {!isPending && !error ? (
             <>
-              <h1>Providers</h1>
-              <PriceChart providers={sortedProviders} coinPrice={coinPrice} />
-              <div className="flex flex-col justify-between p-4 align-center">
-                <Card className="flex justify-between p-4">
-                  <div className="w-[200px]">Provider</div>
-                  <div className="w-[200px]">Price (USD/hr)</div>
-
-                  <div className="w-[200px]">CPU (Units)</div>
-                  <div className="w-[200px]">GPU (Units)</div>
-                  <div className="w-[200px]">Memory (GB)</div>
-                  <div className="w-[200px]">Storage (TB)</div>
-                  <div className="w-[200px]">GPU type</div>
-                </Card>
-                {sortedProviders.map((provider) => (
-                  <Card
-                    key={provider.createdHeight}
-                    className="flex justify-between p-4"
-                  >
-                    <div className="w-[200px]">
-                      {provider?.name?.replace("provider.", "")}
-                    </div>
-                    <div className="w-[200px]">
-                      {(
-                        ((provider.price * 438000) / 1000000) *
-                        coinPrice
-                      ).toFixed(1)}
-                    </div>
-                    <div className="w-[200px]">
-                      {provider.availableStats.cpu / 1000}
-                    </div>
-                    <div className="w-[200px]">
-                      {provider.availableStats.gpu}
-                    </div>
-                    <div className="w-[200px]">
-                      {Math.round(provider.availableStats.memory / 1000000000)}
-                    </div>
-                    <div className="w-[200px]">
-                      {Math.round(
-                        provider.availableStats.storage / 1000000000000
-                      )}
-                    </div>
-                    <div className="w-[200px] flex flex-col gap-2">
-                      {provider.gpuModels.map((gpu) => (
-                        <Card key={gpu.model} className="flex gap-2 p-2">
-                          <span>{gpu.vendor}</span>
-                          <span>{gpu.model}</span>
-                          <span>{gpu.ram}</span>
-                          <span>{gpu.interface}</span>
-                        </Card>
-                      ))}
-                    </div>
-
-                    {/* <DeployButton
-                      dseq={bid.bid.bid_id.dseq}
-                      provider={bid.bid.bid_id.provider}
-                    /> */}
-                  </Card>
-                ))}
-              </div>
+              {!sortedProviders || sortedProviders.length === 0 ? (
+                <h1>No Bids</h1>
+              ) : (
+                <>
+                  <h1>Providers</h1>
+                  <PriceChart
+                    providers={sortedProviders ?? []}
+                    coinPrice={coinPrice}
+                  />
+                  <div className="flex flex-col justify-between p-4 align-center">
+                    <Card className="flex justify-between p-4">
+                      <div className="w-[200px]">Provider</div>
+                      <div className="w-[200px]">Deployment occupied</div>
+                      <div className="w-[200px]">T-shirt average price</div>
+                    </Card>
+                    {sortedProviders.map((provider) => (
+                      <Card
+                        key={provider.provider}
+                        className="flex justify-between p-4"
+                      >
+                        <div className="w-[200px]">
+                          Akash -{" "}
+                          {provider?.provider
+                            ?.replace("akash", "")
+                            .slice(0, 7) + "..."}
+                        </div>
+                        <div className="w-[200px]">
+                          {provider.cpu} / {totalDeployments.cpu}{" "}
+                        </div>
+                        <div className="w-[200px]">{provider.price}</div>
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              )}
             </>
-          )}
-          {/* <Input
-            placeholder="Type the <xxx>.sdl.yaml file"
-            onChange={(e) => setFileName(e.target.value)}
-            value={fileName}
-          /> */}
+          ) : null}
         </TabsContent>
       </Tabs>
     </div>
   );
 };
+
+{
+  /* <div className="w-[200px]">
+                          {Math.round(
+                            provider.availableStats.memory / 1000000000
+                          )}
+                        </div>
+                        <div className="w-[200px]">
+                          {Math.round(
+                            provider.availableStats.storage / 1000000000000
+                          )}
+                        </div>
+                        <div className="w-[200px] flex flex-col gap-2">
+                          {provider.gpuModels.map((gpu) => (
+                            <Card key={gpu.model} className="flex gap-2 p-2">
+                              <span>{gpu.vendor}</span>
+                              <span>{gpu.model}</span>
+                              <span>{gpu.ram}</span>
+                              <span>{gpu.interface}</span>
+                            </Card>
+                          ))}
+                        </div> */
+}

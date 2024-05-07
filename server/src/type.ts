@@ -171,3 +171,23 @@ export type Provider = {
   tier: string[];
   featEndpointIp: boolean;
 };
+
+export type ProviderSupply = {
+  name: string;
+  cpu: number;
+  gpu: number;
+  memory: number;
+  storage: number;
+};
+
+export type Unit = {
+  name: string;
+  unit: number;
+};
+
+export type SuccessfulLease = {
+  dseq: string;
+  provider: string;
+  isSuccess: boolean;
+  price: number;
+};

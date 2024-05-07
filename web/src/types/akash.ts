@@ -120,3 +120,12 @@ export type Provider = {
   tier: string[];
   featEndpointIp: boolean;
 };
+
+export type ProviderResources = {
+  cpu: number;
+  gpu: number;
+  memory: number;
+  storage: number;
+  price: number;
+  provider: string;
+};
