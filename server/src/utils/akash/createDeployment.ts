@@ -8,7 +8,10 @@ import { DirectSecp256k1HdWallet, Registry } from "cosmwasm";
 import * as cert from "@akashnetwork/akashjs/build/certificates";
 import { getRpc } from "@akashnetwork/akashjs/build/rpc";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
-import { getAkashTypeRegistry } from "@akashnetwork/akashjs/build/stargate";
+import {
+  getAkashTypeRegistry,
+  getTypeUrl,
+} from "@akashnetwork/akashjs/build/stargate";
 import {
   QueryBidsRequest,
   QueryClientImpl as QueryMarketClient,
@@ -24,10 +27,10 @@ import { BidID } from "@akashnetwork/akashjs/build/protobuf/akash/market/v1beta4
 // update this with your wallet mnemonic
 const rpcEndpoint = "https://rpc.akashnet.net:443";
 const rawSDL = fs.readFileSync(
-  "./src/routes/deploy/morpheus-deploy.yml",
+  "./src/utils/akash/fixtures/morpheus-deploy.yml",
   "utf8"
 );
-const certificatePath = "./fixtures/cert.json";
+const certificatePath = "./src/utils/akash/fixtures/cert.json";
 
 type Deployment = {
   id: {
@@ -186,7 +189,7 @@ async function createDeployment(
   };
 
   const msg = {
-    typeUrl: "/akash.deployment.v1beta3.MsgCreateDeployment",
+    typeUrl: getTypeUrl(MsgCreateDeployment),
     value: MsgCreateDeployment.fromPartial(deployment),
   };
 
