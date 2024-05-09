@@ -45,7 +45,7 @@ export const deployGenericSDL = async (): Promise<number> => {
   await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
 
   const { stdout: bidStdout } = await execAsync(
-    `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --state=open -o json`
+    `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --gseq=0 --oseq=0 --state=open -o json`
   );
   const bids = JSON.parse(bidStdout).bids;
 
