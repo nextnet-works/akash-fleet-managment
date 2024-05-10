@@ -1,7 +1,7 @@
 ---
 version: "2.0"
 services:
-  morpheus:
+  mor-s-sdl-t1-query-bid:
     image: linuxserver/webtop:amd64-ubuntu-xfce
     expose:
       - port: 3000
@@ -16,12 +16,12 @@ services:
       - port: 11434
         as: 11434
         to:
-          - global: true          
+          - global: true
     env:
       - OLLAMA_DEBUG=1
 profiles:
   compute:
-    morpheus:
+    mor-s-sdl-t1-query-bid:
       resources:
         cpu:
           units: 4
@@ -33,16 +33,15 @@ profiles:
           units: 1
           attributes:
             vendor:
-              nvidia: 
+              nvidia:
   placement:
-    dcloud:
+    global:
       pricing:
-        morpheus:
+        mor-s-sdl-t1-query-bid:
           denom: uakt
-          amount: 1000
+          amount: 10000
 deployment:
-  morpheus:
-    dcloud:
-      profile: morpheus
+  mor-s-sdl-t1-query-bid:
+    global:
+      profile: mor-s-sdl-t1-query-bid
       count: 1
-
