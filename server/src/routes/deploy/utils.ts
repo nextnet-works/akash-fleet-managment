@@ -91,6 +91,8 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
   };
 
+  console.log({ name: "deployAllBiddersSDL-1", data });
+
   const AKASH_DSEQ = Number(
     data.logs[0].events[0].attributes.find((attr) => attr.key === "dseq")?.value
   );
@@ -121,7 +123,7 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
 
 export const lease = async (bid: Bid): Promise<SuccessfulLease> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
-  await execAsync(
+  const { stdout } = await execAsync(
     `provider-services tx market lease create -y --dseq ${
       bid.bid.bid_id.dseq
     } --provider ${
@@ -133,6 +135,8 @@ export const lease = async (bid: Bid): Promise<SuccessfulLease> => {
       KEY_RING: true,
     })}`
   );
+
+  console.log({ name: "lease", data: stdout });
 
   const isSuccess = await sendManifest(
     bid.bid.bid_id.dseq,
@@ -166,6 +170,7 @@ export const sendManifest = async (
       }
     )} -o json`
   );
+  console.log({ name: "sendManifest", data: stdout });
 
   const res = JSON.parse(stdout) as { status: "FAIL" | "PASS" }[];
   return res[0].status === "PASS";
@@ -186,7 +191,7 @@ export const closeDeployment = async (
   owner: string
 ): Promise<void> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
-  await execAsync(
+  const { stdout } = await execAsync(
     `provider-services tx deployment close --dseq ${id} --from ${AKASH_KEY_NAME} --owner=${owner} ${getDynamicVariables(
       {
         AKASH_GAS: true,
@@ -196,6 +201,7 @@ export const closeDeployment = async (
       }
     )}`
   );
+  console.log({ name: "closeDeployment", data: stdout });
 };
 
 export const getDynamicVariables = ({
