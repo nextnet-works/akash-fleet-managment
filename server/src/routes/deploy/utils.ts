@@ -36,8 +36,6 @@ export const deployGenericSDL = async (): Promise<number> => {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
   };
 
-  console.log({ name: "deployGenericSDL", data });
-
   const AKASH_DSEQ = Number(
     data.logs[0].events[0].attributes.find((attr) => attr.key === "dseq")?.value
   );
@@ -51,6 +49,7 @@ export const deployGenericSDL = async (): Promise<number> => {
     `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --gseq=0 --oseq=0 --state=open -o json`
   );
   const bids = JSON.parse(bidStdout).bids;
+  console.log({ bids, length: bids.length });
 
   return bids.length;
 };
@@ -68,8 +67,6 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   const data = JSON.parse(stdout) as {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
   };
-
-  console.log({ name: "deployAllBiddersSDL", data });
 
   const AKASH_DSEQ = Number(
     data.logs[0].events[0].attributes.find((attr) => attr.key === "dseq")?.value

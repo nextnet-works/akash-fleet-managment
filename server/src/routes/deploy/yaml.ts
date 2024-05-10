@@ -98,7 +98,15 @@ export function generateYamlWithWebs(count: number): void {
             attributes: { persistent: true, class: "beta3" },
           },
         ],
-        gpu: { units: 1, attributes: { vendor: { nvidia: "" } } },
+        gpu: {
+          units: 1,
+          attributes: {
+            vendor: {
+              nvidia:
+                "H100,A100,RTX 4090,RTX 8000,P100,A6000,V100,RTX 3090,T4,P40",
+            },
+          },
+        },
       },
     };
 
