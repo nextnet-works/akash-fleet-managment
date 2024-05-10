@@ -75,6 +75,10 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
     data.logs[0].events[0].attributes.find((attr) => attr.key === "owner")
       ?.value ?? "";
 
+  console.log({ AKASH_ACCOUNT_ADDRESS, AKASH_DSEQ });
+
+  await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
+
   const { stdout: bidStdout } = await execAsync(
     `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --state=open -o json`
   );
@@ -82,6 +86,10 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   console.log({ name: "deployAllBiddersSDL-2", data: bidStdout });
 
   const bids = JSON.parse(bidStdout).bids as Bid[];
+
+  if (bids.length === 0) {
+    throw new Error("No bids found in T-2");
+  }
 
   return { bids, owner: AKASH_ACCOUNT_ADDRESS };
 };
