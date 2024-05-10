@@ -207,7 +207,7 @@ export const getDynamicVariables = ({
   AKASH_GAS_ADJUSTMENT?: boolean;
   AKASH_OWNER?: boolean;
 }) => {
-  let output = `--node ${NODE} --chain-id ${AKASH_CHAIN_ID} `;
+  let output = `--node ${NODE} --chain-id ${AKASH_CHAIN_ID} --keyring-backend test`;
 
   if (AKASH_GAS) {
     output += ` --gas=auto `;
