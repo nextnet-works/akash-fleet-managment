@@ -36,6 +36,7 @@ export const deployGenericSDL = async (
         AKASH_GAS: true,
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
+        KEY_RING: true,
       }
     )}`
   );
@@ -82,6 +83,7 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
         AKASH_GAS: true,
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
+        KEY_RING: true,
       }
     )}`
   );
@@ -128,6 +130,7 @@ export const lease = async (bid: Bid): Promise<SuccessfulLease> => {
       AKASH_GAS: true,
       AKASH_GAS_PRICES: true,
       AKASH_GAS_ADJUSTMENT: true,
+      KEY_RING: true,
     })}`
   );
 
@@ -159,6 +162,7 @@ export const sendManifest = async (
         AKASH_GAS: true,
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
+        KEY_RING: true,
       }
     )} -o json`
   );
@@ -188,6 +192,7 @@ export const closeDeployment = async (
         AKASH_GAS: true,
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
+        KEY_RING: true,
       }
     )}`
   );
@@ -197,6 +202,7 @@ export const getDynamicVariables = ({
   AKASH_GAS,
   AKASH_GAS_PRICES,
   AKASH_GAS_ADJUSTMENT,
+  KEY_RING,
   NODE = "https://rpc.akashnet.net:443",
   AKASH_CHAIN_ID = "akashnet-2",
 }: {
@@ -206,8 +212,9 @@ export const getDynamicVariables = ({
   AKASH_GAS_PRICES?: boolean;
   AKASH_GAS_ADJUSTMENT?: boolean;
   AKASH_OWNER?: boolean;
+  KEY_RING?: boolean;
 }) => {
-  let output = `--node ${NODE} --chain-id ${AKASH_CHAIN_ID} --keyring-backend test`;
+  let output = `--node ${NODE} --chain-id ${AKASH_CHAIN_ID} `;
 
   if (AKASH_GAS) {
     output += ` --gas=auto `;
@@ -219,6 +226,10 @@ export const getDynamicVariables = ({
 
   if (AKASH_GAS_ADJUSTMENT) {
     output += `--gas-adjustment=1.25 `;
+  }
+
+  if (KEY_RING) {
+    output += `--keyring-backend test `;
   }
 
   return output;
