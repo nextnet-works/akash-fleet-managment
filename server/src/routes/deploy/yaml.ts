@@ -106,9 +106,9 @@ export function generateYamlWithWebs(count: number): void {
           attributes: {
             vendor: {
               nvidia: [
-                { model: "H100" },
-                { model: "A100" },
-                { model: "RTX4090" },
+                { model: "h100" },
+                { model: "a100" },
+                { model: "rtx4090" },
               ],
             },
           },
