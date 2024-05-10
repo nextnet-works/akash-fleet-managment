@@ -30,7 +30,7 @@ export const handleSdlFlow = async () => {
 export const deployGenericSDL = async (): Promise<number> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   const { stdout } = await execAsync(
-    `provider-services tx deployment create Mor-S-SDL-T1.yml -y --from ${AKASH_KEY_NAME}`
+    `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T1.yml -y --from ${AKASH_KEY_NAME}`
   );
   const data = JSON.parse(stdout) as {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
