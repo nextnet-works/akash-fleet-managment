@@ -55,7 +55,7 @@ type YamlData = {
       [key: string]: { pricing: { [key: string]: PlacementPricing } };
     };
   };
-  deployment: { [key: string]: WebDeployment };
+  deployment: { [key: string]: { [key: string]: WebDeployment } };
 };
 
 export function generateYamlWithWebs(count: number): void {
@@ -125,7 +125,7 @@ export function generateYamlWithWebs(count: number): void {
       },
     };
 
-    data.deployment[key] = {
+    data.deployment[`global${i}`][key] = {
       profile: key,
       count: 1,
     };

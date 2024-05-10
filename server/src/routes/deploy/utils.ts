@@ -6,7 +6,7 @@ import { saveBidsToDB } from "../../utils/db";
 import { generateYamlWithWebs } from "./yaml";
 const execAsync = promisify(exec);
 
-const WAIT_TIME = 12000;
+const WAIT_TIME = 30000;
 
 export const handleSdlFlow = async () => {
   const respondersLength = await deployGenericSDL();
