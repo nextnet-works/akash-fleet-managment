@@ -27,10 +27,17 @@ export const handleSdlFlow = async () => {
   return { leasedAccepted, owner };
 };
 
-export const deployGenericSDL = async (): Promise<number> => {
-  const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
+export const deployGenericSDL = async (
+  AKASH_KEY_NAME = "myWallet-akt"
+): Promise<number> => {
   const { stdout } = await execAsync(
-    `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T1.yml -y --from ${AKASH_KEY_NAME}`
+    `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T1.yml -y --from ${AKASH_KEY_NAME} ${getDynamicVariables(
+      {
+        AKASH_GAS: true,
+        AKASH_GAS_PRICES: true,
+        AKASH_GAS_ADJUSTMENT: true,
+      }
+    )}`
   );
   const data = JSON.parse(stdout) as {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
@@ -52,7 +59,9 @@ export const deployGenericSDL = async (): Promise<number> => {
   console.log({ AKASH_ACCOUNT_ADDRESS, AKASH_DSEQ });
 
   const { stdout: bidStdout } = await execAsync(
-    `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --gseq=0 --oseq=0 --state=open -o json`
+    `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --gseq=0 --oseq=0 ${getDynamicVariables(
+      {}
+    )} --state=open -o json`
   );
   const bids = JSON.parse(bidStdout).bids;
   console.log({ bids, length: bids.length });
@@ -68,7 +77,13 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
 
   const { stdout } = await execAsync(
-    `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T2.yml -y --from ${AKASH_KEY_NAME}`
+    `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T2.yml -y --from ${AKASH_KEY_NAME} ${getDynamicVariables(
+      {
+        AKASH_GAS: true,
+        AKASH_GAS_PRICES: true,
+        AKASH_GAS_ADJUSTMENT: true,
+      }
+    )}`
   );
   const data = JSON.parse(stdout) as {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
@@ -86,7 +101,9 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
 
   const { stdout: bidStdout } = await execAsync(
-    `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --state=open -o json`
+    `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} ${getDynamicVariables(
+      {}
+    )} --state=open -o json`
   );
 
   console.log({ name: "deployAllBiddersSDL-2", data: bidStdout });
@@ -103,7 +120,15 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
 export const lease = async (bid: Bid): Promise<SuccessfulLease> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   await execAsync(
-    `provider-services tx market lease create -y --dseq ${bid.bid.bid_id.dseq} --provider ${bid.bid.bid_id.provider} --from ${AKASH_KEY_NAME}`
+    `provider-services tx market lease create -y --dseq ${
+      bid.bid.bid_id.dseq
+    } --provider ${
+      bid.bid.bid_id.provider
+    } --from ${AKASH_KEY_NAME} ${getDynamicVariables({
+      AKASH_GAS: true,
+      AKASH_GAS_PRICES: true,
+      AKASH_GAS_ADJUSTMENT: true,
+    })}`
   );
 
   const isSuccess = await sendManifest(
@@ -129,7 +154,13 @@ export const sendManifest = async (
 ): Promise<boolean> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   const { stdout } = await execAsync(
-    `provider-services send-manifest Mor-S-SDL-T2.yml --dseq ${dseq} --provider ${provider}  --from ${AKASH_KEY_NAME} --gseq ${gseq} --oseq ${oseq} -o json`
+    `provider-services send-manifest Mor-S-SDL-T2.yml --dseq ${dseq} --provider ${provider} --from ${AKASH_KEY_NAME} --gseq ${gseq} --oseq ${oseq} ${getDynamicVariables(
+      {
+        AKASH_GAS: true,
+        AKASH_GAS_PRICES: true,
+        AKASH_GAS_ADJUSTMENT: true,
+      }
+    )} -o json`
   );
 
   const res = JSON.parse(stdout) as { status: "FAIL" | "PASS" }[];
@@ -152,6 +183,43 @@ export const closeDeployment = async (
 ): Promise<void> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   await execAsync(
-    `provider-services tx deployment close --dseq ${id} --from ${AKASH_KEY_NAME} --owner=${owner}`
+    `provider-services tx deployment close --dseq ${id} --from ${AKASH_KEY_NAME} --owner=${owner} ${getDynamicVariables(
+      {
+        AKASH_GAS: true,
+        AKASH_GAS_PRICES: true,
+        AKASH_GAS_ADJUSTMENT: true,
+      }
+    )}`
   );
+};
+
+export const getDynamicVariables = ({
+  AKASH_GAS,
+  AKASH_GAS_PRICES,
+  AKASH_GAS_ADJUSTMENT,
+  NODE = "https://rpc.akashnet.net:443",
+  AKASH_CHAIN_ID = "akashnet-2",
+}: {
+  NODE?: string;
+  AKASH_CHAIN_ID?: string;
+  AKASH_GAS?: boolean;
+  AKASH_GAS_PRICES?: boolean;
+  AKASH_GAS_ADJUSTMENT?: boolean;
+  AKASH_OWNER?: boolean;
+}) => {
+  let output = `--node ${NODE} --chain-id ${AKASH_CHAIN_ID} `;
+
+  if (AKASH_GAS) {
+    output += ` --gas=auto `;
+  }
+
+  if (AKASH_GAS_PRICES) {
+    output += `--gas-prices=0.025uakt `;
+  }
+
+  if (AKASH_GAS_ADJUSTMENT) {
+    output += `--gas-adjustment=1.25 `;
+  }
+
+  return output;
 };
