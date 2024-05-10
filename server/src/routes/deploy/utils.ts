@@ -208,9 +208,6 @@ export const sendManifest = async (
     gseq +
     " --oseq=1 " +
     getDynamicVariables({
-      AKASH_GAS: true,
-      AKASH_GAS_PRICES: true,
-      AKASH_GAS_ADJUSTMENT: true,
       KEY_RING: true,
     }) +
     " -o json";
