@@ -45,7 +45,9 @@ export const deployGenericSDL = async (): Promise<number> => {
 
   await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
 
-  exec("env");
+  const { stdout: envVars } = await execAsync("env");
+
+  console.log({ envVars });
 
   console.log({ AKASH_ACCOUNT_ADDRESS, AKASH_DSEQ });
 
