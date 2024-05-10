@@ -125,6 +125,8 @@ export function generateYamlWithWebs(count: number): void {
       },
     };
 
+    data.deployment[`global${i}`] = {};
+
     data.deployment[`global${i}`][key] = {
       profile: key,
       count: 1,
