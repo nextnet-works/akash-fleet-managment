@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@akashnetwork/akash-api": "^1.3.0",
-    "@akashnetwork/akashjs": "^0.7.1",
+    "@akashnetwork/akashjs": "^0.8.0",
     "@supabase/supabase-js": "^2.43.1",
     "axios": "^1.6.8",
     "cors": "^2.8.5",
