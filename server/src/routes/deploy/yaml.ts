@@ -29,7 +29,10 @@ type WebProfile = {
       name?: string;
       attributes?: { persistent: boolean; class: string };
     }>;
-    gpu?: { units: number; attributes: { vendor: { nvidia: string } } };
+    gpu?: {
+      units: number;
+      attributes: { vendor: { nvidia: { model: string }[] } };
+    };
   };
 };
 
@@ -102,8 +105,11 @@ export function generateYamlWithWebs(count: number): void {
           units: 1,
           attributes: {
             vendor: {
-              nvidia:
-                "H100,A100,RTX 4090,RTX 8000,P100,A6000,V100,RTX 3090,T4,P40",
+              nvidia: [
+                { model: "H100" },
+                { model: "A100" },
+                { model: "RTX4090" },
+              ],
             },
           },
         },
