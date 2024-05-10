@@ -77,6 +77,17 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
 
   await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
 
+  console.log(
+    `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T2.yml -y --from ${AKASH_KEY_NAME} ${getDynamicVariables(
+      {
+        AKASH_GAS: true,
+        AKASH_GAS_PRICES: true,
+        AKASH_GAS_ADJUSTMENT: true,
+        KEY_RING: true,
+      }
+    )}`
+  );
+
   const { stdout } = await execAsync(
     `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T2.yml -y --from ${AKASH_KEY_NAME} ${getDynamicVariables(
       {
