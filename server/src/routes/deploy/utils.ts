@@ -14,11 +14,23 @@ export const handleSdlFlow = async () => {
 
   await saveBidsToDB(bids);
 
-  const leasesPromises = bids.map((bid, i) => lease(bid, i));
+  let leasesFulfilled: SuccessfulLease[] = [];
+  let leasedRejected: SuccessfulLease[] = [];
 
-  const leasesFulfilled = await Promise.all(leasesPromises);
-
-  const leasedRejected = leasesFulfilled.filter((lease) => !lease.isSuccess);
+  for (const bid of bids) {
+    const i = bids.findIndex(
+      (b) =>
+        b.bid.bid_id.provider + b.bid.bid_id.gseq ===
+        bid.bid.bid_id.provider + bid.bid.bid_id.gseq
+    );
+    const leaseResponse = await lease(bid, i);
+    if (!leaseResponse.isSuccess) {
+      leasesFulfilled.push(leaseResponse);
+    } else {
+      leasedRejected.push(leaseResponse);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
 
   // TODO: add rejected leases to a blacklist of providers
 
