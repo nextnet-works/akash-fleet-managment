@@ -35,6 +35,9 @@ export const deployGenericSDL = async (): Promise<number> => {
   const data = JSON.parse(stdout) as {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
   };
+
+  console.log({ name: "deployGenericSDL", data });
+
   const AKASH_DSEQ = Number(
     data.logs[0].events[0].attributes.find((attr) => attr.key === "dseq")?.value
   );
@@ -60,11 +63,14 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
 
   const { stdout } = await execAsync(
-    `provider-services tx deployment create Mor-S-SDL-T2.yml -y --from ${AKASH_KEY_NAME}`
+    `provider-services tx deployment create ./src/routes/deploy/Mor-S-SDL-T2.yml -y --from ${AKASH_KEY_NAME}`
   );
   const data = JSON.parse(stdout) as {
     logs: { events: { attributes: { key: string; value: string }[] }[] }[];
   };
+
+  console.log({ name: "deployAllBiddersSDL", data });
+
   const AKASH_DSEQ = Number(
     data.logs[0].events[0].attributes.find((attr) => attr.key === "dseq")?.value
   );
@@ -75,6 +81,9 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   const { stdout: bidStdout } = await execAsync(
     `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --state=open -o json`
   );
+
+  console.log({ name: "deployAllBiddersSDL-2", data: bidStdout });
+
   const bids = JSON.parse(bidStdout).bids as Bid[];
 
   return { bids, owner: AKASH_ACCOUNT_ADDRESS };
