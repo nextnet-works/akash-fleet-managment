@@ -17,13 +17,21 @@ export const handleSdlFlow = async () => {
   let leasesFulfilled: SuccessfulLease[] = [];
   let leasedRejected: SuccessfulLease[] = [];
 
-  for (const bid of bids) {
-    const i = bids.findIndex(
-      (b) =>
-        b.bid.bid_id.provider + b.bid.bid_id.gseq ===
-        bid.bid.bid_id.provider + bid.bid.bid_id.gseq
+  let filteredBids: Bid[] = [];
+  const providers = [...new Set(bids.map((bid) => bid.bid.bid_id.provider))];
+
+  providers.forEach((provider) => {
+    const providerBids = bids.filter(
+      (bid) => bid.bid.bid_id.provider === provider
     );
-    const leaseResponse = await lease(bid, i);
+    const sortedBids = providerBids.sort(
+      (a, b) => Number(a.bid.price.amount) - Number(b.bid.price.amount)
+    );
+    filteredBids.push(sortedBids[0]);
+  });
+
+  for (const bid of filteredBids) {
+    const leaseResponse = await lease(bid);
     if (!leaseResponse.isSuccess) {
       leasesFulfilled.push(leaseResponse);
     } else {
@@ -33,7 +41,6 @@ export const handleSdlFlow = async () => {
   }
 
   // TODO: add rejected leases to a blacklist of providers
-
   const leasedAccepted = leasesFulfilled.filter((lease) => lease.isSuccess);
 
   return { leasedAccepted, owner };
@@ -49,6 +56,7 @@ export const deployGenericSDL = async (
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
         KEY_RING: true,
+        AKASH_CHAIN_ID: true,
       }
     )}`
   );
@@ -73,7 +81,7 @@ export const deployGenericSDL = async (
 
   const { stdout: bidStdout } = await execAsync(
     `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} --gseq=0 --oseq=0 ${getDynamicVariables(
-      {}
+      { AKASH_CHAIN_ID: true }
     )} --state=open -o json`
   );
   const bids = JSON.parse(bidStdout).bids;
@@ -96,6 +104,7 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
         KEY_RING: true,
+        AKASH_CHAIN_ID: true,
       }
     )}`
   );
@@ -107,6 +116,7 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
         KEY_RING: true,
+        AKASH_CHAIN_ID: true,
       }
     )}`
   );
@@ -129,7 +139,7 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
 
   const { stdout: bidStdout } = await execAsync(
     `provider-services query market bid list --owner=${AKASH_ACCOUNT_ADDRESS} --dseq=${AKASH_DSEQ} ${getDynamicVariables(
-      {}
+      { AKASH_CHAIN_ID: true }
     )} --state=open -o json`
   );
 
@@ -144,16 +154,13 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   return { bids, owner: AKASH_ACCOUNT_ADDRESS };
 };
 
-export const lease = async (
-  bid: Bid,
-  index: number
-): Promise<SuccessfulLease> => {
+export const lease = async (bid: Bid): Promise<SuccessfulLease> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   const command =
     "provider-services tx market lease create -y --dseq=" +
     bid.bid.bid_id.dseq +
     " --gseq=" +
-    (index + 1) +
+    bid.bid.bid_id.gseq +
     " --oseq=1 --provider=" +
     bid.bid.bid_id.provider +
     " --from " +
@@ -164,6 +171,7 @@ export const lease = async (
       AKASH_GAS_PRICES: true,
       AKASH_GAS_ADJUSTMENT: true,
       KEY_RING: true,
+      AKASH_CHAIN_ID: true,
     });
   const { stdout } = await execAsync(command);
 
@@ -172,7 +180,7 @@ export const lease = async (
   const isSuccess = await sendManifest(
     bid.bid.bid_id.dseq,
     bid.bid.bid_id.provider,
-    index
+    bid.bid.bid_id.gseq
   );
 
   return {
@@ -186,19 +194,19 @@ export const lease = async (
 export const sendManifest = async (
   dseq: string,
   provider: string,
-  index: number
+  gseq: number
 ): Promise<boolean> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   const command =
     "provider-services send-manifest Mor-S-SDL-T2.yml --dseq " +
     dseq +
-    " --provider " +
+    " --provider=" +
     provider +
-    " --from " +
+    " --from=" +
     AKASH_KEY_NAME +
-    " --gseq " +
-    (index + 1) +
-    " --oseq 1 " +
+    " --gseq=" +
+    gseq +
+    " --oseq=1 " +
     getDynamicVariables({
       AKASH_GAS: true,
       AKASH_GAS_PRICES: true,
@@ -236,6 +244,7 @@ export const closeDeployment = async (
         AKASH_GAS_PRICES: true,
         AKASH_GAS_ADJUSTMENT: true,
         KEY_RING: true,
+        AKASH_CHAIN_ID: true,
       }
     )}`
   );
@@ -248,17 +257,21 @@ export const getDynamicVariables = ({
   AKASH_GAS_ADJUSTMENT,
   KEY_RING,
   NODE = "https://rpc.akashnet.net:443",
-  AKASH_CHAIN_ID = "akashnet-2",
+  AKASH_CHAIN_ID,
 }: {
   NODE?: string;
-  AKASH_CHAIN_ID?: string;
+  AKASH_CHAIN_ID?: boolean;
   AKASH_GAS?: boolean;
   AKASH_GAS_PRICES?: boolean;
   AKASH_GAS_ADJUSTMENT?: boolean;
   AKASH_OWNER?: boolean;
   KEY_RING?: boolean;
 }) => {
-  let output = `--node ${NODE} --chain-id ${AKASH_CHAIN_ID} `;
+  let output = `--node ${NODE} `;
+
+  if (AKASH_CHAIN_ID) {
+    output += `--chain-id=akashnet-2 `;
+  }
 
   if (AKASH_GAS) {
     output += ` --gas=auto `;
