@@ -14,7 +14,7 @@ export const handleSdlFlow = async () => {
 
   await saveBidsToDB(bids);
 
-  const leasesPromises = bids.map((bid) => lease(bid));
+  const leasesPromises = bids.map((bid, i) => lease(bid, i));
 
   const leasesFulfilled = await Promise.all(leasesPromises);
 
@@ -132,12 +132,17 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
   return { bids, owner: AKASH_ACCOUNT_ADDRESS };
 };
 
-export const lease = async (bid: Bid): Promise<SuccessfulLease> => {
+export const lease = async (
+  bid: Bid,
+  index: number
+): Promise<SuccessfulLease> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   const { stdout } = await execAsync(
-    `provider-services tx market lease create -y --dseq ${
-      bid.bid.bid_id.dseq
-    } --provider ${
+    `provider-services tx market lease create -y 
+    --dseq ${bid.bid.bid_id.dseq} 
+    --gseq ${index + 1}
+    --oseq 1
+    --provider ${
       bid.bid.bid_id.provider
     } --from ${AKASH_KEY_NAME} ${getDynamicVariables({
       AKASH_GAS: true,
