@@ -157,8 +157,7 @@ export const lease = async (
   const isSuccess = await sendManifest(
     bid.bid.bid_id.dseq,
     bid.bid.bid_id.provider,
-    bid.bid.bid_id.gseq,
-    bid.bid.bid_id.oseq
+    index
   );
 
   return {
@@ -172,19 +171,18 @@ export const lease = async (
 export const sendManifest = async (
   dseq: string,
   provider: string,
-  gseq: number,
-  oseq: number
+  index: number
 ): Promise<boolean> => {
   const AKASH_KEY_NAME = process.env.AKASH_KEY_NAME;
   const { stdout } = await execAsync(
-    `provider-services send-manifest Mor-S-SDL-T2.yml --dseq ${dseq} --provider ${provider} --from ${AKASH_KEY_NAME} --gseq ${gseq} --oseq ${oseq} ${getDynamicVariables(
-      {
-        AKASH_GAS: true,
-        AKASH_GAS_PRICES: true,
-        AKASH_GAS_ADJUSTMENT: true,
-        KEY_RING: true,
-      }
-    )} -o json`
+    `provider-services send-manifest Mor-S-SDL-T2.yml --dseq ${dseq} --provider ${provider} --from ${AKASH_KEY_NAME} --gseq ${
+      index + 1
+    } --oseq 1 ${getDynamicVariables({
+      AKASH_GAS: true,
+      AKASH_GAS_PRICES: true,
+      AKASH_GAS_ADJUSTMENT: true,
+      KEY_RING: true,
+    })} -o json`
   );
   console.log({ name: "sendManifest", data: stdout });
 
