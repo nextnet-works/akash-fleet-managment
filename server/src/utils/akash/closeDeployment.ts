@@ -3,23 +3,17 @@ import {
   getAkashTypeRegistry,
   getTypeUrl,
 } from "@akashnetwork/akashjs/build/stargate/index";
-import { MsgCloseDeployment } from "@akashnetwork/akashjs/build/protobuf/akash/deployment/v1beta3/deploymentmsg";
+import { MsgCloseDeployment } from "@akashnetwork/akash-api/akash/deployment/v1beta3";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { network } from "@akashnetwork/akashjs";
-export async function closeDeployment(deploymentId: string) {
-  try {
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
-      process.env.MNEMONIC!,
-      {
-        prefix: "akash",
-      }
-    );
+import { loadPrerequisites } from "./client";
 
-    // get first account
+export async function closeDeployment(dseq: string) {
+  try {
+    const { wallet } = await loadPrerequisites();
+
     const [account] = await wallet.getAccounts();
 
-    // Use the encode method for the message to wrap the data
-    const dseq = deploymentId.split("/")[1];
     const message = MsgCloseDeployment.fromPartial({
       id: {
         dseq,
@@ -27,7 +21,6 @@ export async function closeDeployment(deploymentId: string) {
       },
     });
 
-    // Set the appropriate typeUrl and attach the encoded message as the value
     const msgAny = {
       typeUrl: getTypeUrl(MsgCloseDeployment),
       value: message,
@@ -41,7 +34,7 @@ export async function closeDeployment(deploymentId: string) {
       wallet,
       {
         registry: myRegistry,
-      }
+      },
     );
 
     const fee = {
@@ -58,10 +51,8 @@ export async function closeDeployment(deploymentId: string) {
       account.address,
       [msgAny],
       fee,
-      "take down deployment"
+      "take down deployment",
     );
-
-    console.log(signedMessage);
 
     if (signedMessage.code === 200) {
       return "Deployment closed successfully";

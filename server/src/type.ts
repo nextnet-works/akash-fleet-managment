@@ -73,12 +73,12 @@ export type Bid = {
   };
 };
 
-export type PagiantionResponse = { next_key: string | null; total: string };
-
 export type BidsResponse = {
   bids: Array<Bid>;
   pagination: PagiantionResponse;
 };
+
+export type PagiantionResponse = { next_key: string | null; total: string };
 
 export type ProvidersResponse = {
   providers: {

@@ -6,7 +6,7 @@ export async function saveBidsToDB(bids: Bid[]): Promise<void> {
   try {
     const supabase = createClient(
       process.env.SUPABASE_PROJECT_URL!,
-      process.env.SERVICE_ROLE_KEY!
+      process.env.SERVICE_ROLE_KEY!,
     );
     const akashPrice = await getAkashCoinPrice();
 
@@ -32,7 +32,7 @@ export async function loadBidsFromDB(): Promise<
 > {
   const supabase = createClient(
     process.env.SUPABASE_PROJECT_URL!,
-    process.env.SERVICE_ROLE_KEY!
+    process.env.SERVICE_ROLE_KEY!,
   );
   const { data, error } = await supabase.from("bids").select(`
     id,

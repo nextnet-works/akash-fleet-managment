@@ -17,7 +17,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export function PriceChart({
@@ -30,7 +30,7 @@ export function PriceChart({
   const averagePrice =
     providers.reduce(
       (acc, curr) => acc + ((curr.price * 438000) / 1000000) * coinPrice,
-      0
+      0,
     ) / providers.length;
 
   const prices = providers
@@ -41,18 +41,19 @@ export function PriceChart({
     prices.length % 2 !== 0 ? prices[mid] : (prices[mid - 1] + prices[mid]) / 2;
 
   const countUntilMedian = prices.filter(
-    (price) => price <= medianPrice
+    (price) => price <= medianPrice,
   ).length;
   const data = {
     labels: providers.map((provider) =>
-      provider?.provider?.replace("akash", "").slice(0, 10)
+      provider?.provider?.replace("akash", "").slice(0, 10),
     ),
     datasets: [
       {
         label: "Price (USD/hr)",
         data: providers.map(
           (provider) =>
-            ((provider.price * 438000) / 1000000) * Number(coinPrice.toFixed(1))
+            ((provider.price * 438000) / 1000000) *
+            Number(coinPrice.toFixed(1)),
         ),
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },

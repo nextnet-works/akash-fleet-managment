@@ -13,7 +13,7 @@ import { useState } from "react";
 
 export const Deployments = () => {
   const [akashKey, setAkashKey] = useState<string>(
-    "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa"
+    "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa",
   );
   const debouncedKey = useDebounce(akashKey, 500);
 
@@ -27,7 +27,7 @@ export const Deployments = () => {
             ["filters.owner"]: debouncedKey,
             ["filters.state"]: ["active", "closed"],
           },
-        }
+        },
       );
       return response.data;
     },
@@ -49,7 +49,7 @@ export const Deployments = () => {
     data?.deployments.sort(
       (a, b) =>
         Number(b.deployment.deployment_id.dseq) -
-        Number(a.deployment.deployment_id.dseq)
+        Number(a.deployment.deployment_id.dseq),
     ) || [];
 
   return (

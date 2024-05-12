@@ -1,49 +1,54 @@
-import { Deployment, DEPLOYMENT } from "./consts";
+import { DEPLOYMENT_RESOURCES } from "../../utils/akash/consts";
 import { Router } from "express";
 
-import { closeDeployment, handleSdlFlow } from "./utils";
-import { ProviderSupply, SuccessfulLease } from "../../type";
+import { BidID, Lease } from "@akashnetwork/akash-api/akash/market/v1beta4";
+
+import { handleSdlFlow } from "./utils";
+import { ProviderSupply } from "../../type";
+import { closeDeployment } from "../../utils/akash/closeDeployment";
 
 const router = Router();
 const MAX_LEASES = 10;
 
 router.post("/create", async (req, res) => {
   try {
-    const deployment = req.body?.deployment as Deployment;
+    // const deployment = req.body?.deployment as DeploymentResources;
 
-    if (!deployment) {
-      return res.status(400).send("deployment is required");
-    }
+    // if (!deployment) {
+    //   return res.status(400).send("deployment is required");
+    // }
 
-    const resourceUsed = DEPLOYMENT[deployment];
+    const resourceUsed = DEPLOYMENT_RESOURCES["MORPHEUS"];
 
     // TODO: save prices of each provider
     const providerSupplies: ProviderSupply[] = [];
 
     let isBidsEmpty = false;
-    let leasesResponses: SuccessfulLease[] = [];
+    let leasesResponses: { bidId: BidID }[] = [];
     let successfulLeaseCount = 0;
-    let ownerGen = "";
     while (!isBidsEmpty) {
-      const { leasedAccepted, owner } = await handleSdlFlow();
-      ownerGen = owner;
-      if (leasedAccepted.length === 0) {
+      const { leasesFulfilled } = await handleSdlFlow();
+      console.log(`Leases fulfilled: ${leasesFulfilled.length}`);
+      if (leasesFulfilled.length === 0) {
         isBidsEmpty = true;
         return;
       }
 
-      for (const lease of leasedAccepted) {
+      for (const lease of leasesFulfilled) {
         if (successfulLeaseCount >= MAX_LEASES) {
           isBidsEmpty = true;
           return;
         }
 
         const providerIndex = providerSupplies.findIndex(
-          (provider) => provider.name === lease.provider
+          (provider) => provider.name === lease.bidId?.provider,
         );
 
         if (providerIndex === -1) {
-          providerSupplies.push({ ...resourceUsed, name: lease.provider });
+          providerSupplies.push({
+            ...resourceUsed,
+            name: lease?.bidId?.provider ?? "",
+          });
         } else {
           providerSupplies[providerIndex].cpu += resourceUsed.cpu;
           providerSupplies[providerIndex].gpu += resourceUsed.gpu;
@@ -52,15 +57,16 @@ router.post("/create", async (req, res) => {
         }
 
         successfulLeaseCount++;
-        leasesResponses = leasesResponses.concat(lease);
+        leasesResponses.push(lease as { bidId: BidID });
       }
     }
 
-    const closedDeploymentsPromises = leasesResponses
-      .filter((lease) => lease.isSuccess)
-      .map((lease) => closeDeployment(lease.dseq, ownerGen));
+    for (const lease of leasesResponses) {
+      const message = await closeDeployment(lease.bidId?.dseq.toString() ?? "");
+      console.log(message);
 
-    await Promise.all(closedDeploymentsPromises);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
 
     res.status(201).json(providerSupplies);
   } catch (e) {

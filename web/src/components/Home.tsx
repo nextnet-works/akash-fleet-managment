@@ -30,7 +30,7 @@ export const Home = () => {
           body: {
             deployment: activeTShirts[0],
           },
-        }
+        },
       );
       return response.data;
     },
@@ -61,7 +61,7 @@ export const Home = () => {
         storage: acc.storage + curr.storage,
       };
     },
-    { cpu: 0, gpu: 0, memory: 0, storage: 0 }
+    { cpu: 0, gpu: 0, memory: 0, storage: 0 },
   );
 
   return (

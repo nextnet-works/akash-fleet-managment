@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as YAML from "yaml";
+import { RAW_SDL_T2 } from "../../utils/akash/consts";
 
 type WebService = {
   image: string;
@@ -142,7 +143,7 @@ export function generateYamlWithWebs(count: number): void {
 
   const yamlStr = YAML.stringify(data);
 
-  fs.writeFileSync("./src/routes/deploy/Mor-S-SDL-T2.yml", yamlStr, "utf8");
+  fs.writeFileSync(RAW_SDL_T2, yamlStr, "utf8");
 
   console.log(`Generated YAML file with ${count} web entries.`);
 }

@@ -9,7 +9,7 @@ export const useCoinPrice = () => {
     queryFn: async () => {
       try {
         const response = await axios.get<number>(
-          `${NODE_SERVER_API}/akash-coin-price`
+          `${NODE_SERVER_API}/akash-coin-price`,
         );
         return response.data;
       } catch (error) {
