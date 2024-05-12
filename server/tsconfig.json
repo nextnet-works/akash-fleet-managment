@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "moduleResolution": "Node16",
+    "moduleResolution": "nodenext",
     "outDir": "dir",
     "sourceMap": true,
     "esModuleInterop": true,
     "strict": true,
     "experimentalDecorators": true,
     "target": "ESNext",
-    "module": "Node16"
+    "module": "NodeNext"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
