@@ -1,4 +1,4 @@
-import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing";
+import { Registry } from "@cosmjs/proto-signing";
 import {
   getAkashTypeRegistry,
   getTypeUrl,
@@ -34,7 +34,7 @@ export async function closeDeployment(dseq: string) {
       wallet,
       {
         registry: myRegistry,
-      },
+      }
     );
 
     const fee = {
@@ -51,7 +51,7 @@ export async function closeDeployment(dseq: string) {
       account.address,
       [msgAny],
       fee,
-      "take down deployment",
+      "take down deployment"
     );
 
     if (signedMessage.code === 200) {

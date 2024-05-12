@@ -1,5 +1,3 @@
-import fs from "fs";
-
 export const RPC_ENDPOINT = "https://rpc.akashnet.net:443";
 export const RAW_SDL_T1 = "./src/utils/akash/assets/Mor-S-SDL-T1.yml";
 export const RAW_SDL_T2 = "./src/utils/akash/assets/Mor-S-SDL-T2.yml";

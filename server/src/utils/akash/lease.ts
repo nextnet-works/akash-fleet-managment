@@ -13,7 +13,7 @@ import { sendManifest } from "./manifest";
 import axios from "axios";
 
 export async function createLease(
-  bids: Bid[],
+  bids: Bid[]
 ): Promise<{ bidId: BidID | undefined }[]> {
   const { wallet, client } = await loadPrerequisites();
   const accounts = await wallet.getAccounts();
@@ -39,7 +39,7 @@ export async function createLease(
     accounts[0].address,
     leasesMessage,
     fee,
-    "create lease",
+    "create lease"
   );
 
   const succefullLeases = await Promise.all(
@@ -54,7 +54,7 @@ export async function createLease(
       }
 
       return { bidId: bid?.bidId };
-    }),
+    })
   );
   return succefullLeases;
 }
@@ -68,7 +68,7 @@ interface LeaseStatusResponse {
 }
 
 export async function queryLeaseStatus(
-  bidId: BidID | undefined,
+  bidId: BidID | undefined
 ): Promise<LeaseStatusResponse> {
   if (!bidId) {
     throw new Error("Bid ID is required");
@@ -110,7 +110,7 @@ export async function queryLeaseStatus(
           Accept: "application/json",
         },
         httpsAgent: agent,
-      },
+      }
     );
 
     return response.data;

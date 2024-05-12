@@ -7,7 +7,6 @@ import {
 } from "@akashnetwork/akashjs/build/protobuf/akash/provider/v1beta3/query";
 
 import { RAW_SDL_T2, RPC_ENDPOINT } from "./consts";
-import { queryLeaseStatus } from "./lease";
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { loadPrerequisites } from "./client";
 import axios from "axios";
