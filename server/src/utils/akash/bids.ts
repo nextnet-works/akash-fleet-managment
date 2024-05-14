@@ -3,16 +3,18 @@ import { getRpc } from "@akashnetwork/akashjs/build/rpc";
 import {
   QueryBidsRequest,
   QueryClientImpl as QueryMarketClient,
-} from "@akashnetwork/akashjs/build/protobuf/akash/market/v1beta4/query";
+} from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 import { RPC_ENDPOINT } from "./consts";
+import { QueryBidsResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
-export async function fetchBids(dseq: number, owner: string) {
-  // Get the RPC client
+export async function fetchBids(
+  dseq: number,
+  owner: string
+): Promise<QueryBidsResponse["bids"]> {
   const rpc = await getRpc(RPC_ENDPOINT);
   const client = new QueryMarketClient(rpc);
 
-  // Create the request with filters
   const request = QueryBidsRequest.fromPartial({
     filters: {
       owner: owner,
@@ -43,11 +45,7 @@ export async function fetchBids(dseq: number, owner: string) {
       console.log("Bid fetched!");
       return bids.bids;
     }
-
-    // Otherwise, loop again until the minimum attempts or timeout
   }
 
-  // If no bids found after the loop, return an empty result or handle accordingly
-  console.log("No bids fetched within the given time and attempts.");
   return [];
 }

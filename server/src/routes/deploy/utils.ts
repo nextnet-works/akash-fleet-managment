@@ -1,13 +1,9 @@
-import { exec } from "child_process";
-import { promisify } from "util";
-
-import { SuccessfulLease } from "../../type";
 import { generateYamlWithWebs } from "./yaml";
 import { createDeployment } from "../../utils/akash/createDeployment";
 import { fetchBids } from "../../utils/akash/bids";
 import { RAW_SDL_T2 } from "../../utils/akash/consts";
 import { createLease } from "../../utils/akash/lease";
-import { Bid, Lease } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 export const handleSdlFlow = async () => {
   const respondersLength = await deployGenericSDL();
@@ -15,13 +11,15 @@ export const handleSdlFlow = async () => {
 
   // await saveBidsToDB(bids);
 
-  let filteredBids: Bid[] = [];
-  const gseqArray = [...new Set(bids.map((bid) => bid?.bid?.bidId?.gseq))];
+  let filteredBids: QueryBidResponse["bid"][] = [];
+  const gseqArray = [
+    ...new Set(bids.map((bid) => bid?.bid?.bidId?.gseq)),
+  ].filter((gseq) => gseq) as number[];
 
   gseqArray.forEach((gseq) => {
     const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
     const sortedBids = gseqBids.sort(
-      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount),
+      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount)
     );
 
     if (!sortedBids[0]?.bid) {
@@ -41,7 +39,7 @@ export const handleSdlFlow = async () => {
 };
 
 export const deployGenericSDL = async (
-  AKASH_KEY_NAME = "myWallet-akt",
+  AKASH_KEY_NAME = "myWallet-akt"
 ): Promise<number> => {
   const data = await createDeployment();
 

@@ -1,34 +1,29 @@
 {
-    "folders": [
-      {
-        "name": "root",
-        "path": "./"
-      },
-      {
-        "name": "web",
-        "path": "web"
-      },
-      {
-        "name": "server",
-        "path": "server"
-      },
-      {
-        "name": "db",
-        "path": "supabase"
-      }
-    ],
-    "settings": {
-      "files.exclude": {
-        "node_modules/": true,
-        "web/": true,
-        "server/": true,
-        "supabase/": true
-      },
-      "cSpell.words": [
-        "deso",
-        "Nanos",
-        "supabase",
-        "tanstack"
-      ]
+  "folders": [
+    {
+      "name": "root",
+      "path": "./"
+    },
+    {
+      "name": "web",
+      "path": "web"
+    },
+    {
+      "name": "server",
+      "path": "server"
+    },
+    {
+      "name": "db",
+      "path": "supabase"
     }
+  ],
+  "settings": {
+    "files.exclude": {
+      "node_modules/": true,
+      "web/": true,
+      "server/": true,
+      "supabase/": true
+    },
+    "cSpell.words": ["deso", "gseq", "Nanos", "supabase", "tanstack"]
   }
+}

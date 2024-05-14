@@ -1,11 +1,11 @@
 import { DEPLOYMENT_RESOURCES } from "../../utils/akash/consts";
 import { Router } from "express";
 
-import { BidID, Lease } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 import { handleSdlFlow } from "./utils";
-import { ProviderSupply } from "../../type";
 import { closeDeployment } from "../../utils/akash/closeDeployment";
+import { ProviderSupply } from "../../utils/akash/types";
 
 const router = Router();
 const MAX_LEASES = 10;
@@ -41,7 +41,7 @@ router.post("/create", async (req, res) => {
         }
 
         const providerIndex = providerSupplies.findIndex(
-          (provider) => provider.name === lease.bidId?.provider,
+          (provider) => provider.name === lease.bidId?.provider
         );
 
         if (providerIndex === -1) {
@@ -63,7 +63,6 @@ router.post("/create", async (req, res) => {
 
     for (const lease of leasesResponses) {
       const message = await closeDeployment(lease.bidId?.dseq.toString() ?? "");
-      console.log(message);
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
     }

@@ -1,6 +1,6 @@
 import https from "https";
 import { MsgCreateLease } from "@akashnetwork/akash-api/akash/market/v1beta4";
-import { BidID, Bid } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta3";
 import { getRpc } from "@akashnetwork/akashjs/build/rpc";
 
 import { loadPrerequisites } from "./client";
@@ -11,9 +11,10 @@ import {
 } from "@akashnetwork/akash-api/akash/provider/v1beta3";
 import { sendManifest } from "./manifest";
 import axios from "axios";
+import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 export async function createLease(
-  bids: Bid[]
+  bids: QueryBidResponse["bid"][]
 ): Promise<{ bidId: BidID | undefined }[]> {
   const { wallet, client } = await loadPrerequisites();
   const accounts = await wallet.getAccounts();
@@ -42,7 +43,7 @@ export async function createLease(
     "create lease"
   );
 
-  const succefullLeases = await Promise.all(
+  const successfulLeases = await Promise.all(
     bids.map(async (bid) => {
       if (!bid?.bidId) {
         return { bidId: undefined };
@@ -56,7 +57,7 @@ export async function createLease(
       return { bidId: bid?.bidId };
     })
   );
-  return succefullLeases;
+  return successfulLeases;
 }
 
 interface ServiceInfo {

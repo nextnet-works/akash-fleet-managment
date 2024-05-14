@@ -4,10 +4,10 @@ import { getRpc } from "@akashnetwork/akashjs/build/rpc";
 import {
   QueryClientImpl as QueryProviderClient,
   QueryProviderRequest,
-} from "@akashnetwork/akashjs/build/protobuf/akash/provider/v1beta3/query";
+} from "@akashnetwork/akash-api/akash/provider/v1beta3";
 
 import { RAW_SDL_T2, RPC_ENDPOINT } from "./consts";
-import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta3";
 import { loadPrerequisites } from "./client";
 import axios from "axios";
 
@@ -53,7 +53,6 @@ export async function sendManifest(leaseId: BidID) {
     }
     return true;
   } catch (error: any) {
-    // const startTime = Date.now();
     // const timeout = 1000 * 60 * 10;
 
     // while (Date.now() - startTime < timeout) {
@@ -83,3 +82,4 @@ export async function sendManifest(leaseId: BidID) {
     return false;
   }
 }
+// const startTime = Date.now();
