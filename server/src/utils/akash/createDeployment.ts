@@ -8,31 +8,31 @@ import { loadPrerequisites } from "./client";
 export async function createDeployment(sdlPath?: string) {
   const { wallet, client, sdl } = await loadPrerequisites(sdlPath);
 
-  const blockheight = await client.getHeight();
+  const blockHeight = await client.getHeight();
   const groups = sdl.groups();
   const accounts = await wallet.getAccounts();
 
-  if (DSEQ != 0) {
-    console.log("Skipping deployment creation...");
-    return {
-      id: {
-        owner: accounts[0].address,
-        dseq: DSEQ,
-      },
-      groups: groups,
-      deposit: {
-        denom: "uakt",
-        amount: "1000000",
-      },
-      version: await sdl.manifestVersion(),
-      depositor: accounts[0].address,
-    };
-  }
+  // if (DSEQ != 0) {
+  //   console.log("Skipping deployment creation...");
+  //   return {
+  //     id: {
+  //       owner: accounts[0].address,
+  //       dseq: DSEQ,
+  //     },
+  //     groups: groups,
+  //     deposit: {
+  //       denom: "uakt",
+  //       amount: "1000000",
+  //     },
+  //     version: await sdl.manifestVersion(),
+  //     depositor: accounts[0].address,
+  //   };
+  // }
 
   const deployment = {
     id: {
       owner: accounts[0].address,
-      dseq: blockheight,
+      dseq: blockHeight,
     },
     groups: groups,
     deposit: {
@@ -62,11 +62,11 @@ export async function createDeployment(sdlPath?: string) {
     accounts[0].address,
     [msg],
     fee,
-    "create deployment",
+    "create deployment"
   );
 
   if (tx.code !== undefined && tx.code === 0) {
-    return deployment;
+    return { tx, dseq: DSEQ, owner: accounts[0].address };
   }
 
   throw new Error(`Could not create deployment: ${tx.rawLog} `);

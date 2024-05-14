@@ -82,4 +82,3 @@ export async function sendManifest(leaseId: BidID) {
     return false;
   }
 }
-// const startTime = Date.now();

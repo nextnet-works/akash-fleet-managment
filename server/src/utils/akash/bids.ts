@@ -7,10 +7,13 @@ import {
 } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 import { RPC_ENDPOINT } from "./consts";
+import { saveBidsToDB } from "../db";
 
 export async function fetchBids(
   dseq: number,
-  owner: string
+  owner: string,
+  blockHeight: number,
+  minAttempts = 3
 ): Promise<QueryBidsResponse["bids"]> {
   const rpc = await getRpc(RPC_ENDPOINT);
   const client = new QueryMarketClient(rpc);
@@ -27,7 +30,6 @@ export async function fetchBids(
   const startTime = Date.now();
   const timeout = 1000 * 60 * 5; // 5 minutes timeout
   let attempts = 0;
-  const minAttempts = 3;
 
   // Loop until the timeout is reached or minimum attempts are satisfied
   while (Date.now() - startTime < timeout || attempts < minAttempts) {
@@ -43,6 +45,9 @@ export async function fetchBids(
       attempts >= minAttempts
     ) {
       console.log("Bid fetched!");
+      if (bids.bids.length > 0) {
+        await saveBidsToDB(bids.bids, blockHeight);
+      }
       return bids.bids;
     }
   }

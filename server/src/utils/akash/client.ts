@@ -1,9 +1,6 @@
 import fs from "fs";
-
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { DirectSecp256k1HdWallet, Registry } from "cosmwasm";
-
-// these imports should point to @akashnetwork/akashjs node module in your project
 import * as cert from "@akashnetwork/akashjs/build/certificates";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
 import { getAkashTypeRegistry } from "@akashnetwork/akashjs/build/stargate";
@@ -14,7 +11,7 @@ export async function loadPrerequisites(sdlPath = RAW_SDL_T1) {
     process.env.AKASH_MNEMONIC!,
     {
       prefix: "akash",
-    },
+    }
   );
   const myRegistry = new Registry(getAkashTypeRegistry());
 
@@ -27,7 +24,7 @@ export async function loadPrerequisites(sdlPath = RAW_SDL_T1) {
       //   amount:  1000.0,
       //   denom:  "uakt",
       // }
-    },
+    }
   );
 
   const certificate = await loadOrCreateCertificate(wallet, client);
@@ -44,11 +41,9 @@ export async function loadPrerequisites(sdlPath = RAW_SDL_T1) {
 
 async function loadOrCreateCertificate(
   wallet: DirectSecp256k1HdWallet,
-  client: SigningStargateClient,
+  client: SigningStargateClient
 ) {
   const accounts = await wallet.getAccounts();
-
-  // check to see if we can load the certificate from the fixtures folder
 
   if (fs.existsSync(CERTIFICATE_PATH)) {
     return loadCertificate(CERTIFICATE_PATH);
@@ -59,11 +54,10 @@ async function loadOrCreateCertificate(
   const result = await cert.broadcastCertificate(
     certificate,
     accounts[0].address,
-    client,
+    client
   );
 
   if (result.code !== undefined && result.code === 0) {
-    // save the certificate to the fixtures folder
     saveCertificate(certificate);
     return certificate;
   }
@@ -85,7 +79,6 @@ function loadCertificate(path: string): {
   }
 }
 
-// saves the certificate into the fixtures folder
 function saveCertificate(certificate: {
   privateKey: string;
   publicKey: string;

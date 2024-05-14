@@ -5,11 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prod": "vite --mode production",
     "build": "tsc && vite build",
+    "lint": "eslint . --fix",
     "preview": "vite preview",
-    "prettier": "prettier --write ../**/*.{ts,tsx,js,jsx,json,md}",
-    "format": "eslint --fix"
+    "types": "npx supabase gen types typescript --local > ./src/types/supabase.gen.ts",
+    "types-db": "npx supabase gen types typescript --local > ../supabase/functions/_lib/supabase.gen.ts",
+    "types-server": "npx supabase gen types typescript --local > ../server/src/types/supabase.gen.ts",
+    "db-pull": "npx supabase db pull",
+    "serve-functions": "npx supabase functions serve --no-verify-jwt --env-file ./supabase/.env.local",
+    "new-migration": "npx supabase db diff -f",
+    "prettier": "prettier --write ../"
   },
   "dependencies": {
     "@focus-reactive/react-yaml": "^1.1.2",

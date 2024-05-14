@@ -5,18 +5,15 @@ import { RAW_SDL_T2 } from "../../utils/akash/consts";
 import { createLease } from "../../utils/akash/lease";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
 import { saveBidsToDB } from "../../utils/db";
-import { Bid } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 export const handleSdlFlow = async () => {
   const respondersLength = await deployGenericSDL();
   const { bids } = await deployAllBiddersSDL(respondersLength);
 
-  await saveBidsToDB(bids);
-
-  let filteredBids: QueryBidResponse["bid"][] = [];
+  const filteredBids: QueryBidResponse["bid"][] = [];
   const gseqArray = [
-    ...new Set(bids.map((bid) => bid?.bid?.bidId?.gseq)),
-  ].filter((gseq) => gseq) as number[];
+    ...new Set(bids.filter((gseq) => gseq).map((bid) => bid?.bid?.bidId?.gseq)),
+  ];
 
   gseqArray.forEach((gseq) => {
     const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
@@ -40,12 +37,10 @@ export const handleSdlFlow = async () => {
   return { leasesFulfilled, leasedRejected };
 };
 
-export const deployGenericSDL = async (
-  AKASH_KEY_NAME = "myWallet-akt"
-): Promise<number> => {
-  const data = await createDeployment();
+export const deployGenericSDL = async () => {
+  const { dseq, owner, tx } = await createDeployment();
 
-  const bids = await fetchBids(data.id.dseq, data.id.owner);
+  const bids = await fetchBids(dseq, owner, tx.height);
 
   return bids.length;
 };
@@ -53,15 +48,9 @@ export const deployGenericSDL = async (
 export const deployAllBiddersSDL = async (respondersLength: number) => {
   generateYamlWithWebs(respondersLength);
 
-  const deploymentRes = await createDeployment(RAW_SDL_T2);
+  const { dseq, owner, tx } = await createDeployment(RAW_SDL_T2);
 
-  await new Promise((resolve) => setTimeout(resolve, 15000)); // Wait 15 seconds
+  const bids = await fetchBids(dseq, owner, tx.height, 6);
 
-  const bids = await fetchBids(deploymentRes.id.dseq, deploymentRes.id.owner);
-
-  if (bids.length === 0) {
-    throw new Error("No bids found in T-2");
-  }
-
-  return { bids, owner: deploymentRes.id.owner };
+  return { bids, owner };
 };

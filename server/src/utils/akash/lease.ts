@@ -36,12 +36,14 @@ export async function createLease(
     gas: "2000000",
   };
 
-  await client.signAndBroadcast(
+  const leasesMessages = await client.signAndBroadcast(
     accounts[0].address,
     leasesMessage,
     fee,
     "create lease"
   );
+
+  const height = leasesMessages.height;
 
   const successfulLeases = await Promise.all(
     bids.map(async (bid) => {

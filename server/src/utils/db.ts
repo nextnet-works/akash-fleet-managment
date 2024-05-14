@@ -1,22 +1,27 @@
 import { createClient } from "@supabase/supabase-js";
 import { getAkashCoinPrice } from "../utils/price";
 import { QueryBidsResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
+import { Database } from "../types/supabase.gen";
+import { loadPrerequisites } from "./akash/client";
 
 export async function saveBidsToDB(
-  bids: QueryBidsResponse["bids"]
+  bids: QueryBidsResponse["bids"],
+  blockHeight: number
 ): Promise<void> {
   try {
-    const supabase = createClient(
+    const supabase = createClient<Database>(
       process.env.SUPABASE_PROJECT_URL!,
       process.env.SERVICE_ROLE_KEY!
     );
-    const akashPrice = await getAkashCoinPrice();
+
+    const { akashPrice } = await getBlockHeightAndAkashPrice();
 
     const output = bids.map((bid) => {
       return {
-        id: bid.escrowAccount?.id,
-        json: bid,
+        id: bid.escrowAccount?.id?.xid ?? "",
+        json: JSON.stringify(bid),
         akash_price_usd: akashPrice,
+        block_height: blockHeight,
       };
     });
     const { error } = await supabase.from("bids").upsert(output);
@@ -45,3 +50,10 @@ export async function loadBidsFromDB(): Promise<
   }
   return data ?? [];
 }
+
+export const getBlockHeightAndAkashPrice = async () => {
+  const akashPrice = await getAkashCoinPrice();
+  const { client } = await loadPrerequisites();
+  const blockHeight = await client.getHeight();
+  return { blockHeight, akashPrice };
+};

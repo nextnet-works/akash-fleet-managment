@@ -24,6 +24,6 @@
       "server/": true,
       "supabase/": true
     },
-    "cSpell.words": ["deso", "gseq", "Nanos", "supabase", "tanstack"]
+    "cSpell.words": ["deso", "DSEQ", "gseq", "Nanos", "supabase", "tanstack"]
   }
 }
