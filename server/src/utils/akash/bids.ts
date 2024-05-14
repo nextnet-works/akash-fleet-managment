@@ -2,11 +2,11 @@ import { getRpc } from "@akashnetwork/akashjs/build/rpc";
 
 import {
   QueryBidsRequest,
+  QueryBidsResponse,
   QueryClientImpl as QueryMarketClient,
 } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 import { RPC_ENDPOINT } from "./consts";
-import { QueryBidsResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 export async function fetchBids(
   dseq: number,

@@ -4,12 +4,14 @@ import { fetchBids } from "../../utils/akash/bids";
 import { RAW_SDL_T2 } from "../../utils/akash/consts";
 import { createLease } from "../../utils/akash/lease";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
+import { saveBidsToDB } from "../../utils/db";
+import { Bid } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 export const handleSdlFlow = async () => {
   const respondersLength = await deployGenericSDL();
   const { bids } = await deployAllBiddersSDL(respondersLength);
 
-  // await saveBidsToDB(bids);
+  await saveBidsToDB(bids);
 
   let filteredBids: QueryBidResponse["bid"][] = [];
   const gseqArray = [

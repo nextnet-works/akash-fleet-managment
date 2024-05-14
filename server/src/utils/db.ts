@@ -1,8 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { getAkashCoinPrice } from "../utils/price";
-import { Bid } from "./akash/types";
+import { QueryBidsResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
-export async function saveBidsToDB(bids: Bid[]): Promise<void> {
+export async function saveBidsToDB(
+  bids: QueryBidsResponse["bids"]
+): Promise<void> {
   try {
     const supabase = createClient(
       process.env.SUPABASE_PROJECT_URL!,
@@ -12,7 +14,7 @@ export async function saveBidsToDB(bids: Bid[]): Promise<void> {
 
     const output = bids.map((bid) => {
       return {
-        id: bid.escrow_account.id.xid,
+        id: bid.escrowAccount?.id,
         json: bid,
         akash_price_usd: akashPrice,
       };
