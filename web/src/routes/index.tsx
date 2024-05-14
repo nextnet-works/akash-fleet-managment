@@ -7,14 +7,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ProviderResources } from "@/types/akash";
 
-import { Deployments } from "./Deployemnts";
-import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
+import { Deployments } from "@/components/Deployements";
+import { queryKeys } from "@/lib/consts";
 import { useCoinPrice } from "@/hooks/useCoinPrice";
 import { useState } from "react";
-import { PriceChart } from "./PriceChart";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import { PriceChart } from "@/components/PriceChart";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { createFileRoute } from "@tanstack/react-router";
+import { Loader } from "@/components/Loader";
+import { ErrorUI } from "@/components/Error";
+export const Route = createFileRoute("/")({
+  component: Home,
+  pendingComponent: Loader,
+  errorComponent: ErrorUI,
+});
 
-export const Home = () => {
+function Home() {
   const coinPrice = useCoinPrice();
   const [activeTShirts, setActiveTShirts] = useState<string[]>([]);
   const {
@@ -25,12 +33,12 @@ export const Home = () => {
     queryKey: [queryKeys.create_deployment, activeTShirts],
     queryFn: async () => {
       const response = await axios.post<ProviderResources[]>(
-        `${NODE_SERVER_API}/deploy/create`,
+        `${import.meta.env.VITE_NODE_SERVER_API}/deploy/create`,
         {
           body: {
             deployment: activeTShirts[0],
           },
-        },
+        }
       );
       return response.data;
     },
@@ -61,7 +69,7 @@ export const Home = () => {
         storage: acc.storage + curr.storage,
       };
     },
-    { cpu: 0, gpu: 0, memory: 0, storage: 0 },
+    { cpu: 0, gpu: 0, memory: 0, storage: 0 }
   );
 
   return (
@@ -161,7 +169,7 @@ export const Home = () => {
       </Tabs>
     </div>
   );
-};
+}
 
 {
   /* <div className="w-[200px]">

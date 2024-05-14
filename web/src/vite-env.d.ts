@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  // more env variables...
+  NODE_SERVER_API: string;
 }
 
 interface ImportMeta {

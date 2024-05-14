@@ -6,14 +6,14 @@ import { DeploymentsResponse } from "@/types/deployment";
 import { Card, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { NODE_SERVER_API, queryKeys } from "@/lib/consts";
+import { queryKeys } from "@/lib/consts";
 import { Input } from "./ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useState } from "react";
 
 export const Deployments = () => {
   const [akashKey, setAkashKey] = useState<string>(
-    "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa",
+    "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa"
   );
   const debouncedKey = useDebounce(akashKey, 500);
 
@@ -27,7 +27,7 @@ export const Deployments = () => {
             ["filters.owner"]: debouncedKey,
             ["filters.state"]: ["active", "closed"],
           },
-        },
+        }
       );
       return response.data;
     },
@@ -36,11 +36,14 @@ export const Deployments = () => {
   const { mutateAsync: handleCloseDeployment } = useMutation({
     mutationKey: [queryKeys.close_deployment],
     mutationFn: async (id: string) =>
-      await axios.post(`${NODE_SERVER_API}/deploy/delete`, {
-        body: {
-          id,
-        },
-      }),
+      await axios.post(
+        `${import.meta.env.VITE_NODE_SERVER_API}/deploy/delete`,
+        {
+          body: {
+            id,
+          },
+        }
+      ),
   });
 
   if (isError) return <div>Error</div>;
@@ -49,7 +52,7 @@ export const Deployments = () => {
     data?.deployments.sort(
       (a, b) =>
         Number(b.deployment.deployment_id.dseq) -
-        Number(a.deployment.deployment_id.dseq),
+        Number(a.deployment.deployment_id.dseq)
     ) || [];
 
   return (
