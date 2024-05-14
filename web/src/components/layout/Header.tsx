@@ -15,6 +15,9 @@ export const Header = () => {
       <Button asChild variant="link">
         <Link to="/">Deployments</Link>
       </Button>
+      <Button asChild variant="link">
+        <Link to="/yaml">Yaml Editor</Link>
+      </Button>
       <span className="ml-auto">
         AKT: <b className="text-2xl">{coinPrice}$</b>
       </span>

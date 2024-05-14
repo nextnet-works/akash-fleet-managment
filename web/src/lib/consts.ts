@@ -4,4 +4,5 @@ export const queryKeys = {
   create_deployment: "create_Deployment",
   approve_bid: "approve_bid",
   coin_price: "coin_price",
+  sdl: "sdl",
 } as const;
