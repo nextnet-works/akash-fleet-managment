@@ -79,7 +79,6 @@ function Home() {
         alignItems: "center",
       }}
     >
-      <span className="text-2xl">Akash Coin Price: ${coinPrice}</span>
       <Tabs defaultValue="create">
         <TabsList className="grid  mx-auto w-[400px] grid-cols-2 ">
           <TabsTrigger value="list">Active Deployments</TabsTrigger>
