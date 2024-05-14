@@ -30,7 +30,7 @@ export async function estimateGas() {
   const gasEstimated = await client.simulate(
     accounts[0].address,
     [msg],
-    "simulate"
+    "simulate",
   );
 
   return gasEstimated;

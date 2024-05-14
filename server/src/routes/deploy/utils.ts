@@ -4,7 +4,6 @@ import { fetchBids } from "../../utils/akash/bids";
 import { RAW_SDL_T2 } from "../../utils/akash/consts";
 import { createLease } from "../../utils/akash/lease";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
-import { saveBidsToDB } from "../../utils/db";
 
 export const handleSdlFlow = async () => {
   const respondersLength = await deployGenericSDL();
@@ -18,7 +17,7 @@ export const handleSdlFlow = async () => {
   gseqArray.forEach((gseq) => {
     const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
     const sortedBids = gseqBids.sort(
-      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount)
+      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount),
     );
 
     if (!sortedBids[0]?.bid) {

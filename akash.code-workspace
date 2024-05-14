@@ -2,28 +2,28 @@
   "folders": [
     {
       "name": "root",
-      "path": "./"
+      "path": "./",
     },
     {
       "name": "web",
-      "path": "web"
+      "path": "web",
     },
     {
       "name": "server",
-      "path": "server"
+      "path": "server",
     },
     {
       "name": "db",
-      "path": "supabase"
-    }
+      "path": "supabase",
+    },
   ],
   "settings": {
     "files.exclude": {
       "node_modules/": true,
       "web/": true,
       "server/": true,
-      "supabase/": true
+      "supabase/": true,
     },
-    "cSpell.words": ["deso", "DSEQ", "gseq", "Nanos", "supabase", "tanstack"]
-  }
+    "cSpell.words": ["deso", "DSEQ", "gseq", "Nanos", "supabase", "tanstack"],
+  },
 }

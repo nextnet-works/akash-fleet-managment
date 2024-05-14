@@ -14,7 +14,7 @@ import axios from "axios";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 export async function createLease(
-  bids: QueryBidResponse["bid"][]
+  bids: QueryBidResponse["bid"][],
 ): Promise<{ bidId: BidID | undefined }[]> {
   const { wallet, client } = await loadPrerequisites();
   const accounts = await wallet.getAccounts();
@@ -40,7 +40,7 @@ export async function createLease(
     accounts[0].address,
     leasesMessage,
     fee,
-    "create lease"
+    "create lease",
   );
 
   const height = leasesMessages.height;
@@ -57,7 +57,7 @@ export async function createLease(
       }
 
       return { bidId: bid?.bidId };
-    })
+    }),
   );
   return successfulLeases;
 }
@@ -71,7 +71,7 @@ interface LeaseStatusResponse {
 }
 
 export async function queryLeaseStatus(
-  bidId: BidID | undefined
+  bidId: BidID | undefined,
 ): Promise<LeaseStatusResponse> {
   if (!bidId) {
     throw new Error("Bid ID is required");
@@ -113,7 +113,7 @@ export async function queryLeaseStatus(
           Accept: "application/json",
         },
         httpsAgent: agent,
-      }
+      },
     );
 
     return response.data;

@@ -1,5 +1,4 @@
 import { DEPLOYMENT_RESOURCES } from "./consts";
-import { Bid as AkashBidType } from "@akashnetwork/akash-api/akash/market/v1beta3";
 
 export type Deployment = {
   id: {
@@ -16,12 +15,6 @@ export type Lease = {
     gseq: number;
     oseq: number;
   };
-};
-
-export type Certificate = {
-  csr: string;
-  privateKey: string;
-  publicKey: string;
 };
 
 export type DeploymentResources = keyof typeof DEPLOYMENT_RESOURCES;

@@ -6,12 +6,12 @@ import { loadPrerequisites } from "./akash/client";
 
 export async function saveBidsToDB(
   bids: QueryBidsResponse["bids"],
-  blockHeight: number
+  blockHeight: number,
 ): Promise<void> {
   try {
     const supabase = createClient<Database>(
       process.env.SUPABASE_PROJECT_URL!,
-      process.env.SERVICE_ROLE_KEY!
+      process.env.SERVICE_ROLE_KEY!,
     );
 
     const { akashPrice } = await getBlockHeightAndAkashPrice();
@@ -39,7 +39,7 @@ export async function loadBidsFromDB(): Promise<
 > {
   const supabase = createClient(
     process.env.SUPABASE_PROJECT_URL!,
-    process.env.SERVICE_ROLE_KEY!
+    process.env.SERVICE_ROLE_KEY!,
   );
   const { data, error } = await supabase.from("bids").select(`
     id,

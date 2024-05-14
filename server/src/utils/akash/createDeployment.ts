@@ -62,7 +62,7 @@ export async function createDeployment(sdlPath?: string) {
     accounts[0].address,
     [msg],
     fee,
-    "create deployment"
+    "create deployment",
   );
 
   if (tx.code !== undefined && tx.code === 0) {

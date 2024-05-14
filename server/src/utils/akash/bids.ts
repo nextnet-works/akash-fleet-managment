@@ -13,7 +13,7 @@ export async function fetchBids(
   dseq: number,
   owner: string,
   blockHeight: number,
-  minAttempts = 3
+  minAttempts = 3,
 ): Promise<QueryBidsResponse["bids"]> {
   const rpc = await getRpc(RPC_ENDPOINT);
   const client = new QueryMarketClient(rpc);

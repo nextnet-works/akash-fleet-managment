@@ -11,7 +11,7 @@ export async function loadPrerequisites(sdlPath = RAW_SDL_T1) {
     process.env.AKASH_MNEMONIC!,
     {
       prefix: "akash",
-    }
+    },
   );
   const myRegistry = new Registry(getAkashTypeRegistry());
 
@@ -24,7 +24,7 @@ export async function loadPrerequisites(sdlPath = RAW_SDL_T1) {
       //   amount:  1000.0,
       //   denom:  "uakt",
       // }
-    }
+    },
   );
 
   const certificate = await loadOrCreateCertificate(wallet, client);
@@ -41,7 +41,7 @@ export async function loadPrerequisites(sdlPath = RAW_SDL_T1) {
 
 async function loadOrCreateCertificate(
   wallet: DirectSecp256k1HdWallet,
-  client: SigningStargateClient
+  client: SigningStargateClient,
 ) {
   const accounts = await wallet.getAccounts();
 
@@ -54,7 +54,7 @@ async function loadOrCreateCertificate(
   const result = await cert.broadcastCertificate(
     certificate,
     accounts[0].address,
-    client
+    client,
   );
 
   if (result.code !== undefined && result.code === 0) {

@@ -41,7 +41,7 @@ router.post("/create", async (req, res) => {
         }
 
         const providerIndex = providerSupplies.findIndex(
-          (provider) => provider.name === lease.bidId?.provider
+          (provider) => provider.name === lease.bidId?.provider,
         );
 
         if (providerIndex === -1) {

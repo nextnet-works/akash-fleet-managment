@@ -10,7 +10,7 @@ const port = 3001;
 
 app.use(
   // cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
-  cors()
+  cors(),
 );
 
 app.use(express.json());
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use("/deploy", deployRouter);
 
 app.get("/akash-coin-price", async (_, res) =>
-  res.json(await getAkashCoinPrice())
+  res.json(await getAkashCoinPrice()),
 );
 
 const options = {
