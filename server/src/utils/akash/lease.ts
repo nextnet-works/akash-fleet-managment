@@ -2,7 +2,6 @@ import https from "https";
 import {
   MsgCreateLease,
   QueryLeaseRequest,
-  QueryLeaseResponse,
   QueryClientImpl as QueryClientImplMarket,
 } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
@@ -90,6 +89,35 @@ interface LeaseStatusResponse {
   ips: null | string[];
 }
 
+export async function saveLeasesToDB(
+  nodes: TablesInsert<"nodes">[]
+): Promise<void> {
+  try {
+    const supabase = createClient<Database>(
+      process.env.SUPABASE_PROJECT_URL!,
+      process.env.SERVICE_ROLE_KEY!
+    );
+
+    const { error } = await supabase.from("nodes").insert(nodes);
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error saving leases to database:", error);
+    throw error;
+  }
+}
+
+export async function queryLeaseStatus(leasId: BidID) {
+  const client = new QueryClientImplMarket(await getRpc(RPC_ENDPOINT));
+
+  const getLeaseStatusRequest = QueryLeaseRequest.fromPartial({ id: leasId });
+
+  const leaseStatusResponse = await client.Lease(getLeaseStatusRequest);
+
+  return leaseStatusResponse;
+}
+
 export async function queryLeaseServices(bidId: BidID | undefined): Promise<{
   servicesUri: string[];
   ports: string[];
@@ -140,6 +168,8 @@ export async function queryLeaseServices(bidId: BidID | undefined): Promise<{
     const servicesUri: string[] = [];
     const ports: string[] = [];
 
+    console.log(response.data);
+
     for (const service in response?.data?.services) {
       servicesUri.push(...(response?.data?.services[service]?.uris ?? []));
     }
@@ -154,35 +184,6 @@ export async function queryLeaseServices(bidId: BidID | undefined): Promise<{
 
     return { servicesUri, ports: ports };
   } catch (error: any) {
-    throw new Error(`Could not query lease status: ${error.message}`);
+    return { servicesUri: [], ports: [] };
   }
-}
-
-export async function saveLeasesToDB(
-  nodes: TablesInsert<"nodes">[]
-): Promise<void> {
-  try {
-    const supabase = createClient<Database>(
-      process.env.SUPABASE_PROJECT_URL!,
-      process.env.SERVICE_ROLE_KEY!
-    );
-
-    const { error } = await supabase.from("nodes").insert(nodes);
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
-    console.error("Error saving leases to database:", error);
-    throw error;
-  }
-}
-
-export async function queryLeaseStatus(leasId: BidID) {
-  const client = new QueryClientImplMarket(await getRpc(RPC_ENDPOINT));
-
-  const getLeaseStatusRequest = QueryLeaseRequest.fromPartial({ id: leasId });
-
-  const leaseStatusResponse = await client.Lease(getLeaseStatusRequest);
-
-  return leaseStatusResponse;
 }

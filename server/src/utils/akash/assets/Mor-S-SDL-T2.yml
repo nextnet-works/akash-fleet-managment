@@ -184,52 +184,6 @@ services:
         data:
           mount: /mnt/data
           readOnly: false
-  web-9:
-    image: linuxserver/webtop:amd64-ubuntu-xfce
-    expose:
-      - port: 3000
-        as: 3000
-        to:
-          - global: true
-      - port: 22
-        as: 22
-        proto: tcp
-        to:
-          - global: true
-      - port: 11434
-        as: 11434
-        to:
-          - global: true
-    env:
-      - OLLAMA_DEBUG=1
-    params:
-      storage:
-        data:
-          mount: /mnt/data
-          readOnly: false
-  web-10:
-    image: linuxserver/webtop:amd64-ubuntu-xfce
-    expose:
-      - port: 3000
-        as: 3000
-        to:
-          - global: true
-      - port: 22
-        as: 22
-        proto: tcp
-        to:
-          - global: true
-      - port: 11434
-        as: 11434
-        to:
-          - global: true
-    env:
-      - OLLAMA_DEBUG=1
-    params:
-      storage:
-        data:
-          mount: /mnt/data
-          readOnly: false
 profiles:
   compute:
     web-1:
@@ -456,62 +410,6 @@ profiles:
                 - model: rtx3090
                 - model: t4
                 - model: p40
-    web-9:
-      resources:
-        cpu:
-          units: 4
-        memory:
-          size: 16Gi
-        storage:
-          - size: 64Gi
-          - name: data
-            size: 10Gi
-            attributes:
-              persistent: true
-              class: beta3
-        gpu:
-          units: 1
-          attributes:
-            vendor:
-              nvidia:
-                - model: h100
-                - model: a100
-                - model: rtx4090
-                - model: rtx8000
-                - model: p100
-                - model: a6000
-                - model: v100
-                - model: rtx3090
-                - model: t4
-                - model: p40
-    web-10:
-      resources:
-        cpu:
-          units: 4
-        memory:
-          size: 16Gi
-        storage:
-          - size: 64Gi
-          - name: data
-            size: 10Gi
-            attributes:
-              persistent: true
-              class: beta3
-        gpu:
-          units: 1
-          attributes:
-            vendor:
-              nvidia:
-                - model: h100
-                - model: a100
-                - model: rtx4090
-                - model: rtx8000
-                - model: p100
-                - model: a6000
-                - model: v100
-                - model: rtx3090
-                - model: t4
-                - model: p40
   placement:
     global1:
       pricing:
@@ -553,16 +451,6 @@ profiles:
         web-8:
           denom: uakt
           amount: 10000
-    global9:
-      pricing:
-        web-9:
-          denom: uakt
-          amount: 10000
-    global10:
-      pricing:
-        web-10:
-          denom: uakt
-          amount: 10000
 deployment:
   web-1:
     global1:
@@ -595,12 +483,4 @@ deployment:
   web-8:
     global8:
       profile: web-8
-      count: 1
-  web-9:
-    global9:
-      profile: web-9
-      count: 1
-  web-10:
-    global10:
-      profile: web-10
       count: 1

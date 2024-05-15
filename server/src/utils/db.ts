@@ -4,6 +4,14 @@ import { QueryBidsResponse } from "@akashnetwork/akash-api/akash/market/v1beta4"
 import { Database } from "../types/supabase.gen";
 import { loadPrerequisites } from "./akash/client";
 
+export const getAdminDB = () => {
+  const supabase = createClient<Database>(
+    process.env.SUPABASE_PROJECT_URL!,
+    process.env.SERVICE_ROLE_KEY!
+  );
+  return supabase;
+};
+
 export async function saveBidsToDB(
   bids: QueryBidsResponse["bids"],
   blockHeight: number
@@ -50,7 +58,6 @@ export async function loadBidsFromDB(): Promise<
   }
   return data ?? [];
 }
-
 export const getBlockHeightAndAkashPrice = async () => {
   const akashPrice = await getAkashCoinPrice();
   const { client } = await loadPrerequisites();

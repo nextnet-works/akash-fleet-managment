@@ -51,7 +51,7 @@ export const handleSdlFlow = async () => {
       akash_provider: lease.bidId.provider,
       wallet_address: lease.bidId.owner,
       json: lease as unknown as Json,
-      provider_uris: lease.serviceUris,
+      provider_uris: lease.serviceUris ?? [],
       provider_domain: lease.uri,
       ports: lease.ports,
       bid_id: `${lease.bidId.owner}/${lease.bidId.dseq}/${lease.bidId.gseq}/1/${lease.bidId.provider}`,

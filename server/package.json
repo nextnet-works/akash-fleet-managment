@@ -21,6 +21,7 @@
     "@supabase/supabase-js": "^2.43.2",
     "axios": "^1.6.8",
     "cors": "^2.8.5",
+    "cron": "^3.1.7",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "knip": "^5.16.0",

@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import deployRouter from "./routes/deploy";
+import workerRouter from "./routes/worker";
 import { getAkashCoinPrice } from "./utils/price";
 // import https from "https";
 import fs from "fs";
@@ -10,7 +11,7 @@ const port = 3001;
 
 app.use(
   // cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
-  cors(),
+  cors()
 );
 
 app.use(express.json());
@@ -18,8 +19,10 @@ app.use(express.json());
 app.use("/deploy", deployRouter);
 
 app.get("/akash-coin-price", async (_, res) =>
-  res.json(await getAkashCoinPrice()),
+  res.json(await getAkashCoinPrice())
 );
+
+app.use("/worker", workerRouter);
 
 const options = {
   key: fs.readFileSync("./src/assets/key.cer"),
