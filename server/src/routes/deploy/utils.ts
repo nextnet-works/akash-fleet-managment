@@ -12,7 +12,7 @@ import {
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { Json } from "../../types/supabase.gen";
 
-export const handleSdlFlow = async () => {
+export const handleSdlFlow = async (deploymentID: number) => {
   const respondersLength = await deployGenericSDL();
   const { bids } = await deployAllBiddersSDL(respondersLength);
 
@@ -33,6 +33,9 @@ export const handleSdlFlow = async () => {
 
     filteredBids.push(sortedBids[0].bid);
   });
+
+  //wait 15 seconds for the bids to be processed
+  await new Promise((resolve) => setTimeout(resolve, 15000));
 
   const nodes = await createLease(filteredBids);
 
@@ -60,6 +63,7 @@ export const handleSdlFlow = async () => {
         : 0,
       state: (lease.lease?.lease?.state ?? Lease_State.UNRECOGNIZED) as number,
       lease_first_block: lease.lease?.lease?.createdAt?.toNumber() ?? 0,
+      sdl_id: deploymentID,
       resources: {},
     };
   });

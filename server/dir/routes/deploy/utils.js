@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deployAllBiddersSDL = exports.deployGenericSDL = exports.handleSdlFlow = void 0;
 const yaml_1 = require("./yaml");
-const createDeployment_1 = require("../../utils/akash/createDeployment");
-const bids_1 = require("../../utils/akash/bids");
-const consts_1 = require("../../utils/akash/consts");
-const lease_1 = require("../../utils/akash/lease");
+const createDeployment_1 = require("../../akash-js/createDeployment");
+const bids_1 = require("../../akash-js/bids");
+const consts_1 = require("../../akash-js/lib/consts");
+const lease_1 = require("../../akash-js/lease");
 const v1beta4_1 = require("@akashnetwork/akash-api/akash/market/v1beta4");
 const handleSdlFlow = async () => {
     const respondersLength = await (0, exports.deployGenericSDL)();
@@ -30,10 +30,11 @@ const handleSdlFlow = async () => {
             gseq: lease.bidId.gseq,
             akash_provider: lease.bidId.provider,
             wallet_address: lease.bidId.owner,
-            json: {},
-            provider_uris: lease.serviceUris,
-            bid_id: `${lease.bidId.owner}/${lease.bidId.dseq}/${lease.bidId.gseq}/1/${lease.bidId.provider}`,
+            json: lease,
+            provider_uris: lease.serviceUris ?? [],
             provider_domain: lease.uri,
+            ports: lease.ports,
+            bid_id: `${lease.bidId.owner}/${lease.bidId.dseq}/${lease.bidId.gseq}/1/${lease.bidId.provider}`,
             price_per_block: lease.lease?.lease?.price?.amount
                 ? Number(lease.lease?.lease?.price?.amount)
                 : 0,

@@ -17,9 +17,7 @@ export const useDashboardSummary = () => {
       if (error) {
         throw error;
       }
-      return data.filter(
-        (node) => node?.provider_uris && node?.provider_uris?.length > 0
-      );
+      return data;
     },
   });
 

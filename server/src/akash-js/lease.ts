@@ -49,17 +49,16 @@ export async function createLease(bids: QueryBidResponse["bid"][]) {
     "create lease"
   );
 
+  ///
   const successfulLeases = await Promise.all(
     bids.map(async (bid) => {
       if (!bid?.bidId) {
         return { bidId: undefined, serviceUris: [] as string[], uri: "" };
       }
-      const { isSuccess, serviceUris, uri, lease, ports } = await sendManifest(
-        bid?.bidId
-      );
+      const { serviceUris, uri, lease, ports } = await sendManifest(bid?.bidId);
 
       return {
-        bidId: !isSuccess ? undefined : bid?.bidId,
+        bidId: bid?.bidId,
         serviceUris,
         uri: uri?.toString() ?? "",
         lease,
@@ -167,8 +166,6 @@ export async function queryLeaseServices(bidId: BidID | undefined): Promise<{
 
     const servicesUri: string[] = [];
     const ports: string[] = [];
-
-    console.log(response.data);
 
     for (const service in response?.data?.services) {
       servicesUri.push(...(response?.data?.services[service]?.uris ?? []));

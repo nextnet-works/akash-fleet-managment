@@ -5,20 +5,37 @@ import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { handleSdlFlow } from "./utils";
 import { closeDeployment } from "../../akash-js/closeDeployment";
-import { ProviderSupply } from "../../akash-js/lib/types";
+import { DeploymentResources, ProviderSupply } from "../../akash-js/lib/types";
+import { createClient } from "@supabase/supabase-js";
+import { Database } from "../../types/supabase.gen";
 
 const router = Router();
 const MAX_LEASES = 10;
 
 router.post("/create", async (req, res) => {
   try {
-    // const deployment = req.body?.deployment as DeploymentResources;
+    const deploymentID = req.body?.body?.deploymentID as DeploymentResources;
 
-    // if (!deployment) {
-    //   return res.status(400).send("deployment is required");
-    // }
+    if (!deploymentID) {
+      return res.status(400).send("deployment is required");
+    }
+    const supabase = createClient<Database>(
+      process.env.SUPABASE_PROJECT_URL!,
+      process.env.SERVICE_ROLE_KEY!
+    );
 
-    const resourceUsed = DEPLOYMENT_RESOURCES["MORPHEUS"];
+    const { data: sdl } = await supabase
+      .from("sdl")
+      .select("*")
+      .eq("id", deploymentID)
+      .single();
+
+    if (!sdl) {
+      return res.status(400).send("deployment not found");
+    }
+
+    const resourceUsed =
+      DEPLOYMENT_RESOURCES[sdl.name as keyof typeof DEPLOYMENT_RESOURCES];
 
     // TODO: save prices of each provider
     const providerSupplies: ProviderSupply[] = [];
@@ -27,7 +44,7 @@ router.post("/create", async (req, res) => {
     let leasesResponses: { bidId: BidID }[] = [];
     let successfulLeaseCount = 0;
     while (!isBidsEmpty) {
-      const { activeNodes } = await handleSdlFlow();
+      const { activeNodes } = await handleSdlFlow(sdl.id);
       console.log(`Leases fulfilled: ${activeNodes.length}`);
       if (activeNodes.length === 0) {
         isBidsEmpty = true;
@@ -62,8 +79,7 @@ router.post("/create", async (req, res) => {
     }
 
     for (const lease of leasesResponses) {
-      const message = await closeDeployment(lease.bidId?.dseq.toString() ?? "");
-
+      await closeDeployment(lease.bidId?.dseq.toString() ?? "");
       await new Promise((resolve) => setTimeout(resolve, 1500));
     }
 

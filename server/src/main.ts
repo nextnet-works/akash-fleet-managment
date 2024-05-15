@@ -40,27 +40,27 @@ const server = app.listen(port, () => {
   updateNodesWorker.start();
 });
 
-server.on("error", (err) => {
-  console.error("Server encountered an error:", err);
-  updateNodesWorker.stop();
-  process.exit(1); // Optional: Exit the process if the server fails
-});
+// server.on("error", (err) => {
+//   console.error("Server encountered an error:", err);
+//   updateNodesWorker.stop();
+//   process.exit(1); // Optional: Exit the process if the server fails
+// });
 
-// Handle graceful shutdown
-process.on("SIGINT", () => {
-  console.log("Received SIGINT. Shutting down gracefully.");
-  server.close(() => {
-    console.log("HTTP server closed.");
-    updateNodesWorker.stop();
-    process.exit(0);
-  });
-});
+// // Handle graceful shutdown
+// process.on("SIGINT", () => {
+//   console.log("Received SIGINT. Shutting down gracefully.");
+//   server.close(() => {
+//     console.log("HTTP server closed.");
+//     updateNodesWorker.stop();
+//     process.exit(0);
+//   });
+// });
 
-process.on("SIGTERM", () => {
-  console.log("Received SIGTERM. Shutting down gracefully.");
-  server.close(() => {
-    console.log("HTTP server closed.");
-    updateNodesWorker.stop();
-    process.exit(0);
-  });
-});
+// process.on("SIGTERM", () => {
+//   console.log("Received SIGTERM. Shutting down gracefully.");
+//   server.close(() => {
+//     console.log("HTTP server closed.");
+//     updateNodesWorker.stop();
+//     process.exit(0);
+//   });
+// });

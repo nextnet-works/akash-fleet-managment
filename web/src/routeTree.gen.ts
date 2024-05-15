@@ -12,18 +12,12 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as YamlImport } from './routes/yaml'
-import { Route as DeployImport } from './routes/deploy'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
 const YamlRoute = YamlImport.update({
   path: '/yaml',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DeployRoute = DeployImport.update({
-  path: '/deploy',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -43,13 +37,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/deploy': {
-      id: '/deploy'
-      path: '/deploy'
-      fullPath: '/deploy'
-      preLoaderRoute: typeof DeployImport
-      parentRoute: typeof rootRoute
-    }
     '/yaml': {
       id: '/yaml'
       path: '/yaml'
@@ -62,10 +49,6 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexRoute,
-  DeployRoute,
-  YamlRoute,
-})
+export const routeTree = rootRoute.addChildren({ IndexRoute, YamlRoute })
 
 /* prettier-ignore-end */

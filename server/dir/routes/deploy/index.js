@@ -1,18 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const consts_1 = require("../../utils/akash/consts");
+const consts_1 = require("../../akash-js/lib/consts");
 const express_1 = require("express");
 const utils_1 = require("./utils");
-const closeDeployment_1 = require("../../utils/akash/closeDeployment");
+const closeDeployment_1 = require("../../akash-js/closeDeployment");
 const router = (0, express_1.Router)();
 const MAX_LEASES = 10;
 router.post("/create", async (req, res) => {
     try {
-        // const deployment = req.body?.deployment as DeploymentResources;
-        // if (!deployment) {
-        //   return res.status(400).send("deployment is required");
-        // }
-        const resourceUsed = consts_1.DEPLOYMENT_RESOURCES["MORPHEUS"];
+        const deployment = req.body?.deployment;
+        if (!deployment) {
+            return res.status(400).send("deployment is required");
+        }
+        const resourceUsed = consts_1.DEPLOYMENT_RESOURCES["Mor-S-SDL-T1"];
         // TODO: save prices of each provider
         const providerSupplies = [];
         let isBidsEmpty = false;
@@ -48,7 +48,7 @@ router.post("/create", async (req, res) => {
             }
         }
         for (const lease of leasesResponses) {
-            const message = await (0, closeDeployment_1.closeDeployment)(lease.bidId?.dseq.toString() ?? "");
+            await (0, closeDeployment_1.closeDeployment)(lease.bidId?.dseq.toString() ?? "");
             await new Promise((resolve) => setTimeout(resolve, 1500));
         }
         res.status(201).json(providerSupplies);

@@ -1,25 +1,17 @@
 import { Lease_State } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { Tables } from "@/types/supabase.gen";
 import { BLOCK_TIME_MS } from "@/lib/consts";
-import { convertToReadableTime, getLeaseActiveTime } from "@/lib/utils";
+import {
+  convertToReadableTime,
+  getLeaseActiveTimeInMinutes,
+} from "@/lib/utils";
 
-export const getAveragePricePerBlock = (nodes: Tables<"nodes">[]) => {
+export const getAllBlockPrice = (nodes: Tables<"nodes">[]) => {
   const activeNodes = nodes.filter((node) => node.state === Lease_State.active);
   const sumPrices = activeNodes.reduce((acc, node) => {
     return acc + node.price_per_block;
   }, 0);
-  return sumPrices / activeNodes.length;
-};
-
-export const timeRemainingInMs = (
-  totalAccountBalance: number,
-  averagePricePerBlock: number
-) => {
-  return (
-    (totalAccountBalance / 1000000 / averagePricePerBlock / BLOCK_TIME_MS) *
-    1000 *
-    60
-  );
+  return sumPrices;
 };
 
 export const addRanking = (nodes: Tables<"nodes">[]) => {
@@ -49,18 +41,25 @@ export const getRankingColor = (rank: number, totalLength: number) => {
 export const getLeftBlock = (
   nodes: Tables<"nodes">[],
   currentBlock: number,
-  totalBalance: number,
   secondsPassed: number
 ) => {
   const totalNodes = nodes.length;
-  const secondsToAdd = secondsPassed * 1000 * totalNodes;
-  const totalDurationMS = nodes.reduce((acc, node) => {
-    return acc + getLeaseActiveTime(node.lease_first_block, currentBlock);
+  const secondsToAdd = secondsPassed * totalNodes;
+  const totalDurationInMinutes = nodes.reduce((acc, node) => {
+    return (
+      acc + getLeaseActiveTimeInMinutes(node.lease_first_block, currentBlock)
+    );
   }, 0);
-  const totalDuration = convertToReadableTime(totalDurationMS + secondsToAdd);
-  const avgPrice = getAveragePricePerBlock(nodes);
-  const remainingTimeMS =
-    timeRemainingInMs(totalBalance, avgPrice) - secondsToAdd;
+
+  console.log(totalDurationInMinutes);
+
+  const totalDuration = convertToReadableTime(
+    (totalDurationInMinutes + secondsToAdd / 60) * 60 * 1000
+  );
+  const sumPrice = getAllBlockPrice(nodes);
+  const spendPerMinute = sumPrice * 10;
+
+  const remainingTimeMS = (spendPerMinute - secondsToAdd / 60) * 60 * 1000;
   const remainingTime = convertToReadableTime(
     remainingTimeMS > 0 ? remainingTimeMS : 0
   );
@@ -73,11 +72,12 @@ export const getLeftBlock = (
     },
     {
       title: "Total Duration",
-      description: "Total duration of all leases based on current filters",
+      description:
+        "Total duration of all leases combined based on current filters",
       value: totalDuration,
     },
     {
-      title: "Remaining Duration",
+      title: "Remaining Duration~",
       description:
         "Remaining duration before out of funds based on current filters",
       value: remainingTime,
@@ -88,28 +88,27 @@ export const getLeftBlock = (
 export const getRightBlock = (
   nodes: Tables<"nodes">[],
   remainingBalance: number,
-  _: number
+  currentBlock: number,
+  coinPrice: number
 ) => {
-  const closedNodes = nodes.filter((node) => node.state === Lease_State.closed);
-  // const activeNodes = nodes.filter((node) => node.state === Lease_State.active);
-  // const currentSpending = activeNodes.reduce((acc, node) => {
-  //   if (!node.lease_first_block) return acc;
-  //   return (
-  //     acc +
-  //     node.price_per_block *
-  //       getLeaseActiveTime(node.lease_first_block, currentBlock)
-  //   );
-  // }, 0);
-  const totalSpending = closedNodes.reduce((acc, node) => {
-    if (!node.lease_first_block || !node.lease_last_block) return acc;
-    return (
-      acc +
-      node.price_per_block *
-        getLeaseActiveTime(node.lease_first_block, node.lease_last_block)
-    );
-    // }, 0) + currentSpending;
-  }, 0);
-  const totalBalance = remainingBalance + totalSpending;
+  const spending =
+    (nodes.reduce((acc, node) => {
+      if (node.lease_first_block && node.lease_last_block) {
+        return (
+          acc +
+          node.price_per_block *
+            (node.lease_last_block - node.lease_first_block)
+        );
+      }
+      if (!node.lease_first_block) return acc;
+      return (
+        acc + node.price_per_block * (currentBlock - node.lease_first_block)
+      );
+    }, 0) /
+      1000000) *
+    coinPrice;
+
+  const totalBalance = remainingBalance + spending;
 
   return [
     {
@@ -126,7 +125,21 @@ export const getRightBlock = (
     {
       title: "Total Spending",
       description: "Total spending on leases",
-      value: totalSpending.toFixed(2),
+      value: spending.toFixed(2),
+    },
+    {
+      title: "Spending per Hour",
+      description: "Spending per hour based on current leases",
+      value: getPricePerHour(getAllBlockPrice(nodes), coinPrice).toFixed(2),
     },
   ];
+};
+
+export const getPricePerHour = (
+  pricePerBlockInUAKT: number,
+  coinPrice: number
+) => {
+  const pricePerBlockInAKT = pricePerBlockInUAKT / 1000000;
+  const pricePerHour = pricePerBlockInAKT * 10 * 60;
+  return pricePerHour * coinPrice;
 };

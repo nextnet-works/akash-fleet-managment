@@ -7,7 +7,7 @@ import { loadPrerequisites } from "../akash-js/client";
 import { queryLeaseServices, queryLeaseStatus } from "../akash-js/lease";
 
 export const updateNodes = async () => {
-  console.log("Updating nodes");
+  console.info("Updating nodes");
   const db = getAdminDB();
   const { data, error } = await db
     .from("nodes")
@@ -41,6 +41,7 @@ export const updateNodes = async () => {
       .update({
         state: result.state,
         provider_uris: result.servicesUri ?? [],
+        price_per_block: Number(result.lease?.lease?.price?.amount),
         lease_first_block: result.lease?.lease?.createdAt.toNumber(),
       })
       .eq("id", result.id);

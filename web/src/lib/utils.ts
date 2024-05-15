@@ -10,11 +10,11 @@ export function cn(...inputs: ClassValue[]) {
  * @param currentBlock
  * @param BLOCK_TIME_MS
  */
-export const getLeaseActiveTime = (
+export const getLeaseActiveTimeInMinutes = (
   firstBlock: number,
   currentBlock: number
 ) => {
-  return (currentBlock - firstBlock) * BLOCK_TIME_MS;
+  return ((currentBlock - firstBlock) * BLOCK_TIME_MS) / 1000 / 60;
 };
 
 export const convertToReadableTime = (totalMilliseconds: number) => {

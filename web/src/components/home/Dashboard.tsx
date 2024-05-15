@@ -5,27 +5,21 @@ import { Lease_State } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { Loader } from "../Loader";
 import { ErrorUI } from "../Error";
-import { useEffect, useState } from "react";
 import { useCoinPrice } from "@/hooks/useCoinPrice";
 import { getLeftBlock, getRightBlock } from "./utils";
 import { useBalance } from "@/hooks/queries/useBalance";
 import { useDashboardSummary } from "@/hooks/queries/useDashboardSummary";
+import { useTimer } from "@/hooks/useTimer";
 
 export const Dashboard = () => {
-  const [secondsPassed, setSecondsPassed] = useState(0);
   const currentBlock = useLatestBlock();
   const totalBalance = useBalance(
     "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa"
   );
   const { nodes, error, isPending } = useDashboardSummary();
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSecondsPassed(secondsPassed + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [secondsPassed]);
 
   const coinPrice = useCoinPrice();
+  const secondsPassed = useTimer();
   const totalInUSD = totalBalance ? (totalBalance * coinPrice) / 1000000 : 0;
 
   if (isPending) return <Loader />;
@@ -33,13 +27,8 @@ export const Dashboard = () => {
   if (error || !nodes) return <ErrorUI message={error?.message} />;
 
   const activeNodes = nodes.filter((node) => node.state === Lease_State.active);
-  const leftBlock = getLeftBlock(
-    activeNodes,
-    currentBlock,
-    totalBalance ?? 0,
-    secondsPassed
-  );
-  const rightBlock = getRightBlock(nodes, totalInUSD, currentBlock);
+  const leftBlock = getLeftBlock(activeNodes, currentBlock, secondsPassed);
+  const rightBlock = getRightBlock(nodes, totalInUSD, currentBlock, coinPrice);
 
   return (
     <Card>

@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateYamlWithWebs = void 0;
 const fs = __importStar(require("fs"));
 const YAML = __importStar(require("yaml"));
-const consts_1 = require("../../utils/akash/consts");
+const consts_1 = require("../../akash-js/lib/consts");
 function generateYamlWithWebs(count) {
     const data = {
         version: "2.0",

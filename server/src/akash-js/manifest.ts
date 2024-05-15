@@ -6,11 +6,6 @@ import {
   QueryProviderRequest,
 } from "@akashnetwork/akash-api/akash/provider/v1beta3";
 
-// import {
-//   QueryClientImpl as QueryProviderClient,
-//   QueryProviderRequest,
-// } from "@akashnetwork/akash-api/akash/provider/v1beta3";
-
 import { RAW_SDL_T2, RPC_ENDPOINT } from "./lib/consts";
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { loadPrerequisites } from "./client";
@@ -30,7 +25,7 @@ export async function sendManifest(leaseId: BidID) {
     const tx = await client.Provider(request);
 
     if (!tx.provider) {
-      return { isSuccess: false, serviceUris: [] };
+      return { serviceUris: [] };
     }
 
     const providerInfo = tx.provider;
@@ -45,7 +40,7 @@ export async function sendManifest(leaseId: BidID) {
       rejectUnauthorized: false,
     });
 
-    const response = await axios.put(`${uri.origin}${path}`, manifest, {
+    await axios.put(`${uri.origin}${path}`, manifest, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -54,33 +49,18 @@ export async function sendManifest(leaseId: BidID) {
       httpsAgent: agent,
     });
 
-    if (response.status !== 200) {
-      return { isSuccess: false, serviceUris: [] };
-    }
-
     const leaseStatus = await queryLeaseStatus(leaseId);
     const { servicesUri, ports } = await queryLeaseServices(leaseId);
 
-    // if (leaseStatus.lease?.state === Lease_State.active) {
-    //   for (const [name, service] of Object.entries(leaseStatus.escrowPayment.)) {
-    //     if (service.uris) {
-    //       serviceUris.concat(service.uris);
-    //     }
-    //   }
-    // }
-
     return {
-      isSuccess: true,
       servicesUri,
       uri,
       ports,
       lease: leaseStatus,
     };
   } catch (error: any) {
-    // throw new Error(`Could not start deployment. Timeout reached.`);
     console.error(error);
     return {
-      isSuccess: false,
       serviceUris: [],
     };
   }

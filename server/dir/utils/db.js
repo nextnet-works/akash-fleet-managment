@@ -1,9 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBlockHeightAndAkashPrice = exports.loadBidsFromDB = exports.saveBidsToDB = void 0;
+exports.getBlockHeightAndAkashPrice = exports.loadBidsFromDB = exports.saveBidsToDB = exports.getAdminDB = void 0;
 const supabase_js_1 = require("@supabase/supabase-js");
-const price_1 = require("../utils/price");
-const client_1 = require("./akash/client");
+const akashPrice_1 = require("./akashPrice");
+const client_1 = require("../akash-js/client");
+const getAdminDB = () => {
+    const supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_PROJECT_URL, process.env.SERVICE_ROLE_KEY);
+    return supabase;
+};
+exports.getAdminDB = getAdminDB;
 async function saveBidsToDB(bids, blockHeight) {
     try {
         const supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_PROJECT_URL, process.env.SERVICE_ROLE_KEY);
@@ -40,7 +45,7 @@ async function loadBidsFromDB() {
 }
 exports.loadBidsFromDB = loadBidsFromDB;
 const getBlockHeightAndAkashPrice = async () => {
-    const akashPrice = await (0, price_1.getAkashCoinPrice)();
+    const akashPrice = await (0, akashPrice_1.getAkashCoinPrice)();
     const { client } = await (0, client_1.loadPrerequisites)();
     const blockHeight = await client.getHeight();
     return { blockHeight, akashPrice };
