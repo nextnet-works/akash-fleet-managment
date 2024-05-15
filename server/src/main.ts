@@ -2,8 +2,10 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import deployRouter from "./routes/deploy";
-import workerRouter from "./routes/worker";
+import { updateNodes } from "./routes/worker";
 import { getAkashCoinPrice } from "./utils/price";
+import { CronJob } from "cron";
+
 // import https from "https";
 import fs from "fs";
 const app = express();
@@ -22,7 +24,7 @@ app.get("/akash-coin-price", async (_, res) =>
   res.json(await getAkashCoinPrice())
 );
 
-app.use("/worker", workerRouter);
+const updateNodesWorker = new CronJob("*/6 * * * * *", updateNodes);
 
 const options = {
   key: fs.readFileSync("./src/assets/key.cer"),
@@ -33,4 +35,32 @@ const options = {
 //   .createServer(options, app)
 //   .listen(port, () => console.log(`Server running on port ${port}`));
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const server = app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+  updateNodesWorker.start();
+});
+
+server.on("error", (err) => {
+  console.error("Server encountered an error:", err);
+  updateNodesWorker.stop();
+  process.exit(1); // Optional: Exit the process if the server fails
+});
+
+// Handle graceful shutdown
+process.on("SIGINT", () => {
+  console.log("Received SIGINT. Shutting down gracefully.");
+  server.close(() => {
+    console.log("HTTP server closed.");
+    updateNodesWorker.stop();
+    process.exit(0);
+  });
+});
+
+process.on("SIGTERM", () => {
+  console.log("Received SIGTERM. Shutting down gracefully.");
+  server.close(() => {
+    console.log("HTTP server closed.");
+    updateNodesWorker.stop();
+    process.exit(0);
+  });
+});
