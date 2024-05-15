@@ -18,6 +18,7 @@
     "knip": "knip"
   },
   "dependencies": {
+    "@akashnetwork/akash-api": "^1.4.0",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@focus-reactive/react-yaml": "^1.1.2",
     "@hookform/resolvers": "^3.4.0",
