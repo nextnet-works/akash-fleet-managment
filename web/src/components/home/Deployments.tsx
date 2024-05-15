@@ -91,17 +91,6 @@ export const Deployments = () => {
           </p>
         )}
       </div>
-      {/* {!isCreating ? (
-      ) : (
-        <Button
-          onClick={() => {
-            handleCreateDeployment(sdlID);
-          }}
-          variant="destructive"
-        >
-          Stopping Deployment
-        </Button>
-      )} */}
     </div>
   );
 };

@@ -7,7 +7,7 @@ const bids_1 = require("../../akash-js/bids");
 const consts_1 = require("../../akash-js/lib/consts");
 const lease_1 = require("../../akash-js/lease");
 const v1beta4_1 = require("@akashnetwork/akash-api/akash/market/v1beta4");
-const handleSdlFlow = async () => {
+const handleSdlFlow = async (deploymentID) => {
     const respondersLength = await (0, exports.deployGenericSDL)();
     const { bids } = await (0, exports.deployAllBiddersSDL)(respondersLength);
     const filteredBids = [];
@@ -22,6 +22,8 @@ const handleSdlFlow = async () => {
         }
         filteredBids.push(sortedBids[0].bid);
     });
+    //wait 15 seconds for the bids to be processed
+    await new Promise((resolve) => setTimeout(resolve, 15000));
     const nodes = await (0, lease_1.createLease)(filteredBids);
     const activeNodes = nodes.filter((lease) => lease.bidId);
     const output = activeNodes.map((lease) => {
@@ -40,6 +42,7 @@ const handleSdlFlow = async () => {
                 : 0,
             state: (lease.lease?.lease?.state ?? v1beta4_1.Lease_State.UNRECOGNIZED),
             lease_first_block: lease.lease?.lease?.createdAt?.toNumber() ?? 0,
+            sdl_id: deploymentID,
             resources: {},
         };
     });

@@ -135,22 +135,31 @@ export type Database = {
       }
       sdl: {
         Row: {
+          aws: number
           created_at: string
+          gcp: number
           id: number
           name: string
-          yml_json: Json
+          "vasi.ai": number
+          yml_json: Json | null
         }
         Insert: {
+          aws: number
           created_at?: string
+          gcp: number
           id?: number
           name: string
-          yml_json: Json
+          "vasi.ai": number
+          yml_json?: Json | null
         }
         Update: {
+          aws?: number
           created_at?: string
+          gcp?: number
           id?: number
           name?: string
-          yml_json?: Json
+          "vasi.ai"?: number
+          yml_json?: Json | null
         }
         Relationships: []
       }

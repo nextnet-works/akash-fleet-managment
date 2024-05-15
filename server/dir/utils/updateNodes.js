@@ -6,7 +6,7 @@ const db_1 = require("./db");
 const client_1 = require("../akash-js/client");
 const lease_1 = require("../akash-js/lease");
 const updateNodes = async () => {
-    console.log("Updating nodes");
+    console.info("Updating nodes");
     const db = (0, db_1.getAdminDB)();
     const { data, error } = await db
         .from("nodes")
@@ -39,6 +39,7 @@ const updateNodes = async () => {
             .update({
             state: result.state,
             provider_uris: result.servicesUri ?? [],
+            price_per_block: Number(result.lease?.lease?.price?.amount),
             lease_first_block: result.lease?.lease?.createdAt.toNumber(),
         })
             .eq("id", result.id);

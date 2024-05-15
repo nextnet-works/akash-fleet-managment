@@ -4,22 +4,32 @@ const consts_1 = require("../../akash-js/lib/consts");
 const express_1 = require("express");
 const utils_1 = require("./utils");
 const closeDeployment_1 = require("../../akash-js/closeDeployment");
+const supabase_js_1 = require("@supabase/supabase-js");
 const router = (0, express_1.Router)();
 const MAX_LEASES = 10;
 router.post("/create", async (req, res) => {
     try {
-        const deployment = req.body?.deployment;
-        if (!deployment) {
+        const deploymentID = req.body?.body?.deploymentID;
+        if (!deploymentID) {
             return res.status(400).send("deployment is required");
         }
-        const resourceUsed = consts_1.DEPLOYMENT_RESOURCES["Mor-S-SDL-T1"];
+        const supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_PROJECT_URL, process.env.SERVICE_ROLE_KEY);
+        const { data: sdl } = await supabase
+            .from("sdl")
+            .select("*")
+            .eq("id", deploymentID)
+            .single();
+        if (!sdl) {
+            return res.status(400).send("deployment not found");
+        }
+        const resourceUsed = consts_1.DEPLOYMENT_RESOURCES[sdl.name];
         // TODO: save prices of each provider
         const providerSupplies = [];
         let isBidsEmpty = false;
         let leasesResponses = [];
         let successfulLeaseCount = 0;
         while (!isBidsEmpty) {
-            const { activeNodes } = await (0, utils_1.handleSdlFlow)();
+            const { activeNodes } = await (0, utils_1.handleSdlFlow)(sdl.id);
             console.log(`Leases fulfilled: ${activeNodes.length}`);
             if (activeNodes.length === 0) {
                 isBidsEmpty = true;

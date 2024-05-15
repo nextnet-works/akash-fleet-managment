@@ -32,13 +32,14 @@ async function createLease(bids) {
         gas: "2000000",
     };
     await client.signAndBroadcast(accounts[0].address, leasesMessage, fee, "create lease");
+    ///
     const successfulLeases = await Promise.all(bids.map(async (bid) => {
         if (!bid?.bidId) {
             return { bidId: undefined, serviceUris: [], uri: "" };
         }
-        const { isSuccess, serviceUris, uri, lease, ports } = await (0, manifest_1.sendManifest)(bid?.bidId);
+        const { serviceUris, uri, lease, ports } = await (0, manifest_1.sendManifest)(bid?.bidId);
         return {
-            bidId: !isSuccess ? undefined : bid?.bidId,
+            bidId: bid?.bidId,
             serviceUris,
             uri: uri?.toString() ?? "",
             lease,
@@ -103,7 +104,6 @@ async function queryLeaseServices(bidId) {
         });
         const servicesUri = [];
         const ports = [];
-        console.log(response.data);
         for (const service in response?.data?.services) {
             servicesUri.push(...(response?.data?.services[service]?.uris ?? []));
         }

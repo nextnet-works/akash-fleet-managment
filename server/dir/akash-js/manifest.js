@@ -22,7 +22,7 @@ async function sendManifest(leaseId) {
         });
         const tx = await client.Provider(request);
         if (!tx.provider) {
-            return { isSuccess: false, serviceUris: [] };
+            return { serviceUris: [] };
         }
         const providerInfo = tx.provider;
         const manifest = sdl.manifestSortedJSON();
@@ -34,7 +34,7 @@ async function sendManifest(leaseId) {
             key: certificate.privateKey,
             rejectUnauthorized: false,
         });
-        const response = await axios_1.default.put(`${uri.origin}${path}`, manifest, {
+        await axios_1.default.put(`${uri.origin}${path}`, manifest, {
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
@@ -42,13 +42,9 @@ async function sendManifest(leaseId) {
             },
             httpsAgent: agent,
         });
-        if (response.status !== 200) {
-            return { isSuccess: false, serviceUris: [] };
-        }
         const leaseStatus = await (0, lease_1.queryLeaseStatus)(leaseId);
         const { servicesUri, ports } = await (0, lease_1.queryLeaseServices)(leaseId);
         return {
-            isSuccess: true,
             servicesUri,
             uri,
             ports,
@@ -58,7 +54,6 @@ async function sendManifest(leaseId) {
     catch (error) {
         console.error(error);
         return {
-            isSuccess: false,
             serviceUris: [],
         };
     }

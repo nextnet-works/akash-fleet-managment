@@ -14,6 +14,6 @@ exports.RESOURCES_MORPHEUS = {
     storage: 10 ^ 11,
 };
 exports.DEPLOYMENT_RESOURCES = {
-    ["Mor-S-SDL-T1"]: exports.RESOURCES_MORPHEUS,
+    ["Mor-S-SDL"]: exports.RESOURCES_MORPHEUS,
 };
 //# sourceMappingURL=consts.js.map

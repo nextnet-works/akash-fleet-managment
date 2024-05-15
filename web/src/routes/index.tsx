@@ -14,6 +14,7 @@ import { addRanking } from "@/components/home/utils";
 import { Tables } from "@/types/supabase.gen";
 import { DashboardTable } from "@/components/home/Table";
 import { Deployments } from "@/components/home/Deployments";
+import { Compare } from "@/components/home/Compare";
 // import { Compare } from "@/components/home/Compare";
 export const Route = createFileRoute("/")({
   component: Home,
@@ -71,10 +72,10 @@ function Home() {
   return (
     <div className="flex flex-col gap-4">
       <Deployments />
-      {/* <Compare /> */}
       {nodes.length > 0 ? (
         <>
           <Dashboard />
+          <Compare />
           <DashboardTable nodes={nodes} currentBlock={currentBlock} />
         </>
       ) : (

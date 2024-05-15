@@ -1,6 +1,5 @@
 import { Lease_State } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { Tables } from "@/types/supabase.gen";
-import { BLOCK_TIME_MS } from "@/lib/consts";
 import {
   convertToReadableTime,
   getLeaseActiveTimeInMinutes,
