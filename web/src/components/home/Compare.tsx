@@ -67,7 +67,7 @@ export function Compare() {
     const ourNodes = nodes?.filter((node) => node.sdl_id === app.id);
     const averagePrice =
       ourNodes.reduce((acc, node) => {
-        return acc + node.price_per_block * 10 * 60 * coinPrice;
+        return acc + (node.price_per_block * 10 * 60 * coinPrice) / 1000000;
       }, 0) / ourNodes.length;
     return (
       acc +
@@ -125,7 +125,9 @@ export function Compare() {
                             ?.filter((node) => node.sdl_id === app.id)
                             .reduce((acc, node) => {
                               return (
-                                acc + node.price_per_block * 10 * 60 * coinPrice
+                                acc +
+                                (node.price_per_block * 10 * 60 * coinPrice) /
+                                  1000000
                               );
                             }, 0) /
                           nodes?.filter((node) => node.sdl_id === app.id).length
@@ -140,18 +142,18 @@ export function Compare() {
                   Total: {nodes?.length}
                 </TableCell>
                 <TableCell className="font-medium text-center">
-                  {totalGCP}
+                  ${totalGCP}
                 </TableCell>
                 <TableCell className="font-medium text-center">
-                  {totalAWS}
+                  ${totalAWS}
                 </TableCell>
                 <TableCell className="font-medium text-center">
-                  {totalDigitalOcean}
+                  ${totalDigitalOcean}
                 </TableCell>
                 <TableCell className="p-2">
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-md text-center p-2">
                     {" "}
-                    {totalOurPlatform ?? 0}
+                    ${totalOurPlatform ?? 0}
                   </div>
                 </TableCell>
               </TableRow>
