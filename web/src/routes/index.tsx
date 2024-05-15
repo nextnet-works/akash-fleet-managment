@@ -31,6 +31,7 @@ import { ProviderResources } from "@/types/akash";
 import { Button } from "@/components/ui/button";
 import { addRanking, getRankingColor } from "@/components/home/utils";
 import { ExternalLinkIcon } from "lucide-react";
+import { Tables } from "@/types/supabase.gen";
 export const Route = createFileRoute("/")({
   component: Home,
   loader: Loader,
@@ -55,16 +56,19 @@ function Home() {
     queryFn: async () => {
       const { data, error } = await db
         .from("nodes")
-        .select("*")
+        .select("*, sdl(*)")
         .eq("state", Lease_State.active)
         .order("dseq", { ascending: false });
       if (error) {
         throw error;
       }
       const filteredNodes = data.filter(
-        (node) => node.provider_uris.length > 0
+        (node) => node?.provider_uris && node?.provider_uris?.length > 0
       );
-      return addRanking(filteredNodes);
+      return addRanking(filteredNodes) as unknown as (Tables<"nodes"> & {
+        sdl: Tables<"sdl">;
+        rank: number;
+      })[];
     },
   });
 
@@ -158,7 +162,7 @@ function Home() {
                       {data.dseq.toString().slice(-4)}/{data.gseq}
                     </TableCell>
                     <TableCell className="text-center">
-                      {data.bid_id.slice(0, 10)}
+                      {data.sdl.name}
                     </TableCell>
                     <TableCell className="text-center">
                       ${data.price_per_block.toFixed(2)}
@@ -203,19 +207,19 @@ function Home() {
                       />
                     </TableCell>
                     <TableCell className="text-center">
-                      {data.provider_uris.map((uri) => (
-                        <Button
-                          className="flex gap-2 items-center justify-center "
-                          asChild
-                          variant={"ghost"}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <a href={uri} target="_blank" rel="noreferrer">
-                            Link {data.provider_uris.indexOf(uri) + 1}{" "}
-                            <ExternalLinkIcon />
-                          </a>
-                        </Button>
-                      ))}
+                      {data?.provider_uris &&
+                        data.provider_uris.map((uri, i) => (
+                          <Button
+                            className="flex gap-2 items-center justify-center "
+                            asChild
+                            variant={"ghost"}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <a href={uri} target="_blank" rel="noreferrer">
+                              Link {i + 1} <ExternalLinkIcon />
+                            </a>
+                          </Button>
+                        ))}
                     </TableCell>
                   </TableRow>
                 ))}

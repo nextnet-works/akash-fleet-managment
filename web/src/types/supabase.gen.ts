@@ -69,15 +69,17 @@ export type Database = {
           json: Json
           lease_first_block: number
           lease_last_block: number | null
+          ports: string[] | null
           price_per_block: number
           provider_domain: string
-          provider_uris: string[]
+          provider_uris: string[] | null
           resources: Json
+          sdl_id: number | null
           state: number
           wallet_address: string
         }
         Insert: {
-          akash_provider: string
+          akash_provider?: string
           bid_id: string
           created_at?: string | null
           dseq: number
@@ -86,10 +88,12 @@ export type Database = {
           json: Json
           lease_first_block: number
           lease_last_block?: number | null
+          ports?: string[] | null
           price_per_block: number
           provider_domain: string
-          provider_uris?: string[]
+          provider_uris?: string[] | null
           resources: Json
+          sdl_id?: number | null
           state?: number
           wallet_address: string
         }
@@ -103,10 +107,12 @@ export type Database = {
           json?: Json
           lease_first_block?: number
           lease_last_block?: number | null
+          ports?: string[] | null
           price_per_block?: number
           provider_domain?: string
-          provider_uris?: string[]
+          provider_uris?: string[] | null
           resources?: Json
+          sdl_id?: number | null
           state?: number
           wallet_address?: string
         }
@@ -116,6 +122,13 @@ export type Database = {
             columns: ["bid_id"]
             isOneToOne: true
             referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_nodes_sdl_id_fkey"
+            columns: ["sdl_id"]
+            isOneToOne: false
+            referencedRelation: "sdl"
             referencedColumns: ["id"]
           },
         ]

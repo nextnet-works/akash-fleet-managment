@@ -142,7 +142,9 @@ export const Dashboard = () => {
       if (error) {
         throw error;
       }
-      return data;
+      return data.filter(
+        (node) => node?.provider_uris && node?.provider_uris?.length > 0
+      );
     },
   });
 
