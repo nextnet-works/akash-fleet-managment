@@ -27,6 +27,10 @@ const accounts: Account[] = [
     name: "AWS (coming soon)",
     uri: "aws.amazon.com",
   },
+  {
+    name: "Kepler Wallet (coming soon)",
+    uri: "keplerwallet.io",
+  },
 ];
 
 export function AvatarMenu() {
@@ -40,13 +44,13 @@ export function AvatarMenu() {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 space-y-2 p-2">
+      <DropdownMenuContent className=" space-y-2 p-2">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium">Linked Accounts</h3>
         </div>
         <Separator />
         {accounts.map((account, i) => (
-          <DropdownMenuItem key={account.uri} disabled={i === 2}>
+          <DropdownMenuItem key={account.uri} disabled={i > 1}>
             <div className="flex items-center gap-3 cursor-pointer w-full">
               <Avatar className="h-8 w-8">
                 <AvatarImage alt={account.name} src="/placeholder-logo.svg" />
