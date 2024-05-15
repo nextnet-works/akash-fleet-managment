@@ -9,7 +9,13 @@ export const useCoinPrice = () => {
     queryFn: async () => {
       try {
         const response = await axios.get<number>(
-          `${import.meta.env.VITE_NODE_SERVER_API}/akash-coin-price`
+          `${import.meta.env.VITE_NODE_SERVER_API}/akash-coin-price`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
         );
         return response.data;
       } catch (error) {

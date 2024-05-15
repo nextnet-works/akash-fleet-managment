@@ -37,6 +37,10 @@ export const Deployments = () => {
             body: {
               deploymentID: Number(sdlID),
             },
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
           }
         );
         return response.data;

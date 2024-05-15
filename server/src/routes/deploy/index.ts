@@ -34,9 +34,6 @@ router.post("/create", async (req, res) => {
       return res.status(400).send("deployment not found");
     }
 
-    const resourceUsed =
-      DEPLOYMENT_RESOURCES[sdl.name as keyof typeof DEPLOYMENT_RESOURCES];
-
     // TODO: save prices of each provider
     const providerSupplies: ProviderSupply[] = [];
 
@@ -55,22 +52,6 @@ router.post("/create", async (req, res) => {
         if (successfulLeaseCount >= MAX_LEASES) {
           isBidsEmpty = true;
           return;
-        }
-
-        const providerIndex = providerSupplies.findIndex(
-          (provider) => provider.name === lease.bidId?.provider
-        );
-
-        if (providerIndex === -1) {
-          providerSupplies.push({
-            ...resourceUsed,
-            name: lease?.bidId?.provider ?? "",
-          });
-        } else {
-          providerSupplies[providerIndex].cpu += resourceUsed.cpu;
-          providerSupplies[providerIndex].gpu += resourceUsed.gpu;
-          providerSupplies[providerIndex].memory += resourceUsed.memory;
-          providerSupplies[providerIndex].storage += resourceUsed.storage;
         }
 
         successfulLeaseCount++;
