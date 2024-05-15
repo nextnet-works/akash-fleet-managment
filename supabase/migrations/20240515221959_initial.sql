@@ -1,7 +1,3 @@
-alter table "_realtime"."tenants" drop column "enable_authorization";
-
-alter table "_realtime"."tenants" drop column "jwt_jwks";
-
 
 create table "public"."bids" (
     "created_at" timestamp with time zone default now(),
