@@ -7,9 +7,14 @@ exports.sendManifest = void 0;
 const https_1 = __importDefault(require("https"));
 const rpc_1 = require("@akashnetwork/akashjs/build/rpc");
 const v1beta3_1 = require("@akashnetwork/akash-api/akash/provider/v1beta3");
+// import {
+//   QueryClientImpl as QueryProviderClient,
+//   QueryProviderRequest,
+// } from "@akashnetwork/akash-api/akash/provider/v1beta3";
 const consts_1 = require("./consts");
 const client_1 = require("./client");
 const axios_1 = __importDefault(require("axios"));
+const lease_1 = require("./lease");
 async function sendManifest(leaseId) {
     try {
         const { certificate, sdl } = await (0, client_1.loadPrerequisites)(consts_1.RAW_SDL_T2);
@@ -21,7 +26,7 @@ async function sendManifest(leaseId) {
         });
         const tx = await client.Provider(request);
         if (!tx.provider) {
-            return false;
+            return { isSuccess: false, serviceUris: [] };
         }
         const providerInfo = tx.provider;
         const manifest = sdl.manifestSortedJSON();
@@ -37,38 +42,37 @@ async function sendManifest(leaseId) {
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
-                "Content-Length": manifest.length,
+                "Content-Length": manifest.length.toString(),
             },
             httpsAgent: agent,
         });
         if (response.status !== 200) {
-            return false;
+            return { isSuccess: false, serviceUris: [] };
         }
-        return true;
-    }
-    catch (error) {
-        // const timeout = 1000 * 60 * 10;
-        // while (Date.now() - startTime < timeout) {
-        //   console.log(`Waiting for deployment to start... (leaseId: ${leaseId})`);
-        //   const status = await queryLeaseStatus(leaseId).catch((err) => {
-        //     if (err.includes("Could not query lease status: 404")) {
-        //       return undefined;
-        //     }
-        //     throw err;
-        //   });
-        //   if (status) {
-        //     for (const [name, service] of Object.entries(status.services)) {
-        //       if (service.uris) {
-        //         console.log(`Service ${name} is available at:`, service.uris[0]);
-        //         return;
-        //       }
+        console.log(`Deployment started for leaseId: ${leaseId}, ${response.data}`);
+        const leaseStatus = await (0, lease_1.queryLeaseStatus)(leaseId);
+        const serviceUris = [];
+        // if (leaseStatus.lease?.state === Lease_State.active) {
+        //   for (const [name, service] of Object.entries(leaseStatus.escrowPayment.)) {
+        //     if (service.uris) {
+        //       serviceUris.concat(service.uris);
         //     }
         //   }
-        //   // Wait 3 seconds before trying again
-        //   await new Promise((resolve) => setTimeout(resolve, 3000));
         // }
+        return {
+            isSuccess: true,
+            serviceUris,
+            uri,
+            lease: leaseStatus,
+        };
+    }
+    catch (error) {
         // throw new Error(`Could not start deployment. Timeout reached.`);
-        return false;
+        console.error(error);
+        return {
+            isSuccess: false,
+            serviceUris: [],
+        };
     }
 }
 exports.sendManifest = sendManifest;

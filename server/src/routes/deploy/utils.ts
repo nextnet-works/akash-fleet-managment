@@ -1,9 +1,16 @@
+import { status } from "@grpc/grpc-js";
 import { generateYamlWithWebs } from "./yaml";
 import { createDeployment } from "../../utils/akash/createDeployment";
 import { fetchBids } from "../../utils/akash/bids";
 import { RAW_SDL_T2 } from "../../utils/akash/consts";
-import { createLease } from "../../utils/akash/lease";
-import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
+import { createLease, saveLeasesToDB } from "../../utils/akash/lease";
+import {
+  Lease_State,
+  QueryBidResponse,
+  QueryLeaseResponse,
+} from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { Json } from "../../types/supabase.gen";
 
 export const handleSdlFlow = async () => {
   const respondersLength = await deployGenericSDL();
@@ -17,7 +24,7 @@ export const handleSdlFlow = async () => {
   gseqArray.forEach((gseq) => {
     const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
     const sortedBids = gseqBids.sort(
-      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount),
+      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount)
     );
 
     if (!sortedBids[0]?.bid) {
@@ -27,13 +34,41 @@ export const handleSdlFlow = async () => {
     filteredBids.push(sortedBids[0].bid);
   });
 
-  const leases = await createLease(filteredBids);
+  const nodes = await createLease(filteredBids);
 
-  const leasesFulfilled = leases.filter((lease) => lease.bidId);
+  const activeNodes = nodes.filter((lease) => lease.bidId) as {
+    bidId: BidID;
+    serviceUris: string[];
+    uri: string;
+    lease?: QueryLeaseResponse;
+    ports: string[];
+  }[];
+
+  const output = activeNodes.map((lease) => {
+    return {
+      dseq: lease.bidId.dseq.toNumber(),
+      gseq: lease.bidId.gseq,
+      akash_provider: lease.bidId.provider,
+      wallet_address: lease.bidId.owner,
+      json: lease as unknown as Json,
+      provider_uris: lease.serviceUris,
+      provider_domain: lease.uri,
+      ports: lease.ports,
+      bid_id: `${lease.bidId.owner}/${lease.bidId.dseq}/${lease.bidId.gseq}/1/${lease.bidId.provider}`,
+      price_per_block: lease.lease?.lease?.price?.amount
+        ? Number(lease.lease?.lease?.price?.amount)
+        : 0,
+      state: (lease.lease?.lease?.state ?? Lease_State.UNRECOGNIZED) as number,
+      lease_first_block: lease.lease?.lease?.createdAt?.toNumber() ?? 0,
+      resources: {},
+    };
+  });
+
+  await saveLeasesToDB(output);
   // TODO: add rejected leases to a blacklist of providers
-  const leasedRejected = leases.filter((lease) => !lease.bidId);
+  const leasedRejected = nodes.filter((lease) => !lease.bidId);
 
-  return { leasesFulfilled, leasedRejected };
+  return { activeNodes, leasedRejected };
 };
 
 export const deployGenericSDL = async () => {

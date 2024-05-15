@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createDeployment = void 0;
 const stargate_1 = require("@akashnetwork/akashjs/build/stargate");
 const v1beta3_1 = require("@akashnetwork/akash-api/akash/deployment/v1beta3");
-const consts_1 = require("./consts");
 const client_1 = require("./client");
 async function createDeployment(sdlPath) {
     const { wallet, client, sdl } = await (0, client_1.loadPrerequisites)(sdlPath);
@@ -54,7 +53,7 @@ async function createDeployment(sdlPath) {
     };
     const tx = await client.signAndBroadcast(accounts[0].address, [msg], fee, "create deployment");
     if (tx.code !== undefined && tx.code === 0) {
-        return { tx, dseq: consts_1.DSEQ, owner: accounts[0].address };
+        return { tx, dseq: blockHeight, owner: accounts[0].address };
     }
     throw new Error(`Could not create deployment: ${tx.rawLog} `);
 }

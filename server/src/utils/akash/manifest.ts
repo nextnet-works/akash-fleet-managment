@@ -6,10 +6,16 @@ import {
   QueryProviderRequest,
 } from "@akashnetwork/akash-api/akash/provider/v1beta3";
 
+// import {
+//   QueryClientImpl as QueryProviderClient,
+//   QueryProviderRequest,
+// } from "@akashnetwork/akash-api/akash/provider/v1beta3";
+
 import { RAW_SDL_T2, RPC_ENDPOINT } from "./consts";
-import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta3";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { loadPrerequisites } from "./client";
 import axios from "axios";
+import { queryLeaseServices, queryLeaseStatus } from "./lease";
 
 export async function sendManifest(leaseId: BidID) {
   try {
@@ -24,7 +30,7 @@ export async function sendManifest(leaseId: BidID) {
     const tx = await client.Provider(request);
 
     if (!tx.provider) {
-      return false;
+      return { isSuccess: false, serviceUris: [] };
     }
 
     const providerInfo = tx.provider;
@@ -43,42 +49,39 @@ export async function sendManifest(leaseId: BidID) {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        "Content-Length": manifest.length,
+        "Content-Length": manifest.length.toString(),
       },
       httpsAgent: agent,
     });
 
     if (response.status !== 200) {
-      return false;
+      return { isSuccess: false, serviceUris: [] };
     }
-    return true;
-  } catch (error: any) {
-    // const timeout = 1000 * 60 * 10;
 
-    // while (Date.now() - startTime < timeout) {
-    //   console.log(`Waiting for deployment to start... (leaseId: ${leaseId})`);
-    //   const status = await queryLeaseStatus(leaseId).catch((err) => {
-    //     if (err.includes("Could not query lease status: 404")) {
-    //       return undefined;
-    //     }
+    const leaseStatus = await queryLeaseStatus(leaseId);
+    const { servicesUri, ports } = await queryLeaseServices(leaseId);
 
-    //     throw err;
-    //   });
-
-    //   if (status) {
-    //     for (const [name, service] of Object.entries(status.services)) {
-    //       if (service.uris) {
-    //         console.log(`Service ${name} is available at:`, service.uris[0]);
-    //         return;
-    //       }
+    // if (leaseStatus.lease?.state === Lease_State.active) {
+    //   for (const [name, service] of Object.entries(leaseStatus.escrowPayment.)) {
+    //     if (service.uris) {
+    //       serviceUris.concat(service.uris);
     //     }
     //   }
-
-    //   // Wait 3 seconds before trying again
-    //   await new Promise((resolve) => setTimeout(resolve, 3000));
     // }
 
+    return {
+      isSuccess: true,
+      servicesUri,
+      uri,
+      ports,
+      lease: leaseStatus,
+    };
+  } catch (error: any) {
     // throw new Error(`Could not start deployment. Timeout reached.`);
-    return false;
+    console.error(error);
+    return {
+      isSuccess: false,
+      serviceUris: [],
+    };
   }
 }

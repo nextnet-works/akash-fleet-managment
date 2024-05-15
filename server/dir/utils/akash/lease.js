@@ -1,17 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.queryLeaseStatus = exports.createLease = void 0;
-const https_1 = __importDefault(require("https"));
+exports.queryLeaseStatus = exports.saveLeasesToDB = exports.createLease = void 0;
 const v1beta4_1 = require("@akashnetwork/akash-api/akash/market/v1beta4");
 const rpc_1 = require("@akashnetwork/akashjs/build/rpc");
 const client_1 = require("./client");
 const consts_1 = require("./consts");
-const v1beta3_1 = require("@akashnetwork/akash-api/akash/provider/v1beta3");
 const manifest_1 = require("./manifest");
-const axios_1 = __importDefault(require("axios"));
+const supabase_js_1 = require("@supabase/supabase-js");
 async function createLease(bids) {
     const { wallet, client } = await (0, client_1.loadPrerequisites)();
     const accounts = await wallet.getAccounts();
@@ -30,58 +25,87 @@ async function createLease(bids) {
         ],
         gas: "2000000",
     };
-    const leasesMessages = await client.signAndBroadcast(accounts[0].address, leasesMessage, fee, "create lease");
-    const height = leasesMessages.height;
+    const tx = await client.signAndBroadcast(accounts[0].address, leasesMessage, fee, "create lease");
+    console.log({ tx: JSON.stringify(tx), name: "create lease" });
     const successfulLeases = await Promise.all(bids.map(async (bid) => {
         if (!bid?.bidId) {
-            return { bidId: undefined };
+            return { bidId: undefined, serviceUris: [], uri: "" };
         }
-        const isSuccess = await (0, manifest_1.sendManifest)(bid?.bidId);
-        if (!isSuccess) {
-            return { bidId: undefined };
-        }
-        return { bidId: bid?.bidId };
+        const { isSuccess, serviceUris, uri, lease } = await (0, manifest_1.sendManifest)(bid?.bidId);
+        return {
+            bidId: !isSuccess ? undefined : bid?.bidId,
+            serviceUris,
+            uri: uri?.toString() ?? "",
+            lease,
+        };
     }));
     return successfulLeases;
 }
 exports.createLease = createLease;
-async function queryLeaseStatus(bidId) {
-    if (!bidId) {
-        throw new Error("Bid ID is required");
-    }
-    // Load required certificates
-    const { certificate } = await (0, client_1.loadPrerequisites)();
-    // Build the path and set up the custom HTTPS agent
-    const leasePath = `/lease/${bidId.dseq}/${bidId.gseq}/${bidId.oseq}/status`;
-    const agent = new https_1.default.Agent({
-        cert: certificate.csr,
-        key: certificate.privateKey,
-        rejectUnauthorized: false,
-    });
-    // Retrieve provider information
-    const request = v1beta3_1.QueryProviderRequest.fromPartial({
-        owner: bidId.provider,
-    });
-    const client = new v1beta3_1.QueryClientImpl(await (0, rpc_1.getRpc)(consts_1.RPC_ENDPOINT));
-    const tx = await client.Provider(request);
-    if (!tx.provider) {
-        throw new Error(`Could not find provider ${bidId.provider}`);
-    }
-    const providerInfo = tx.provider;
-    const uri = new URL(providerInfo.hostUri);
+// export async function queryLeaseStatus(
+//   bidId: BidID | undefined
+// ): Promise<LeaseStatusResponse> {
+//   if (!bidId) {
+//     throw new Error("Bid ID is required");
+//   }
+//   // Load required certificates
+//   const { certificate } = await loadPrerequisites();
+//   // Build the path and set up the custom HTTPS agent
+//   const leasePath = `/lease/${bidId.dseq}/${bidId.gseq}/${bidId.oseq}/status`;
+//   const agent = new https.Agent({
+//     cert: certificate.csr,
+//     key: certificate.privateKey,
+//     rejectUnauthorized: false,
+//   });
+//   // Retrieve provider information
+//   const request = QueryProviderRequest.fromPartial({
+//     owner: bidId.provider,
+//   });
+//   const client = new QueryProviderClient(await getRpc(RPC_ENDPOINT));
+//   const tx = await client.Provider(request);
+//   if (!tx.provider) {
+//     throw new Error(`Could not find provider ${bidId.provider}`);
+//   }
+//   console.log({ tx: JSON.stringify(tx), name: "getLeaseProvider" });
+//   const providerInfo = tx.provider;
+//   const uri = new URL(providerInfo.hostUri);
+//   try {
+//     const response = await axios.get<LeaseStatusResponse>(
+//       `${uri.origin}${leasePath}`,
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Accept: "application/json",
+//         },
+//         httpsAgent: agent,
+//       }
+//     );
+//     console.log(`Lease status: ${JSON.stringify(response.data)}`);
+//     return response.data;
+//   } catch (error: any) {
+//     throw new Error(`Could not query lease status: ${error.message}`);
+//   }
+// }
+async function saveLeasesToDB(nodes) {
     try {
-        const response = await axios_1.default.get(`${uri.origin}${leasePath}`, {
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            httpsAgent: agent,
-        });
-        return response.data;
+        const supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_PROJECT_URL, process.env.SERVICE_ROLE_KEY);
+        const { error } = await supabase.from("nodes").insert(nodes);
+        if (error) {
+            throw error;
+        }
     }
     catch (error) {
-        throw new Error(`Could not query lease status: ${error.message}`);
+        console.error("Error saving leases to database:", error);
+        throw error;
     }
+}
+exports.saveLeasesToDB = saveLeasesToDB;
+async function queryLeaseStatus(leasId) {
+    const client = new v1beta4_1.QueryClientImpl(await (0, rpc_1.getRpc)(consts_1.RPC_ENDPOINT));
+    const getLeaseStatusRequest = v1beta4_1.QueryLeaseRequest.fromPartial({ id: leasId });
+    const leaseStatusResponse = await client.Lease(getLeaseStatusRequest);
+    console.log(v1beta4_1.QueryLeaseResponse.toJSON(leaseStatusResponse));
+    return leaseStatusResponse;
 }
 exports.queryLeaseStatus = queryLeaseStatus;
 //# sourceMappingURL=lease.js.map

@@ -7,19 +7,16 @@ export const Header = () => {
 
   return (
     <div className="p-4 flex gap-4">
-      <Button asChild variant="link">
+      <Button asChild variant="ghost">
         <Link to="/" search={undefined}>
-          Dashboard
+          Home
         </Link>
       </Button>
-      <Button asChild variant="link">
-        <Link to="/">Deployments</Link>
+      <Button asChild variant="ghost">
+        <Link to="/yaml">Editor</Link>
       </Button>
-      <Button asChild variant="link">
-        <Link to="/yaml">Yaml Editor</Link>
-      </Button>
-      <span className="ml-auto">
-        AKT: <b className="text-2xl">{coinPrice}$</b>
+      <span className="ml-auto flex items-center gap-2 font-bold">
+        AKT: {coinPrice}$
       </span>
     </div>
   );

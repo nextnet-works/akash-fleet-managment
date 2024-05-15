@@ -1,10 +1,9 @@
 import { getRpc } from "@akashnetwork/akashjs/build/rpc";
-
 import {
   QueryBidsRequest,
   QueryBidsResponse,
   QueryClientImpl as QueryMarketClient,
-} from "@akashnetwork/akash-api/akash/market/v1beta3";
+} from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { RPC_ENDPOINT } from "./consts";
 import { saveBidsToDB } from "../db";
@@ -13,7 +12,7 @@ export async function fetchBids(
   dseq: number,
   owner: string,
   blockHeight: number,
-  minAttempts = 3,
+  minAttempts = 3
 ): Promise<QueryBidsResponse["bids"]> {
   const rpc = await getRpc(RPC_ENDPOINT);
   const client = new QueryMarketClient(rpc);

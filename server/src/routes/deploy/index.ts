@@ -1,7 +1,7 @@
 import { DEPLOYMENT_RESOURCES } from "../../utils/akash/consts";
 import { Router } from "express";
 
-import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta3";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { handleSdlFlow } from "./utils";
 import { closeDeployment } from "../../utils/akash/closeDeployment";
@@ -27,21 +27,21 @@ router.post("/create", async (req, res) => {
     let leasesResponses: { bidId: BidID }[] = [];
     let successfulLeaseCount = 0;
     while (!isBidsEmpty) {
-      const { leasesFulfilled } = await handleSdlFlow();
-      console.log(`Leases fulfilled: ${leasesFulfilled.length}`);
-      if (leasesFulfilled.length === 0) {
+      const { activeNodes } = await handleSdlFlow();
+      console.log(`Leases fulfilled: ${activeNodes.length}`);
+      if (activeNodes.length === 0) {
         isBidsEmpty = true;
         return;
       }
 
-      for (const lease of leasesFulfilled) {
+      for (const lease of activeNodes) {
         if (successfulLeaseCount >= MAX_LEASES) {
           isBidsEmpty = true;
           return;
         }
 
         const providerIndex = providerSupplies.findIndex(
-          (provider) => provider.name === lease.bidId?.provider,
+          (provider) => provider.name === lease.bidId?.provider
         );
 
         if (providerIndex === -1) {

@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchBids = void 0;
 const rpc_1 = require("@akashnetwork/akashjs/build/rpc");
-const v1beta3_1 = require("@akashnetwork/akash-api/akash/market/v1beta3");
+const v1beta4_1 = require("@akashnetwork/akash-api/akash/market/v1beta4");
 const consts_1 = require("./consts");
 const db_1 = require("../db");
 async function fetchBids(dseq, owner, blockHeight, minAttempts = 3) {
     const rpc = await (0, rpc_1.getRpc)(consts_1.RPC_ENDPOINT);
-    const client = new v1beta3_1.QueryClientImpl(rpc);
-    const request = v1beta3_1.QueryBidsRequest.fromPartial({
+    const client = new v1beta4_1.QueryClientImpl(rpc);
+    const request = v1beta4_1.QueryBidsRequest.fromPartial({
         filters: {
             owner: owner,
             dseq: dseq,

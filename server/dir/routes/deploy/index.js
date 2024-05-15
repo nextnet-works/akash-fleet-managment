@@ -19,13 +19,13 @@ router.post("/create", async (req, res) => {
         let leasesResponses = [];
         let successfulLeaseCount = 0;
         while (!isBidsEmpty) {
-            const { leasesFulfilled } = await (0, utils_1.handleSdlFlow)();
-            console.log(`Leases fulfilled: ${leasesFulfilled.length}`);
-            if (leasesFulfilled.length === 0) {
+            const { activeNodes } = await (0, utils_1.handleSdlFlow)();
+            console.log(`Leases fulfilled: ${activeNodes.length}`);
+            if (activeNodes.length === 0) {
                 isBidsEmpty = true;
                 return;
             }
-            for (const lease of leasesFulfilled) {
+            for (const lease of activeNodes) {
                 if (successfulLeaseCount >= MAX_LEASES) {
                     isBidsEmpty = true;
                     return;

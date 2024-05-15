@@ -1,6 +1,11 @@
 import https from "https";
-import { MsgCreateLease } from "@akashnetwork/akash-api/akash/market/v1beta4";
-import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta3";
+import {
+  MsgCreateLease,
+  QueryLeaseRequest,
+  QueryLeaseResponse,
+  QueryClientImpl as QueryClientImplMarket,
+} from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { getRpc } from "@akashnetwork/akashjs/build/rpc";
 
 import { loadPrerequisites } from "./client";
@@ -9,13 +14,15 @@ import {
   QueryProviderRequest,
   QueryClientImpl as QueryProviderClient,
 } from "@akashnetwork/akash-api/akash/provider/v1beta3";
+
 import { sendManifest } from "./manifest";
 import axios from "axios";
-import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta3";
+import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { createClient } from "@supabase/supabase-js";
+import { Database, TablesInsert } from "../../types/supabase.gen";
+import { ForwarderPortStatus } from "@akashnetwork/akash-api/akash/provider/lease/v1";
 
-export async function createLease(
-  bids: QueryBidResponse["bid"][],
-): Promise<{ bidId: BidID | undefined }[]> {
+export async function createLease(bids: QueryBidResponse["bid"][]) {
   const { wallet, client } = await loadPrerequisites();
   const accounts = await wallet.getAccounts();
 
@@ -36,43 +43,57 @@ export async function createLease(
     gas: "2000000",
   };
 
-  const leasesMessages = await client.signAndBroadcast(
+  await client.signAndBroadcast(
     accounts[0].address,
     leasesMessage,
     fee,
-    "create lease",
+    "create lease"
   );
-
-  const height = leasesMessages.height;
 
   const successfulLeases = await Promise.all(
     bids.map(async (bid) => {
       if (!bid?.bidId) {
-        return { bidId: undefined };
+        return { bidId: undefined, serviceUris: [] as string[], uri: "" };
       }
-      const isSuccess = await sendManifest(bid?.bidId);
+      const { isSuccess, serviceUris, uri, lease, ports } = await sendManifest(
+        bid?.bidId
+      );
 
-      if (!isSuccess) {
-        return { bidId: undefined };
-      }
-
-      return { bidId: bid?.bidId };
-    }),
+      return {
+        bidId: !isSuccess ? undefined : bid?.bidId,
+        serviceUris,
+        uri: uri?.toString() ?? "",
+        lease,
+        ports,
+      };
+    })
   );
+
   return successfulLeases;
 }
 
 interface ServiceInfo {
-  uris: string[];
+  name: string;
+  available: number;
+  total: number;
+  uris: string[] | null;
+  observed_generation: number;
+  replicas: number;
+  updated_replicas: number;
+  ready_replicas: number;
+  available_replicas: number;
 }
 
 interface LeaseStatusResponse {
   services: Record<string, ServiceInfo>;
+  forwarded_ports: Record<string, ForwarderPortStatus>;
+  ips: null | string[];
 }
 
-export async function queryLeaseStatus(
-  bidId: BidID | undefined,
-): Promise<LeaseStatusResponse> {
+export async function queryLeaseServices(bidId: BidID | undefined): Promise<{
+  servicesUri: string[];
+  ports: string[];
+}> {
   if (!bidId) {
     throw new Error("Bid ID is required");
   }
@@ -113,11 +134,55 @@ export async function queryLeaseStatus(
           Accept: "application/json",
         },
         httpsAgent: agent,
-      },
+      }
     );
 
-    return response.data;
+    const servicesUri: string[] = [];
+    const ports: string[] = [];
+
+    for (const service in response?.data?.services) {
+      servicesUri.push(...(response?.data?.services[service]?.uris ?? []));
+    }
+
+    // run on each forwarded port and create port using his host + externalPort
+    for (const port in response?.data?.forwarded_ports) {
+      const portStatus = response?.data?.forwarded_ports[port];
+      if (portStatus?.externalPort && portStatus?.host) {
+        ports.push(`${portStatus.host}:${portStatus.externalPort}`);
+      }
+    }
+
+    return { servicesUri, ports: ports };
   } catch (error: any) {
     throw new Error(`Could not query lease status: ${error.message}`);
   }
+}
+
+export async function saveLeasesToDB(
+  nodes: TablesInsert<"nodes">[]
+): Promise<void> {
+  try {
+    const supabase = createClient<Database>(
+      process.env.SUPABASE_PROJECT_URL!,
+      process.env.SERVICE_ROLE_KEY!
+    );
+
+    const { error } = await supabase.from("nodes").insert(nodes);
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error saving leases to database:", error);
+    throw error;
+  }
+}
+
+export async function queryLeaseStatus(leasId: BidID) {
+  const client = new QueryClientImplMarket(await getRpc(RPC_ENDPOINT));
+
+  const getLeaseStatusRequest = QueryLeaseRequest.fromPartial({ id: leasId });
+
+  const leaseStatusResponse = await client.Lease(getLeaseStatusRequest);
+
+  return leaseStatusResponse;
 }

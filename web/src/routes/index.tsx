@@ -1,194 +1,193 @@
-import axios from "axios";
-
-import { Card } from "@/components/ui/card";
-
-import { useQuery } from "@tanstack/react-query";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import { ProviderResources } from "@/types/akash";
-
-import { Deployments } from "@/components/Deployements";
-import { queryKeys } from "@/lib/consts";
-import { useCoinPrice } from "@/hooks/useCoinPrice";
-import { useState } from "react";
-import { PriceChart } from "@/components/PriceChart";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import {
+  TableHead,
+  TableRow,
+  TableHeader,
+  TableCell,
+  TableBody,
+  Table,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenu,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDownIcon } from "lucide-react";
 import { Loader } from "@/components/Loader";
 import { ErrorUI } from "@/components/Error";
+import { queryKeys } from "@/lib/consts";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { db } from "@/lib/supabase";
+import { Lease_State } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { convertToReadableTime, getLeaseActiveTime } from "@/lib/utils";
+import { useLatestBlock } from "@/hooks/useLatestBlock";
+import { useEffect } from "react";
+import { Dashboard } from "@/components/home/Dashboard";
 export const Route = createFileRoute("/")({
   component: Home,
-  pendingComponent: Loader,
+  loader: Loader,
   errorComponent: ErrorUI,
 });
 
+const green =
+  "bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400";
+const yellow =
+  "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400";
+const red = "bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400";
+
+// const greenText = "text-green-600 dark:text-green-400";
+// const yellowText = "text-yellow-600 dark:text-yellow-400";
+// const redText = "text-red-600 dark:text-red-400";
 function Home() {
-  const coinPrice = useCoinPrice();
-  const [activeTShirts, setActiveTShirts] = useState<string[]>([]);
+  const queryClient = useQueryClient();
   const {
-    data: providers,
-    isPending,
+    data: nodes,
     error,
+    isPending,
   } = useQuery({
-    queryKey: [queryKeys.create_deployment, activeTShirts],
+    queryKey: [queryKeys.dashboard],
     queryFn: async () => {
-      const response = await axios.post<ProviderResources[]>(
-        `${import.meta.env.VITE_NODE_SERVER_API}/deploy/create`,
-        {
-          body: {
-            deployment: activeTShirts[0],
-          },
-        }
-      );
-      return response.data;
+      const { data, error } = await db
+        .from("nodes")
+        .select("*")
+        .eq("state", Lease_State.active)
+        .order("dseq", { ascending: false });
+      if (error) {
+        throw error;
+      }
+      return data;
     },
-    enabled: activeTShirts.length > 0,
   });
 
-  const handleButtonClick = async (c: string) => {
-    setActiveTShirts((ps) => {
-      if (ps.includes(c)) {
-        return ps.filter((p) => p !== c);
-      }
-      return [...ps, c];
-    });
-  };
+  const currentBlock = useLatestBlock();
 
-  const sortedProviders = providers?.sort((a, b) => {
-    return a.price - b.price;
-  })
-    ? providers
-    : [];
-
-  const totalDeployments = sortedProviders?.reduce(
-    (acc, curr) => {
-      return {
-        cpu: acc.cpu + curr.cpu,
-        gpu: acc.gpu + curr.gpu,
-        memory: acc.memory + curr.memory,
-        storage: acc.storage + curr.storage,
-      };
-    },
-    { cpu: 0, gpu: 0, memory: 0, storage: 0 }
-  );
-
+  useEffect(() => {
+    db.channel("new")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "nodes" },
+        () => queryClient.invalidateQueries({ queryKey: [queryKeys.dashboard] })
+      )
+      .subscribe();
+  }, []);
+  if (isPending) return <Loader />;
+  if (error) return <ErrorUI message={error.message} />;
   return (
-    <div
-      className="p-4 gap-4 flex flex-col align-center w-full"
-      style={{
-        alignItems: "center",
-      }}
-    >
-      <Tabs defaultValue="create">
-        <TabsList className="grid  mx-auto w-[400px] grid-cols-2 ">
-          <TabsTrigger value="list">Active Deployments</TabsTrigger>
-          <TabsTrigger value="create">Create new Deploy</TabsTrigger>
-        </TabsList>
-        <TabsContent
-          value="list"
-          className="flex flex-col gap-4 align-items-center w-full"
-        >
-          <Deployments />
-        </TabsContent>
-        <TabsContent
-          value="create"
-          className="flex flex-col gap-4 align-items-center w-full text-center"
-        >
-          <ToggleGroup type="multiple" value={activeTShirts}>
-            <ToggleGroupItem
-              value="MORPHEUS"
-              onClick={() => handleButtonClick("MORPHEUS")}
-            >
-              Mopheus
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="B"
-              onClick={() => handleButtonClick("B")}
-              disabled
-            >
-              TShirt-B
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="C"
-              onClick={() => handleButtonClick("C")}
-              disabled
-            >
-              TShirt-C
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="D"
-              onClick={() => handleButtonClick("D")}
-              disabled
-            >
-              TShirt-D
-            </ToggleGroupItem>
-          </ToggleGroup>
-          {isPending && <h2>Loading...</h2>}
-          {error && <h1>Error</h1>}
-          {!isPending && !error ? (
-            <>
-              {!sortedProviders || sortedProviders.length === 0 ? (
-                <h1>No Bids</h1>
-              ) : (
-                <>
-                  <h1>Providers</h1>
-                  <PriceChart
-                    providers={sortedProviders ?? []}
-                    coinPrice={coinPrice}
-                  />
-                  <div className="flex flex-col justify-between p-4 align-center">
-                    <Card className="flex justify-between p-4">
-                      <div className="w-[200px]">Provider</div>
-                      <div className="w-[200px]">Deployment occupied</div>
-                      <div className="w-[200px]">T-shirt average price</div>
-                    </Card>
-                    {sortedProviders.map((provider) => (
-                      <Card
-                        key={provider.provider}
-                        className="flex justify-between p-4"
-                      >
-                        <div className="w-[200px]">
-                          Akash -{" "}
-                          {provider?.provider
-                            ?.replace("akash", "")
-                            .slice(0, 7) + "..."}
-                        </div>
-                        <div className="w-[200px]">
-                          {provider.cpu} / {totalDeployments.cpu}{" "}
-                        </div>
-                        <div className="w-[200px]">{provider.price}</div>
-                      </Card>
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          ) : null}
-        </TabsContent>
-      </Tabs>
+    <div className="flex flex-col gap-4">
+      <Dashboard />
+      <div className="mt-4 flex items-center gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              Filter by
+              <ChevronDownIcon className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>dseq</DropdownMenuItem>
+            <DropdownMenuItem>gseq</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="border rounded-lg w-full max-w-[1400px]">
+        <div className="relative w-full overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">DSEC/GSEC</TableHead>
+                <TableHead className="text-center">T-Shirt Name</TableHead>
+                <TableHead className="text-center">
+                  Payment per Hour ($)
+                </TableHead>{" "}
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center">
+                  Active Time (Hour)
+                </TableHead>
+                <TableHead className="text-center">Ranking</TableHead>
+                <TableHead className="text-center">Cloud Provider</TableHead>
+                <TableHead className="text-center">App Link</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {nodes.map((data) => (
+                <TableRow key={data.dseq}>
+                  <TableCell className="font-medium text-center">
+                    {data.dseq.toString().slice(-4)}/{data.gseq}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {data.bid_id.slice(0, 10)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    ${data.price_per_block.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      className={
+                        data.state === Lease_State.active
+                          ? green
+                          : data.state === Lease_State.UNRECOGNIZED
+                            ? yellow
+                            : red
+                      }
+                      variant="outline"
+                    >
+                      {Lease_State[data.state]}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {convertToReadableTime(
+                      getLeaseActiveTime(data.lease_first_block, currentBlock)
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    3/10
+                    {/* <span
+                      className={
+                        data.ranking > 5
+                          ? greenText
+                          : data.ranking > 3
+                            ? yellowText
+                            : redText
+                      }
+                    >
+                      {data.ranking}/10
+                    </span> */}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <img
+                      alt={data.provider_domain}
+                      className="w-6 h-6 object-contain mx-auto"
+                      height="24"
+                      src="https://ailifxntfghvpmukgfgw.supabase.co/storage/v1/object/public/assets/akash-sign-red.svg?t=2024-05-14T20%3A41%3A30.530Z"
+                      style={{
+                        aspectRatio: "24/24",
+                        objectFit: "cover",
+                      }}
+                      width="24"
+                    />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Link
+                      className="text-primary hover:underline"
+                      href={data.provider_domain}
+                      target="_blank"
+                    >
+                      {data.provider_domain}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
-}
-
-{
-  /* <div className="w-[200px]">
-                          {Math.round(
-                            provider.availableStats.memory / 1000000000
-                          )}
-                        </div>
-                        <div className="w-[200px]">
-                          {Math.round(
-                            provider.availableStats.storage / 1000000000000
-                          )}
-                        </div>
-                        <div className="w-[200px] flex flex-col gap-2">
-                          {provider.gpuModels.map((gpu) => (
-                            <Card key={gpu.model} className="flex gap-2 p-2">
-                              <span>{gpu.vendor}</span>
-                              <span>{gpu.model}</span>
-                              <span>{gpu.ram}</span>
-                              <span>{gpu.interface}</span>
-                            </Card>
-                          ))}
-                        </div> */
 }

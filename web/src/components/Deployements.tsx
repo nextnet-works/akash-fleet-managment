@@ -6,7 +6,7 @@ import { DeploymentsResponse } from "@/types/deployment";
 import { Card, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { queryKeys } from "@/lib/consts";
+import { MAIN_NET, queryKeys } from "@/lib/consts";
 import { Input } from "./ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useState } from "react";
@@ -21,7 +21,7 @@ export const Deployments = () => {
     queryKey: [queryKeys.deployments, debouncedKey],
     queryFn: async () => {
       const response = await axios.get<DeploymentsResponse>(
-        "https://akash-api.polkachu.com/akash/deployment/v1beta3/deployments/list",
+        `${MAIN_NET}/akash/deployment/v1beta3/deployments/list`,
         {
           params: {
             ["filters.owner"]: debouncedKey,

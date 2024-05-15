@@ -58,6 +58,68 @@ export type Database = {
         }
         Relationships: []
       }
+      nodes: {
+        Row: {
+          akash_provider: string
+          bid_id: string
+          created_at: string | null
+          dseq: number
+          gseq: number
+          id: number
+          json: Json
+          lease_first_block: number
+          lease_last_block: number | null
+          price_per_block: number
+          provider_domain: string
+          provider_uris: string[]
+          resources: Json
+          state: number
+          wallet_address: string
+        }
+        Insert: {
+          akash_provider: string
+          bid_id: string
+          created_at?: string | null
+          dseq: number
+          gseq: number
+          id?: number
+          json: Json
+          lease_first_block: number
+          lease_last_block?: number | null
+          price_per_block: number
+          provider_domain: string
+          provider_uris?: string[]
+          resources: Json
+          state?: number
+          wallet_address: string
+        }
+        Update: {
+          akash_provider?: string
+          bid_id?: string
+          created_at?: string | null
+          dseq?: number
+          gseq?: number
+          id?: number
+          json?: Json
+          lease_first_block?: number
+          lease_last_block?: number | null
+          price_per_block?: number
+          provider_domain?: string
+          provider_uris?: string[]
+          resources?: Json
+          state?: number
+          wallet_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_nodes_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: true
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sdl: {
         Row: {
           created_at: string
