@@ -2,10 +2,9 @@ import {
   BidID,
   Lease_State,
 } from "@akashnetwork/akash-api/akash/market/v1beta4";
-import { getAdminDB } from "../../utils/db";
-import { loadPrerequisites } from "../../utils/akash/client";
-import { queryLeaseServices, queryLeaseStatus } from "../../utils/akash/lease";
-import { CronJob } from "cron";
+import { getAdminDB } from "./db";
+import { loadPrerequisites } from "../akash-js/client";
+import { queryLeaseServices, queryLeaseStatus } from "../akash-js/lease";
 
 export const updateNodes = async () => {
   console.log("Updating nodes");
@@ -43,7 +42,6 @@ export const updateNodes = async () => {
         state: result.state,
         provider_uris: result.servicesUri ?? [],
         lease_first_block: result.lease?.lease?.createdAt.toNumber(),
-        // lease_last_block: result.lease?.lease?.closedOn.toNumber(),
       })
       .eq("id", result.id);
     if (error) throw new Error(error.message);

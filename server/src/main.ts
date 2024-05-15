@@ -2,12 +2,12 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import deployRouter from "./routes/deploy";
-import { updateNodes } from "./routes/worker";
-import { getAkashCoinPrice } from "./utils/price";
+import { getAkashCoinPrice } from "./utils/akashPrice";
 import { CronJob } from "cron";
 
 // import https from "https";
 import fs from "fs";
+import { updateNodes } from "./utils/updateNodes";
 const app = express();
 const port = 3001;
 
@@ -24,7 +24,7 @@ app.get("/akash-coin-price", async (_, res) =>
   res.json(await getAkashCoinPrice())
 );
 
-const updateNodesWorker = new CronJob("*/6 * * * * *", updateNodes);
+const updateNodesWorker = new CronJob("*/9 * * * * *", updateNodes);
 
 const options = {
   key: fs.readFileSync("./src/assets/key.cer"),

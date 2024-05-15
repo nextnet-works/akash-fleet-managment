@@ -5,7 +5,6 @@ import axios from "axios";
 export const useLatestBlock = () => {
   const { data } = useQuery({
     queryKey: [queryKeys.last_block],
-    // refetchInterval: 5000,
     queryFn: async () => {
       try {
         const { data } = await axios.get<BlockData>(

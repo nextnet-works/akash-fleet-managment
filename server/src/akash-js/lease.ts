@@ -8,7 +8,7 @@ import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { getRpc } from "@akashnetwork/akashjs/build/rpc";
 
 import { loadPrerequisites } from "./client";
-import { RPC_ENDPOINT } from "./consts";
+import { RPC_ENDPOINT } from "./lib/consts";
 import {
   QueryProviderRequest,
   QueryClientImpl as QueryProviderClient,
@@ -18,7 +18,7 @@ import { sendManifest } from "./manifest";
 import axios from "axios";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { createClient } from "@supabase/supabase-js";
-import { Database, TablesInsert } from "../../types/supabase.gen";
+import { Database, TablesInsert } from "../types/supabase.gen";
 import { ForwarderPortStatus } from "@akashnetwork/akash-api/akash/provider/lease/v1";
 
 export async function createLease(bids: QueryBidResponse["bid"][]) {

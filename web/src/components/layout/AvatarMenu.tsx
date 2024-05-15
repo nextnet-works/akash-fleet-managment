@@ -17,11 +17,11 @@ type Account = {
 const accounts: Account[] = [
   {
     name: "Akash",
-    uri: "stats.akash.network/addresses/akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa",
+    uri: "https://stats.akash.network/addresses/akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa",
   },
   {
     name: "Cloudmos",
-    uri: "cloudmos.io.deployments",
+    uri: "https://deploy.cloudmos.io/deployments",
   },
   {
     name: "AWS (coming soon)",
@@ -50,7 +50,11 @@ export function AvatarMenu() {
         </div>
         <Separator />
         {accounts.map((account, i) => (
-          <DropdownMenuItem key={account.uri} disabled={i > 1}>
+          <DropdownMenuItem
+            key={account.uri}
+            disabled={i > 1}
+            onClick={() => window.open(account.uri, "_blank")}
+          >
             <div className="flex items-center gap-3 cursor-pointer w-full">
               <Avatar className="h-8 w-8">
                 <AvatarImage alt={account.name} src="/placeholder-logo.svg" />
@@ -58,12 +62,7 @@ export function AvatarMenu() {
               </Avatar>
               <div className="flex-1 flex items-center justify-between">
                 <p className="font-medium">{account.name}</p>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="ml-auto"
-                  onClick={() => window.open(account.uri, "_blank")}
-                >
+                <Button size="icon" variant="ghost" className="ml-auto">
                   <ExternalLinkIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </Button>
               </div>

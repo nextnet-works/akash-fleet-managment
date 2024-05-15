@@ -5,8 +5,8 @@ import {
   QueryClientImpl as QueryMarketClient,
 } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
-import { RPC_ENDPOINT } from "./consts";
-import { saveBidsToDB } from "../db";
+import { RPC_ENDPOINT } from "./lib/consts";
+import { saveBidsToDB } from "../utils/db";
 
 export async function fetchBids(
   dseq: number,

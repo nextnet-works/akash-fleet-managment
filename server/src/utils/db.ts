@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { getAkashCoinPrice } from "../utils/price";
+import { getAkashCoinPrice } from "./akashPrice";
 import { QueryBidsResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { Database } from "../types/supabase.gen";
-import { loadPrerequisites } from "./akash/client";
+import { loadPrerequisites } from "../akash-js/client";
 
 export const getAdminDB = () => {
   const supabase = createClient<Database>(

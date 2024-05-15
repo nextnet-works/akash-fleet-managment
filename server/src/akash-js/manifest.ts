@@ -11,7 +11,7 @@ import {
 //   QueryProviderRequest,
 // } from "@akashnetwork/akash-api/akash/provider/v1beta3";
 
-import { RAW_SDL_T2, RPC_ENDPOINT } from "./consts";
+import { RAW_SDL_T2, RPC_ENDPOINT } from "./lib/consts";
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { loadPrerequisites } from "./client";
 import axios from "axios";

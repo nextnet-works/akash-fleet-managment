@@ -1,9 +1,9 @@
 import { status } from "@grpc/grpc-js";
 import { generateYamlWithWebs } from "./yaml";
-import { createDeployment } from "../../utils/akash/createDeployment";
-import { fetchBids } from "../../utils/akash/bids";
-import { RAW_SDL_T2 } from "../../utils/akash/consts";
-import { createLease, saveLeasesToDB } from "../../utils/akash/lease";
+import { createDeployment } from "../../akash-js/createDeployment";
+import { fetchBids } from "../../akash-js/bids";
+import { RAW_SDL_T2 } from "../../akash-js/lib/consts";
+import { createLease, saveLeasesToDB } from "../../akash-js/lease";
 import {
   Lease_State,
   QueryBidResponse,

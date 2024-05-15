@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as YAML from "yaml";
-import { RAW_SDL_T2 } from "../../utils/akash/consts";
+import { RAW_SDL_T2 } from "../../akash-js/lib/consts";
 
 type WebService = {
   image: string;

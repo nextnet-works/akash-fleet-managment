@@ -4,7 +4,7 @@ import { DirectSecp256k1HdWallet, Registry } from "cosmwasm";
 import * as cert from "@akashnetwork/akashjs/build/certificates";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
 import { getAkashTypeRegistry } from "@akashnetwork/akashjs/build/stargate";
-import { CERTIFICATE_PATH, RAW_SDL_T1, RPC_ENDPOINT } from "./consts";
+import { CERTIFICATE_PATH, RAW_SDL_T1, RPC_ENDPOINT } from "./lib/consts";
 
 export async function loadPrerequisites(sdlPath = RAW_SDL_T1) {
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(

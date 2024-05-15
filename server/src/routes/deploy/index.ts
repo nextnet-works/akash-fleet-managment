@@ -1,11 +1,11 @@
-import { DEPLOYMENT_RESOURCES } from "../../utils/akash/consts";
+import { DEPLOYMENT_RESOURCES } from "../../akash-js/lib/consts";
 import { Router } from "express";
 
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { handleSdlFlow } from "./utils";
-import { closeDeployment } from "../../utils/akash/closeDeployment";
-import { ProviderSupply } from "../../utils/akash/types";
+import { closeDeployment } from "../../akash-js/closeDeployment";
+import { ProviderSupply } from "../../akash-js/lib/types";
 
 const router = Router();
 const MAX_LEASES = 10;
