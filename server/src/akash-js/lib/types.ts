@@ -1,5 +1,3 @@
-import { DEPLOYMENT_RESOURCES } from "./consts";
-
 export type Deployment = {
   id: {
     owner: string;
@@ -16,8 +14,6 @@ export type Lease = {
     oseq: number;
   };
 };
-
-export type DeploymentResources = keyof typeof DEPLOYMENT_RESOURCES;
 
 export type ProviderSupply = {
   name: string;

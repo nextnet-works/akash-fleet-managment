@@ -1,11 +1,10 @@
-import { DEPLOYMENT_RESOURCES } from "../../akash-js/lib/consts";
 import { Router } from "express";
 
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { handleSdlFlow } from "./utils";
 import { closeDeployment } from "../../akash-js/closeDeployment";
-import { DeploymentResources, ProviderSupply } from "../../akash-js/lib/types";
+import { ProviderSupply } from "../../akash-js/lib/types";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "../../types/supabase.gen";
 
@@ -14,7 +13,7 @@ const MAX_LEASES = 10;
 
 router.post("/create", async (req, res) => {
   try {
-    const deploymentID = req.body?.body?.deploymentID as DeploymentResources;
+    const deploymentID = req.body?.body?.deploymentID;
 
     if (!deploymentID) {
       return res.status(400).send("deployment is required");
