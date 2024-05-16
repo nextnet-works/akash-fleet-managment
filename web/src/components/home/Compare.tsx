@@ -80,7 +80,10 @@ export function Compare() {
       <DialogTrigger>
         <Button>Price Comparison</Button>
       </DialogTrigger>
-      <DialogContent className="bg-white dark:bg-gray-950 p-6 rounded-lg shadow-lg mx-auto flex flex-col gap-4">
+      <DialogContent
+        className="bg-white dark:bg-gray-950 p-6 rounded-lg shadow-lg mx-auto flex flex-col gap-4"
+        style={{ maxWidth: "90vw", width: "1200px" }}
+      >
         <div className="flex flex-col items-center">
           <h1 className="text-2xl font-bold tracking-tight">
             Pricing Per Hour
@@ -153,7 +156,7 @@ export function Compare() {
                 <TableCell className="p-2">
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-md text-center p-2">
                     {" "}
-                    ${totalOurPlatform ?? 0}
+                    ${totalOurPlatform?.toFixed(2) ?? 0}
                   </div>
                 </TableCell>
               </TableRow>
