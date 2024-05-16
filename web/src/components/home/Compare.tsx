@@ -121,8 +121,9 @@ export function Compare() {
                     <TableCell className="text-center">
                       ${app["vasi.ai"]}
                     </TableCell>
-                    <TableCell className="bg-gray-100 dark:bg-gray-800 rounded-md">
-                      <div className="text-center p-2">
+                    <TableCell className="p-2">
+                      <div className="bg-gray-100 dark:bg-gray-800 rounded-md text-center p-2">
+                        $
                         {(
                           nodes
                             ?.filter((node) => node.sdl_id === app.id)
