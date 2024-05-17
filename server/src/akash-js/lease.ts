@@ -18,7 +18,6 @@ import { sendManifest } from "./manifest";
 import axios from "axios";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { createClient } from "@supabase/supabase-js";
-import { Database, TablesInsert } from "../types/supabase.gen";
 import { ForwarderPortStatus } from "@akashnetwork/akash-api/akash/provider/lease/v1";
 
 export async function createLease(bids: QueryBidResponse["bid"][]) {
@@ -86,25 +85,6 @@ interface LeaseStatusResponse {
   services: Record<string, ServiceInfo>;
   forwarded_ports: Record<string, ForwarderPortStatus>;
   ips: null | string[];
-}
-
-export async function saveLeasesToDB(
-  nodes: TablesInsert<"nodes">[]
-): Promise<void> {
-  try {
-    const supabase = createClient<Database>(
-      process.env.SUPABASE_PROJECT_URL!,
-      process.env.SERVICE_ROLE_KEY!
-    );
-
-    const { error } = await supabase.from("nodes").insert(nodes);
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
-    console.error("Error saving leases to database:", error);
-    throw error;
-  }
 }
 
 export async function queryLeaseStatus(leasId: BidID) {

@@ -4,7 +4,6 @@ exports.fetchBids = void 0;
 const rpc_1 = require("@akashnetwork/akashjs/build/rpc");
 const v1beta4_1 = require("@akashnetwork/akash-api/akash/market/v1beta4");
 const consts_1 = require("./lib/consts");
-const db_1 = require("../utils/db");
 async function fetchBids(dseq, owner, blockHeight, minAttempts = 3) {
     const rpc = await (0, rpc_1.getRpc)(consts_1.RPC_ENDPOINT);
     const client = new v1beta4_1.QueryClientImpl(rpc);
@@ -30,9 +29,6 @@ async function fetchBids(dseq, owner, blockHeight, minAttempts = 3) {
             bids.bids[0].bid !== undefined &&
             attempts >= minAttempts) {
             console.log("Bid fetched!");
-            if (bids.bids.length > 0) {
-                await (0, db_1.saveBidsToDB)(bids.bids, blockHeight);
-            }
             return bids.bids;
         }
     }

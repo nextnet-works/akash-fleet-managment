@@ -1,18 +1,15 @@
-import { status } from "@grpc/grpc-js";
 import { generateYamlWithWebs } from "./yaml";
 import { createDeployment } from "../../akash-js/createDeployment";
 import { fetchBids } from "../../akash-js/bids";
 import { RAW_SDL_T2 } from "../../akash-js/lib/consts";
-import { createLease, saveLeasesToDB } from "../../akash-js/lease";
+import { createLease } from "../../akash-js/lease";
 import {
-  Lease_State,
   QueryBidResponse,
   QueryLeaseResponse,
 } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
-import { Json } from "../../types/supabase.gen";
 
-export const handleSdlFlow = async (deploymentID: number) => {
+export const handleSdlFlow = async () => {
   const respondersLength = await deployGenericSDL();
   const { bids } = await deployAllBiddersSDL(respondersLength);
 
@@ -47,28 +44,6 @@ export const handleSdlFlow = async (deploymentID: number) => {
     ports: string[];
   }[];
 
-  const output = activeNodes.map((lease) => {
-    return {
-      dseq: lease.bidId.dseq.toNumber(),
-      gseq: lease.bidId.gseq,
-      akash_provider: lease.bidId.provider,
-      wallet_address: lease.bidId.owner,
-      json: lease as unknown as Json,
-      provider_uris: lease.serviceUris ?? [],
-      provider_domain: lease.uri,
-      ports: lease.ports,
-      bid_id: `${lease.bidId.owner}/${lease.bidId.dseq}/${lease.bidId.gseq}/1/${lease.bidId.provider}`,
-      price_per_block: lease.lease?.lease?.price?.amount
-        ? Number(lease.lease?.lease?.price?.amount)
-        : 0,
-      state: (lease.lease?.lease?.state ?? Lease_State.UNRECOGNIZED) as number,
-      lease_first_block: lease.lease?.lease?.createdAt?.toNumber() ?? 0,
-      sdl_id: deploymentID,
-      resources: {},
-    };
-  });
-
-  await saveLeasesToDB(output);
   // TODO: add rejected leases to a blacklist of providers
   const leasedRejected = nodes.filter((lease) => !lease.bidId);
 

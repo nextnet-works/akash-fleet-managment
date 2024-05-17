@@ -7,7 +7,6 @@ import { CronJob } from "cron";
 
 // import https from "https";
 import fs from "fs";
-import { updateNodes } from "./utils/updateNodes";
 const app = express();
 const port = 3001;
 
@@ -24,8 +23,6 @@ app.get("/akash-coin-price", async (_, res) =>
   res.json(await getAkashCoinPrice())
 );
 
-const updateNodesWorker = new CronJob("*/9 * * * * *", updateNodes);
-
 const options = {
   key: fs.readFileSync("./src/assets/key.cer"),
   cert: fs.readFileSync("./src/assets/cert.cer"),
@@ -37,7 +34,6 @@ const options = {
 
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  updateNodesWorker.start();
 });
 
 // server.on("error", (err) => {

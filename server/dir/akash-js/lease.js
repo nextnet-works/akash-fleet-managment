@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.queryLeaseServices = exports.queryLeaseStatus = exports.saveLeasesToDB = exports.createLease = void 0;
+exports.queryLeaseServices = exports.queryLeaseStatus = exports.createLease = void 0;
 const https_1 = __importDefault(require("https"));
 const v1beta4_1 = require("@akashnetwork/akash-api/akash/market/v1beta4");
 const rpc_1 = require("@akashnetwork/akashjs/build/rpc");
@@ -12,7 +12,6 @@ const consts_1 = require("./lib/consts");
 const v1beta3_1 = require("@akashnetwork/akash-api/akash/provider/v1beta3");
 const manifest_1 = require("./manifest");
 const axios_1 = __importDefault(require("axios"));
-const supabase_js_1 = require("@supabase/supabase-js");
 async function createLease(bids) {
     const { wallet, client } = await (0, client_1.loadPrerequisites)();
     const accounts = await wallet.getAccounts();
@@ -49,20 +48,6 @@ async function createLease(bids) {
     return successfulLeases;
 }
 exports.createLease = createLease;
-async function saveLeasesToDB(nodes) {
-    try {
-        const supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_PROJECT_URL, process.env.SERVICE_ROLE_KEY);
-        const { error } = await supabase.from("nodes").insert(nodes);
-        if (error) {
-            throw error;
-        }
-    }
-    catch (error) {
-        console.error("Error saving leases to database:", error);
-        throw error;
-    }
-}
-exports.saveLeasesToDB = saveLeasesToDB;
 async function queryLeaseStatus(leasId) {
     const client = new v1beta4_1.QueryClientImpl(await (0, rpc_1.getRpc)(consts_1.RPC_ENDPOINT));
     const getLeaseStatusRequest = v1beta4_1.QueryLeaseRequest.fromPartial({ id: leasId });

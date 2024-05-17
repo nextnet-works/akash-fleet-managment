@@ -6,7 +6,6 @@ import {
 } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { RPC_ENDPOINT } from "./lib/consts";
-import { saveBidsToDB } from "../utils/db";
 
 export async function fetchBids(
   dseq: number,
@@ -44,9 +43,6 @@ export async function fetchBids(
       attempts >= minAttempts
     ) {
       console.log("Bid fetched!");
-      if (bids.bids.length > 0) {
-        await saveBidsToDB(bids.bids, blockHeight);
-      }
       return bids.bids;
     }
   }

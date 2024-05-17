@@ -6,7 +6,6 @@ import { handleSdlFlow } from "./utils";
 import { closeDeployment } from "../../akash-js/closeDeployment";
 import { ProviderSupply } from "../../akash-js/lib/types";
 import { createClient } from "@supabase/supabase-js";
-import { Database } from "../../types/supabase.gen";
 
 const router = Router();
 const MAX_LEASES = 10;
@@ -18,20 +17,6 @@ router.post("/create", async (req, res) => {
     if (!deploymentID) {
       return res.status(400).send("deployment is required");
     }
-    const supabase = createClient<Database>(
-      process.env.SUPABASE_PROJECT_URL!,
-      process.env.SERVICE_ROLE_KEY!
-    );
-
-    const { data: sdl } = await supabase
-      .from("sdl")
-      .select("*")
-      .eq("id", deploymentID)
-      .single();
-
-    if (!sdl) {
-      return res.status(400).send("deployment not found");
-    }
 
     // TODO: save prices of each provider
     const providerSupplies: ProviderSupply[] = [];
@@ -40,7 +25,7 @@ router.post("/create", async (req, res) => {
     let leasesResponses: { bidId: BidID }[] = [];
     let successfulLeaseCount = 0;
     while (!isBidsEmpty) {
-      const { activeNodes } = await handleSdlFlow(sdl.id);
+      const { activeNodes } = await handleSdlFlow();
       console.log(`Leases fulfilled: ${activeNodes.length}`);
       if (activeNodes.length === 0) {
         isBidsEmpty = true;
