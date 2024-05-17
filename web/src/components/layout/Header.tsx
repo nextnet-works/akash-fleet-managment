@@ -8,7 +8,12 @@ export const Header = () => {
       <AvatarMenu />
       <Button asChild variant="ghost">
         <Link to="/" search={undefined}>
-          Home
+          Dashboard
+        </Link>
+      </Button>
+      <Button asChild variant="ghost">
+        <Link to="/" search={undefined}>
+          History
         </Link>
       </Button>
       <Button asChild variant="ghost">

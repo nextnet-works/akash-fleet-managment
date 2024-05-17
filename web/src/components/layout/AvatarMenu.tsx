@@ -5,9 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { ExternalLinkIcon, PlusIcon, UserIcon } from "lucide-react";
+import { UserIcon } from "lucide-react";
 
 type Account = {
   name: string;
@@ -20,15 +18,7 @@ const accounts: Account[] = [
     uri: "https://stats.akash.network/addresses/akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa",
   },
   {
-    name: "Cloudmos",
-    uri: "https://deploy.cloudmos.io/deployments",
-  },
-  {
-    name: "provider1 (coming soon)",
-    uri: "provider1.amazon.com",
-  },
-  {
-    name: "Kepler Wallet (coming soon)",
+    name: "Kepler Wallet",
     uri: "keplerwallet.io",
   },
 ];
@@ -45,10 +35,6 @@ export function AvatarMenu() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className=" space-y-2 p-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium">Linked Accounts</h3>
-        </div>
-        <Separator />
         {accounts.map((account, i) => (
           <DropdownMenuItem
             key={account.uri}
@@ -62,17 +48,10 @@ export function AvatarMenu() {
               </Avatar>
               <div className="flex-1 flex items-center justify-between">
                 <p className="font-medium">{account.name}</p>
-                <Button size="icon" variant="ghost" className="ml-auto">
-                  <ExternalLinkIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                </Button>
               </div>
             </div>
           </DropdownMenuItem>
         ))}
-        <Separator />
-        <Button variant="outline" className="w-full">
-          Link New Account <PlusIcon className="h-4 w-4 mx-2" />
-        </Button>
       </DropdownMenuContent>
     </DropdownMenu>
   );
