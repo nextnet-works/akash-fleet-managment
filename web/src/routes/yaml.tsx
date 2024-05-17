@@ -67,12 +67,12 @@ function Yaml() {
       <h1 className="text-2xl font-bold">YAML Editor</h1>
       <Select onValueChange={handleSelect}>
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select TShirt" />
+          <SelectValue placeholder="Select SDL" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Select TShirt</SelectLabel>
-            <SelectItem value="0">Select TShirt</SelectItem>
+            <SelectLabel>Select SDL</SelectLabel>
+            <SelectItem value="0">Select SDL</SelectItem>
             {data.map((item) => (
               <SelectItem key={item.id} value={item.id.toString()}>
                 {item.name}

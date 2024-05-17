@@ -45,21 +45,23 @@ export function Compare() {
 
   if (!nodes) return null;
 
-  const totalGCP = filteredSdl?.reduce((acc, app) => {
+  const totalprovider2 = filteredSdl?.reduce((acc, app) => {
     return (
-      acc + app.gcp * nodes?.filter((node) => node.sdl_id === app.id).length
+      acc +
+      app.provider2 * nodes?.filter((node) => node.sdl_id === app.id).length
     );
   }, 0);
-  const totalAWS = filteredSdl?.reduce((acc, app) => {
+  const totalprovider1 = filteredSdl?.reduce((acc, app) => {
     return (
-      acc + app.aws * nodes?.filter((node) => node.sdl_id === app.id).length
+      acc +
+      app.provider1 * nodes?.filter((node) => node.sdl_id === app.id).length
     );
   }, 0);
 
-  const totalDigitalOcean = filteredSdl?.reduce((acc, app) => {
+  const totalprovider3 = filteredSdl?.reduce((acc, app) => {
     return (
       acc +
-      app["vasi.ai"] * nodes?.filter((node) => node.sdl_id === app.id).length
+      app["provider4"] * nodes?.filter((node) => node.sdl_id === app.id).length
     );
   }, 0);
 
@@ -93,10 +95,10 @@ export function Compare() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>TShirt Name</TableHead>
-                <TableHead className="text-center">GCP</TableHead>
-                <TableHead className="text-center">AWS</TableHead>
-                <TableHead className="text-center">Vasi.ai</TableHead>
+                <TableHead>SDL Name</TableHead>
+                <TableHead className="text-center">provider2</TableHead>
+                <TableHead className="text-center">provider1</TableHead>
+                <TableHead className="text-center">provider4</TableHead>
                 <TableHead className="p-2">
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-md text-center p-2">
                     Current
@@ -116,10 +118,14 @@ export function Compare() {
                         )
                       </span>
                     </TableCell>
-                    <TableCell className="text-center">${app.gcp}</TableCell>
-                    <TableCell className="text-center">${app.aws}</TableCell>
                     <TableCell className="text-center">
-                      ${app["vasi.ai"]}
+                      ${app.provider2}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      ${app.provider1}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      ${app["provider4"]}
                     </TableCell>
                     <TableCell className="p-2">
                       <div className="bg-gray-100 dark:bg-gray-800 rounded-md text-center p-2">
@@ -146,13 +152,13 @@ export function Compare() {
                   Total: {nodes?.length}
                 </TableCell>
                 <TableCell className="font-medium text-center">
-                  ${totalGCP}
+                  ${totalprovider2}
                 </TableCell>
                 <TableCell className="font-medium text-center">
-                  ${totalAWS}
+                  ${totalprovider1}
                 </TableCell>
                 <TableCell className="font-medium text-center">
-                  ${totalDigitalOcean}
+                  ${totalprovider3}
                 </TableCell>
                 <TableCell className="p-2">
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-md text-center p-2">

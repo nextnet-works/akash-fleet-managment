@@ -6,7 +6,7 @@ export const CERTIFICATE_PATH = "./src/akash-js/assets/cert.json";
 // you can set this to a specific deployment sequence number to skip the deployment creation
 export const DSEQ = 0;
 
-export const RESOURCES_MORPHEUS = {
+export const RESOURCES_SDL_TEST = {
   cpu: 10 ^ 2,
   gpu: 1,
   memory: 10 ^ 8,
@@ -14,5 +14,5 @@ export const RESOURCES_MORPHEUS = {
 } as const;
 
 export const DEPLOYMENT_RESOURCES = {
-  ["Mor-S-SDL"]: RESOURCES_MORPHEUS,
+  ["Mor-S-SDL"]: RESOURCES_SDL_TEST,
 } as const;

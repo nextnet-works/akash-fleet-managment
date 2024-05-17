@@ -26,7 +26,7 @@ export const Deployments = () => {
         if (!sdlID) {
           toast({
             title: "Error",
-            description: "Please select a TShirt",
+            description: "Please select a SDL",
           });
           return;
         }
@@ -69,11 +69,11 @@ export const Deployments = () => {
       <div className="flex items-center justify-between gap-4 w-full">
         <Select onValueChange={(value) => setSdlID(value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Select TShirt" />
+            <SelectValue placeholder="Select SDL" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="0">Select TShirt</SelectItem>
+              <SelectItem value="0">Select SDL</SelectItem>
               {sdls?.map((item) => (
                 <SelectItem key={item.id} value={item.id.toString()}>
                   {item.name}

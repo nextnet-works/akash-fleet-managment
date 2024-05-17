@@ -24,8 +24,8 @@ const accounts: Account[] = [
     uri: "https://deploy.cloudmos.io/deployments",
   },
   {
-    name: "AWS (coming soon)",
-    uri: "aws.amazon.com",
+    name: "provider1 (coming soon)",
+    uri: "provider1.amazon.com",
   },
   {
     name: "Kepler Wallet (coming soon)",

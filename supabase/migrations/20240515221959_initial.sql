@@ -38,8 +38,8 @@ create table "public"."sdl" (
     "created_at" timestamp with time zone not null default now(),
     "yml_json" jsonb,
     "name" text not null,
-    "vasi.ai" numeric not null,
-    "gcp" numeric not null,
+    "provider4" numeric not null,
+    "provider2" numeric not null,
     "aws" numeric not null
 );
 

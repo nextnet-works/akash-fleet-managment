@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const consts_1 = require("../../akash-js/lib/consts");
 const express_1 = require("express");
 const utils_1 = require("./utils");
 const closeDeployment_1 = require("../../akash-js/closeDeployment");
@@ -22,7 +21,6 @@ router.post("/create", async (req, res) => {
         if (!sdl) {
             return res.status(400).send("deployment not found");
         }
-        const resourceUsed = consts_1.DEPLOYMENT_RESOURCES[sdl.name];
         // TODO: save prices of each provider
         const providerSupplies = [];
         let isBidsEmpty = false;
@@ -39,19 +37,6 @@ router.post("/create", async (req, res) => {
                 if (successfulLeaseCount >= MAX_LEASES) {
                     isBidsEmpty = true;
                     return;
-                }
-                const providerIndex = providerSupplies.findIndex((provider) => provider.name === lease.bidId?.provider);
-                if (providerIndex === -1) {
-                    providerSupplies.push({
-                        ...resourceUsed,
-                        name: lease?.bidId?.provider ?? "",
-                    });
-                }
-                else {
-                    providerSupplies[providerIndex].cpu += resourceUsed.cpu;
-                    providerSupplies[providerIndex].gpu += resourceUsed.gpu;
-                    providerSupplies[providerIndex].memory += resourceUsed.memory;
-                    providerSupplies[providerIndex].storage += resourceUsed.storage;
                 }
                 successfulLeaseCount++;
                 leasesResponses.push(lease);
