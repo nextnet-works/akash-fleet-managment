@@ -106,12 +106,19 @@ export const Deployments = () => {
           return;
         }
         const sdlFile = sdls.find((item) => item.name === sdl);
+        if (!sdlFile) {
+          toast({
+            title: "Error",
+            description: "SDL not found",
+          });
+          return;
+        }
 
         const response = await axios.post<ProviderResources[]>(
           `${import.meta.env.VITE_NODE_SERVER_API}/deploy/create`,
           {
             body: {
-              sdlFile,
+              sdlFile: sdlFile.file,
             },
           },
           {

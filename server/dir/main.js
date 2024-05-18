@@ -9,7 +9,7 @@ const cors_1 = __importDefault(require("cors"));
 const deploy_1 = __importDefault(require("./routes/deploy"));
 const akashPrice_1 = require("./utils/akashPrice");
 const app = (0, express_1.default)();
-const port = 3001;
+const port = 3000;
 app.use(
 // cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
 (0, cors_1.default)());

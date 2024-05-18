@@ -8,7 +8,7 @@ import { CronJob } from "cron";
 // import https from "https";
 import fs from "fs";
 const app = express();
-const port = 3001;
+const port = 3000;
 
 app.use(
   // cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
