@@ -97,6 +97,14 @@ function Home() {
 
   const currentBlock = useLatestBlock();
 
+  if (!akashKey) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        Login with Keplr to view your deployments
+      </div>
+    );
+  }
+
   if (isPending) return <Loader />;
   if (error) return <ErrorUI message={error.message} />;
   return (

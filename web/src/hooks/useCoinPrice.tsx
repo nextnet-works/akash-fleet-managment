@@ -5,7 +5,7 @@ import axios from "axios";
 export const useCoinPrice = () => {
   const { data } = useQuery({
     queryKey: [queryKeys.coin_price],
-    refetchInterval: 10000, // Refetch every 60 seconds
+    refetchInterval: 60000, // Refetch every 60 seconds
     queryFn: async () => {
       try {
         const response = await axios.get<number>(

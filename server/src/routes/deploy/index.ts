@@ -18,8 +18,6 @@ router.post("/create", async (req, res) => {
       return res.status(400).send("deployment is required");
     }
 
-    console.log(sdlFile);
-
     // TODO: save prices of each provider
     const providerSupplies: ProviderSupply[] = [];
 
