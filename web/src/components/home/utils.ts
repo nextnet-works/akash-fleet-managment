@@ -56,7 +56,7 @@ export const getLeftBlock = (
     );
   }, 0);
 
-  console.log(totalDurationInMinutes);
+  console.log(leases);
 
   const totalDuration = convertToReadableTime(
     (totalDurationInMinutes + secondsToAdd / 60) * 60 * 1000
@@ -71,7 +71,7 @@ export const getLeftBlock = (
 
   return [
     {
-      title: "Total Nodes",
+      title: "Total Active Nodes",
       description: "Total number of nodes based on current filters",
       value: totalNodes.toString(),
     },
@@ -101,14 +101,14 @@ export const getRightBlock = (
       if (node.lease.created_at && node.lease.closed_on) {
         return (
           acc +
-          Number(node.lease.price) *
+          Number(node.lease.price.amount) *
             (Number(node.lease.closed_on) - Number(node.lease.created_at))
         );
       }
       if (!node.lease.created_at) return acc;
       return (
         acc +
-        Number(node.lease.price) *
+        Number(node.lease.price.amount) *
           (currentBlock - Number(node.lease.created_at))
       );
     }, 0) /

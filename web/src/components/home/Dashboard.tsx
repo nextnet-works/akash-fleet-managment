@@ -10,12 +10,12 @@ import { getLeftBlock, getRightBlock } from "./utils";
 import { useBalance } from "@/hooks/queries/useBalance";
 import { useDashboardSummary } from "@/hooks/queries/useDashboardSummary";
 import { useTimer } from "@/hooks/useTimer";
+import { useStore } from "@/store";
 
 export const Dashboard = () => {
   const currentBlock = useLatestBlock();
-  const totalBalance = useBalance(
-    "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa"
-  );
+  const akashKey = useStore((state) => state.akashKey);
+  const totalBalance = useBalance(akashKey);
   const { leases, error, isPending } = useDashboardSummary();
 
   const coinPrice = useCoinPrice();
@@ -29,6 +29,7 @@ export const Dashboard = () => {
   const activeNodes = leases.filter(
     (node) => node.lease.state === Lease_State.active.toString()
   );
+
   const leftBlock = getLeftBlock(activeNodes, currentBlock, secondsPassed);
   const rightBlock = getRightBlock(leases, totalInUSD, currentBlock, coinPrice);
 

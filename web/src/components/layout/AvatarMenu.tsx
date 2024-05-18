@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
+import { useStore } from "@/store";
 import { UserIcon } from "lucide-react";
 
 type Account = {
@@ -20,6 +21,19 @@ const accounts: Account[] = [
 ];
 
 export function AvatarMenu() {
+  const setAkashKey = useStore((state) => state.setAkashKey);
+  const handleLoginWithKeplr = async () => {
+    if (!window.keplr) {
+      alert("Please install keplr extension");
+    } else {
+      const chainId = "akashnet-2";
+      await window.keplr.enable(chainId);
+      const offlineSigner = window.keplr.getOfflineSigner(chainId);
+      const accounts = await offlineSigner.getAccounts();
+      setAkashKey(accounts[0].address);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -35,7 +49,7 @@ export function AvatarMenu() {
           <DropdownMenuItem
             key={account.uri}
             disabled={i > 1}
-            onClick={() => window.open(account.uri, "_blank")}
+            onClick={handleLoginWithKeplr}
           >
             <div className="flex items-center gap-3 cursor-pointer w-full">
               <Avatar className="h-8 w-8">

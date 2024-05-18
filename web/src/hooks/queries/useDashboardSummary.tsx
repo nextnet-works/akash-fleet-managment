@@ -1,9 +1,11 @@
 import { queryKeys } from "@/lib/consts";
+import { useStore } from "@/store";
 import { LeaseResponse } from "@/types/akash";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const useDashboardSummary = () => {
+  const akashKey = useStore((state) => state.akashKey);
   const {
     data: leases,
     error,
@@ -15,8 +17,8 @@ export const useDashboardSummary = () => {
         "https://akash-api.polkachu.com/akash/market/v1beta4/leases/list",
         {
           params: {
-            "filters.owner": "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa",
-            "pagination.limit": 1000,
+            "filters.owner": akashKey,
+            "pagination.limit": 200,
             "pagination.count_total": true,
           },
         }
@@ -24,6 +26,7 @@ export const useDashboardSummary = () => {
 
       return res.data.leases as LeaseResponse[];
     },
+    enabled: !!akashKey,
   });
 
   return { leases, error, isPending };

@@ -16,10 +16,11 @@ type WalletsFunds = {
   pagination: Pagination;
 };
 
-export const useBalance = (key: string) => {
+export const useBalance = (key: string | null) => {
   const { data: totalBalance } = useQuery({
     queryKey: [queryKeys.total_balance, key],
     queryFn: async () => {
+      if (!key) return 0;
       const response = await axios.get<WalletsFunds>(
         `${MAIN_NET}/cosmos/bank/v1beta1/balances/${key}`
       );
@@ -28,6 +29,7 @@ export const useBalance = (key: string) => {
       );
       return Number(akashBalance?.amount);
     },
+    enabled: !!key,
   });
 
   return totalBalance ?? 0;
