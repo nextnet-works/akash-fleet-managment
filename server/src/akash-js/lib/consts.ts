@@ -1,6 +1,6 @@
 export const RPC_ENDPOINT = "https://rpc.akashnet.net:443";
-export const RAW_SDL_T1 = "./src/akash-js/assets/Mor-S-SDL-T1.yml";
-export const RAW_SDL_T2 = "./src/akash-js/assets/Mor-S-SDL-T2.yml";
+export const RAW_SDL_T1 = "./src/akash-js/assets/SDL-T1.yml";
+export const RAW_SDL_T2 = "./src/akash-js/assets/SDL-T2.yml";
 export const CERTIFICATE_PATH = "./src/akash-js/assets/cert.json";
 
 // you can set this to a specific deployment sequence number to skip the deployment creation

@@ -1,16 +1,18 @@
 import { generateYamlWithWebs } from "./yaml";
 import { createDeployment } from "../../akash-js/createDeployment";
 import { fetchBids } from "../../akash-js/bids";
-import { RAW_SDL_T2 } from "../../akash-js/lib/consts";
+import { RAW_SDL_T1, RAW_SDL_T2 } from "../../akash-js/lib/consts";
 import { createLease } from "../../akash-js/lease";
+import * as fs from "fs";
+import * as YAML from "yaml";
 import {
   QueryBidResponse,
   QueryLeaseResponse,
 } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
-export const handleSdlFlow = async () => {
-  const respondersLength = await deployGenericSDL();
+export const handleSdlFlow = async (sdlFile: Record<string, any>) => {
+  const respondersLength = await deployGenericSDL(sdlFile);
   const { bids } = await deployAllBiddersSDL(respondersLength);
 
   const filteredBids: QueryBidResponse["bid"][] = [];
@@ -50,8 +52,11 @@ export const handleSdlFlow = async () => {
   return { activeNodes, leasedRejected };
 };
 
-export const deployGenericSDL = async () => {
-  const { dseq, owner, tx } = await createDeployment();
+export const deployGenericSDL = async (sdlFile: Record<string, any>) => {
+  const yamlStr = YAML.stringify(sdlFile);
+
+  fs.writeFileSync(RAW_SDL_T1, yamlStr, "utf8");
+  const { dseq, owner, tx } = await createDeployment(RAW_SDL_T1);
 
   const bids = await fetchBids(dseq, owner, tx.height);
 

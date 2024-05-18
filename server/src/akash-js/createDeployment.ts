@@ -4,7 +4,7 @@ import { MsgCreateDeployment } from "@akashnetwork/akash-api/akash/deployment/v1
 
 import { loadPrerequisites } from "./client";
 
-export async function createDeployment(sdlPath?: string) {
+export async function createDeployment(sdlPath: string) {
   const { wallet, client, sdl } = await loadPrerequisites(sdlPath);
 
   const blockHeight = await client.getHeight();

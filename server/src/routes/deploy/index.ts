@@ -12,9 +12,9 @@ const MAX_LEASES = 10;
 
 router.post("/create", async (req, res) => {
   try {
-    const deploymentID = req.body?.body?.deploymentID;
+    const sdlFile = req.body?.body?.sdlFile;
 
-    if (!deploymentID) {
+    if (!sdlFile) {
       return res.status(400).send("deployment is required");
     }
 
@@ -25,7 +25,7 @@ router.post("/create", async (req, res) => {
     let leasesResponses: { bidId: BidID }[] = [];
     let successfulLeaseCount = 0;
     while (!isBidsEmpty) {
-      const { activeNodes } = await handleSdlFlow();
+      const { activeNodes } = await handleSdlFlow(sdlFile);
       console.log(`Leases fulfilled: ${activeNodes.length}`);
       if (activeNodes.length === 0) {
         isBidsEmpty = true;

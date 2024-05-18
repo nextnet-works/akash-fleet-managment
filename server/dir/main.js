@@ -8,8 +8,6 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const deploy_1 = __importDefault(require("./routes/deploy"));
 const akashPrice_1 = require("./utils/akashPrice");
-// import https from "https";
-const fs_1 = __importDefault(require("fs"));
 const app = (0, express_1.default)();
 const port = 3001;
 app.use(
@@ -18,10 +16,10 @@ app.use(
 app.use(express_1.default.json());
 app.use("/deploy", deploy_1.default);
 app.get("/akash-coin-price", async (_, res) => res.json(await (0, akashPrice_1.getAkashCoinPrice)()));
-const options = {
-    key: fs_1.default.readFileSync("./src/assets/key.cer"),
-    cert: fs_1.default.readFileSync("./src/assets/cert.cer"),
-};
+// const options = {
+//   key: fs.readFileSync("./src/assets/key.cer"),
+//   cert: fs.readFileSync("./src/assets/cert.cer"),
+// };
 // https
 //   .createServer(options, app)
 //   .listen(port, () => console.log(`Server running on port ${port}`));

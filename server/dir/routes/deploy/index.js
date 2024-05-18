@@ -7,8 +7,8 @@ const router = (0, express_1.Router)();
 const MAX_LEASES = 10;
 router.post("/create", async (req, res) => {
     try {
-        const deploymentID = req.body?.body?.deploymentID;
-        if (!deploymentID) {
+        const sdlFile = req.body?.body?.sdlFile;
+        if (!sdlFile) {
             return res.status(400).send("deployment is required");
         }
         // TODO: save prices of each provider
@@ -17,7 +17,7 @@ router.post("/create", async (req, res) => {
         let leasesResponses = [];
         let successfulLeaseCount = 0;
         while (!isBidsEmpty) {
-            const { activeNodes } = await (0, utils_1.handleSdlFlow)();
+            const { activeNodes } = await (0, utils_1.handleSdlFlow)(sdlFile);
             console.log(`Leases fulfilled: ${activeNodes.length}`);
             if (activeNodes.length === 0) {
                 isBidsEmpty = true;
