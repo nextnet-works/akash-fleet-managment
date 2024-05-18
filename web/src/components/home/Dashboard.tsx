@@ -16,7 +16,7 @@ export const Dashboard = () => {
   const totalBalance = useBalance(
     "akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa"
   );
-  const { nodes, error, isPending } = useDashboardSummary();
+  const { leases, error, isPending } = useDashboardSummary();
 
   const coinPrice = useCoinPrice();
   const secondsPassed = useTimer();
@@ -24,11 +24,13 @@ export const Dashboard = () => {
 
   if (isPending) return <Loader />;
 
-  if (error || !nodes) return <ErrorUI message={error?.message} />;
+  if (error || !leases) return <ErrorUI message={error?.message} />;
 
-  const activeNodes = nodes.filter((node) => node.state === Lease_State.active);
+  const activeNodes = leases.filter(
+    (node) => node.lease.state === Lease_State.active.toString()
+  );
   const leftBlock = getLeftBlock(activeNodes, currentBlock, secondsPassed);
-  const rightBlock = getRightBlock(nodes, totalInUSD, currentBlock, coinPrice);
+  const rightBlock = getRightBlock(leases, totalInUSD, currentBlock, coinPrice);
 
   return (
     <Card>

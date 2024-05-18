@@ -87,7 +87,7 @@ type Attribute = {
 };
 
 type GPUModel = {
-  interface: string;
+  type: string;
   model: string;
   ram: string;
   vendor: string;
@@ -128,4 +128,48 @@ export type ProviderResources = {
   storage: number;
   price: number;
   provider: string;
+};
+
+type LeaseId = {
+  owner: string;
+  dseq: string;
+  gseq: number;
+  oseq: number;
+  provider: string;
+};
+
+type Price = {
+  denom: string;
+  amount: string;
+};
+
+type Lease = {
+  lease_id: LeaseId;
+  state: string;
+  price: Price;
+  created_at: string;
+  closed_on: string;
+};
+
+type AccountId = {
+  scope: string;
+  xid: string;
+};
+
+type EscrowPayment = {
+  account_id: AccountId;
+  payment_id: string;
+  owner: string;
+  state: string;
+  rate: Price;
+  balance: Price;
+  withdrawn: {
+    denom: string;
+    amount: string;
+  };
+};
+
+export type LeaseResponse = {
+  lease: Lease;
+  escrow_payment: EscrowPayment;
 };

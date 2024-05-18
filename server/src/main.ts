@@ -23,10 +23,10 @@ app.get("/akash-coin-price", async (_, res) =>
   res.json(await getAkashCoinPrice())
 );
 
-const options = {
-  key: fs.readFileSync("./src/assets/key.cer"),
-  cert: fs.readFileSync("./src/assets/cert.cer"),
-};
+// const options = {
+//   key: fs.readFileSync("./src/assets/key.cer"),
+//   cert: fs.readFileSync("./src/assets/cert.cer"),
+// };
 
 // https
 //   .createServer(options, app)

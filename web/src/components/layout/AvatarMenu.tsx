@@ -14,10 +14,6 @@ type Account = {
 
 const accounts: Account[] = [
   {
-    name: "Akash",
-    uri: "https://stats.akash.network/addresses/akash1yddk6apmrtkcfzn85h5arnz7dfel8qxdyc02xa",
-  },
-  {
     name: "Kepler Wallet",
     uri: "keplerwallet.io",
   },

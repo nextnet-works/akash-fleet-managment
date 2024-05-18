@@ -16,9 +16,6 @@ export const Header = () => {
           History
         </Link>
       </Button>
-      <Button asChild variant="ghost">
-        <Link to="/yaml">Editor</Link>
-      </Button>
     </div>
   );
 };

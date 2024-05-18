@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Link } from "@tanstack/react-router";
+// import { Link } from "@tanstack/react-router";
 
 import {
   Select,
@@ -13,12 +13,11 @@ import {
 import { ProviderResources } from "@/types/akash";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useSdl } from "@/hooks/queries/useSdl";
+// import { useSdl } from "@/hooks/queries/useSdl";
 import { useToast } from "../ui/use-toast";
 
 export const Deployments = () => {
   const [sdlID, setSdlID] = useState<string>("");
-  const sdls = useSdl();
   const { toast } = useToast();
   const { mutateAsync: handleCreateDeployment, isPending: isCreating } =
     useMutation({
@@ -74,17 +73,17 @@ export const Deployments = () => {
           <SelectContent>
             <SelectGroup>
               <SelectItem value="0">Select SDL</SelectItem>
-              {sdls?.map((item) => (
+              {/* {sdls?.map((item) => (
                 <SelectItem key={item.id} value={item.id.toString()}>
                   {item.name}
                 </SelectItem>
-              ))}
+              ))} */}
             </SelectGroup>
           </SelectContent>
         </Select>{" "}
-        <Button asChild variant={"outline"}>
+        {/* <Button asChild variant={"outline"}>
           <Link to="/yaml">Edit New</Link>
-        </Button>
+        </Button> */}
         <Button onClick={() => handleCreateDeployment(sdlID)}>
           {isCreating ? "Processing.." : "Deploy"}
         </Button>
