@@ -27,7 +27,7 @@ export const Dashboard = () => {
   if (error || !leases) return <ErrorUI message={error?.message} />;
 
   const activeNodes = leases.filter(
-    (node) => node.lease.state === Lease_State.active.toString()
+    (node) => node.lease.state === Lease_State.active.toString(),
   );
 
   const leftBlock = getLeftBlock(activeNodes, currentBlock, secondsPassed);

@@ -45,7 +45,7 @@ export async function createLease(bids: QueryBidResponse["bid"][]) {
     accounts[0].address,
     leasesMessage,
     fee,
-    "create lease"
+    "create lease",
   );
 
   ///
@@ -63,7 +63,7 @@ export async function createLease(bids: QueryBidResponse["bid"][]) {
         lease,
         ports,
       };
-    })
+    }),
   );
 
   return successfulLeases;
@@ -141,7 +141,7 @@ export async function queryLeaseServices(bidId: BidID | undefined): Promise<{
           Accept: "application/json",
         },
         httpsAgent: agent,
-      }
+      },
     );
 
     const servicesUri: string[] = [];

@@ -23,7 +23,7 @@ export const handleSdlFlow = async (sdlFile: Record<string, any>) => {
   gseqArray.forEach((gseq) => {
     const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
     const sortedBids = gseqBids.sort(
-      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount)
+      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount),
     );
 
     if (!sortedBids[0]?.bid) {

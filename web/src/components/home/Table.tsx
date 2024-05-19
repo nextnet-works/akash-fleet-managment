@@ -68,7 +68,7 @@ export const DashboardTable = ({
                   $
                   {getPricePerHour(
                     Number(lease.lease.price.amount),
-                    coinPrice
+                    coinPrice,
                   ).toFixed(2)}
                 </TableCell>
                 <TableCell className="text-center">
@@ -91,18 +91,18 @@ export const DashboardTable = ({
                   {convertToReadableTime(
                     getLeaseActiveTimeInMinutes(
                       Number(lease.lease.created_at),
-                      currentBlock
+                      currentBlock,
                     ) +
                       (lease.lease.state === Lease_State.active.toString()
                         ? (secondsPassed / 60) * 60 * 1000
-                        : 0)
+                        : 0),
                   )}
                 </TableCell>
                 <TableCell className="text-center">
                   <span
                     className={getRankingColor(
                       lease.rank,
-                      leasesWithRanking.length
+                      leasesWithRanking.length,
                     )}
                   >
                     {lease.rank} / {leasesWithRanking.length}

@@ -1,7 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+var __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
+  };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const express_1 = __importDefault(require("express"));
@@ -11,11 +13,14 @@ const akashPrice_1 = require("./utils/akashPrice");
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(
-// cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
-(0, cors_1.default)());
+  // cors({ origin: ["https://akash-gamma.vercel.app", "http://localhost:5173"] })
+  (0, cors_1.default)(),
+);
 app.use(express_1.default.json());
 app.use("/deploy", deploy_1.default);
-app.get("/akash-coin-price", async (_, res) => res.json(await (0, akashPrice_1.getAkashCoinPrice)()));
+app.get("/akash-coin-price", async (_, res) =>
+  res.json(await (0, akashPrice_1.getAkashCoinPrice)()),
+);
 // const options = {
 //   key: fs.readFileSync("./src/assets/key.cer"),
 //   cert: fs.readFileSync("./src/assets/cert.cer"),
@@ -24,7 +29,7 @@ app.get("/akash-coin-price", async (_, res) => res.json(await (0, akashPrice_1.g
 //   .createServer(options, app)
 //   .listen(port, () => console.log(`Server running on port ${port}`));
 const server = app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
 // server.on("error", (err) => {
 //   console.error("Server encountered an error:", err);

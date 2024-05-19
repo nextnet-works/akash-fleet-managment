@@ -7,7 +7,7 @@ import { LeaseResponse } from "@/types/akash";
 
 export const getAllBlockPrice = (leases: LeaseResponse[]) => {
   const activeLeases = leases.filter(
-    (lease) => lease.lease.state === Lease_State.active.toString()
+    (lease) => lease.lease.state === Lease_State.active.toString(),
   );
   const sumPrices = activeLeases.reduce((acc, node) => {
     return acc + Number(node.lease.price.amount);
@@ -18,13 +18,13 @@ export const getAllBlockPrice = (leases: LeaseResponse[]) => {
 export const addRanking = (leases: LeaseResponse[]) => {
   const clonedNodes = structuredClone(leases);
   const sortedNodes = clonedNodes.sort(
-    (a, b) => Number(a.lease.price) - Number(b.lease.price)
+    (a, b) => Number(a.lease.price) - Number(b.lease.price),
   );
   return leases.map((lease) => {
     const rank = sortedNodes.findIndex(
       (n) =>
         n.lease.lease_id.dseq + n.lease.lease_id.gseq ===
-        lease.lease.lease_id.dseq + lease.lease.lease_id.gseq
+        lease.lease.lease_id.dseq + lease.lease.lease_id.gseq,
     );
     return {
       ...lease,
@@ -46,7 +46,7 @@ export const getRankingColor = (rank: number, totalLength: number) => {
 export const getLeftBlock = (
   leases: LeaseResponse[],
   currentBlock: number,
-  secondsPassed: number
+  secondsPassed: number,
 ) => {
   const totalNodes = leases.length;
   const secondsToAdd = secondsPassed * totalNodes;
@@ -57,14 +57,14 @@ export const getLeftBlock = (
   }, 0);
 
   const totalDuration = convertToReadableTime(
-    (totalDurationInMinutes + secondsToAdd / 60) * 60 * 1000
+    (totalDurationInMinutes + secondsToAdd / 60) * 60 * 1000,
   );
   const sumPrice = getAllBlockPrice(leases);
   const spendPerMinute = sumPrice * 10;
 
   const remainingTimeMS = (spendPerMinute - secondsToAdd / 60) * 60 * 1000;
   const remainingTime = convertToReadableTime(
-    remainingTimeMS > 0 ? remainingTimeMS : 0
+    remainingTimeMS > 0 ? remainingTimeMS : 0,
   );
 
   return [
@@ -92,7 +92,7 @@ export const getRightBlock = (
   leases: LeaseResponse[],
   remainingBalance: number,
   currentBlock: number,
-  coinPrice: number
+  coinPrice: number,
 ) => {
   const spending =
     (leases.reduce((acc, node) => {
@@ -142,7 +142,7 @@ export const getRightBlock = (
 
 export const getPricePerHour = (
   pricePerBlockInUAKT: number,
-  coinPrice: number
+  coinPrice: number,
 ) => {
   const pricePerBlockInAKT = pricePerBlockInUAKT / 1000000;
   const pricePerHour = pricePerBlockInAKT * 10 * 60;
