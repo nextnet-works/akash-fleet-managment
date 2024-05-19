@@ -19,3 +19,7 @@ export const yellow =
   "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400";
 export const red =
   "bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400";
+
+export const CHAIN_ID = "akashnet-2";
+
+export const RPC_ENDPOINT = "https://akash-api.polkachu.com/akash";

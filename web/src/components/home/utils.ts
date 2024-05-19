@@ -56,8 +56,6 @@ export const getLeftBlock = (
     );
   }, 0);
 
-  console.log(leases);
-
   const totalDuration = convertToReadableTime(
     (totalDurationInMinutes + secondsToAdd / 60) * 60 * 1000
   );

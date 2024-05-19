@@ -5,6 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Loader } from "@/components/Loader";
 import { ErrorUI } from "@/components/Error";
 import { ThemeProvider } from "@/components/theme-provider";
+import { useEffect } from "react";
+import { useStore } from "@/store";
+import { getKeplerAccounts } from "@/lib/kepler/utils";
 
 export const Route = createRootRoute({
   component: Root,
@@ -13,6 +16,13 @@ export const Route = createRootRoute({
 });
 
 function Root() {
+  const setAkashKey = useStore((state) => state.setAkashKey);
+  useEffect(() => {
+    (async () => {
+      const accounts = await getKeplerAccounts();
+      setAkashKey(accounts[0].address);
+    })();
+  }, []);
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Header />

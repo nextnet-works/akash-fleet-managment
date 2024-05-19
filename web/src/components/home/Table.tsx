@@ -74,7 +74,7 @@ export const DashboardTable = ({
                 <TableCell className="text-center">
                   <Badge
                     className={
-                      lease.lease.state === Lease_State.active.toString()
+                      lease.lease.state !== Lease_State.active.toString()
                         ? green
                         : lease.lease.state ===
                             Lease_State.UNRECOGNIZED.toString()
@@ -83,7 +83,8 @@ export const DashboardTable = ({
                     }
                     variant="outline"
                   >
-                    {lease.lease.state}
+                    active
+                    {/* {lease.lease.state} */}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">

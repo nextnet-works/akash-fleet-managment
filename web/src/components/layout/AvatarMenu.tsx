@@ -5,34 +5,36 @@ import {
   DropdownMenuContent,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
+import { getKeplerAccounts } from "@/lib/kepler/utils";
 import { useStore } from "@/store";
-import { UserIcon } from "lucide-react";
+import { LogOutIcon, LucideProps, UserIcon } from "lucide-react";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
+import { Button } from "../ui/button";
 
-type Account = {
+type Action = {
   name: string;
-  uri: string;
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
 };
 
-const accounts: Account[] = [
-  {
-    name: "Kepler Wallet",
-    uri: "keplerwallet.io",
-  },
-];
-
 export function AvatarMenu() {
-  const setAkashKey = useStore((state) => state.setAkashKey);
-  const handleLoginWithKeplr = async () => {
-    if (!window.keplr) {
-      alert("Please install keplr extension");
-    } else {
-      const chainId = "akashnet-2";
-      await window.keplr.enable(chainId);
-      const offlineSigner = window.keplr.getOfflineSigner(chainId);
-      const accounts = await offlineSigner.getAccounts();
-      setAkashKey(accounts[0].address);
+  const { setAkashKey, akashKey } = useStore((state) => state);
+  const handleLoginWithKepler = async () => {
+    if (akashKey) {
+      setAkashKey(null);
+      return;
     }
+    const accounts = await getKeplerAccounts();
+    setAkashKey(accounts[0].address);
   };
+
+  const accounts: Action[] = [
+    {
+      name: akashKey ? "Logout Kepler Wallet" : "Connect with Kepler",
+      icon: akashKey ? LogOutIcon : UserIcon,
+    },
+  ];
 
   return (
     <DropdownMenu>
@@ -45,21 +47,25 @@ export function AvatarMenu() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className=" space-y-2 p-2">
-        {accounts.map((account, i) => (
+        {accounts.map((account) => (
           <DropdownMenuItem
-            key={account.uri}
-            disabled={i > 1}
-            onClick={handleLoginWithKeplr}
+            key={account.name}
+            onClick={handleLoginWithKepler}
+            asChild
           >
-            <div className="flex items-center gap-3 cursor-pointer w-full">
+            <Button
+              className="flex items-center gap-3 cursor-pointer w-full"
+              variant={"ghost"}
+            >
               <Avatar className="h-8 w-8">
                 <AvatarImage alt={account.name} src="/placeholder-logo.svg" />
                 <AvatarFallback>{account.name[0]}</AvatarFallback>
               </Avatar>
-              <div className="flex-1 flex items-center justify-between">
-                <p className="font-medium">{account.name}</p>
+              <div className="flex-1 flex items-center justify-between gap-4">
+                <span className="font-medium">{account.name}</span>
+                <account.icon className="h-5 w-5" />
               </div>
-            </div>
+            </Button>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

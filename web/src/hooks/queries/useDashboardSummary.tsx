@@ -1,4 +1,4 @@
-import { queryKeys } from "@/lib/consts";
+import { RPC_ENDPOINT, queryKeys } from "@/lib/consts";
 import { useStore } from "@/store";
 import { LeaseResponse } from "@/types/akash";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ export const useDashboardSummary = () => {
     queryKey: [queryKeys.dashboard, "summary"],
     queryFn: async () => {
       const res = await axios.get(
-        "https://akash-api.polkachu.com/akash/market/v1beta4/leases/list",
+        `${RPC_ENDPOINT}/market/v1beta4/leases/list`,
         {
           params: {
             "filters.owner": akashKey,

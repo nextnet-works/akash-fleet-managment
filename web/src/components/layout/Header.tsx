@@ -7,14 +7,10 @@ export const Header = () => {
     <div className="p-4 flex gap-4">
       <AvatarMenu />
       <Button asChild variant="ghost">
-        <Link to="/" search={undefined}>
-          Dashboard
-        </Link>
+        <Link to="/">Dashboard</Link>
       </Button>
       <Button asChild variant="ghost">
-        <Link to="/" search={undefined}>
-          History
-        </Link>
+        <Link to="/">History</Link>
       </Button>
     </div>
   );
