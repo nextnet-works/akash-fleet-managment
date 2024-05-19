@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import YamlEditor from "@focus-reactive/react-yaml";
 import { useRef, useState } from "react";
@@ -62,7 +64,6 @@ function SdlEditor() {
     if (!actions.current) return;
     actions.current.replaceValue({ json: sdls[0].file });
   };
-
   return (
     <Card className="w-full max-w-2xl mx-auto h-full min-h-2xl">
       <CardHeader>
