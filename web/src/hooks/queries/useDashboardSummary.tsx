@@ -21,7 +21,7 @@ export const useDashboardSummary = () => {
             "pagination.limit": 200,
             "pagination.count_total": true,
           },
-        }
+        },
       );
 
       return res.data.leases as LeaseResponse[];

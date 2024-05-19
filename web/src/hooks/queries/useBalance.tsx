@@ -22,10 +22,10 @@ export const useBalance = (key: string | null) => {
     queryFn: async () => {
       if (!key) return 0;
       const response = await axios.get<WalletsFunds>(
-        `${MAIN_NET}/cosmos/bank/v1beta1/balances/${key}`
+        `${MAIN_NET}/cosmos/bank/v1beta1/balances/${key}`,
       );
       const akashBalance = response.data.balances.find(
-        (balance) => balance.denom === "uakt"
+        (balance) => balance.denom === "uakt",
       );
       return Number(akashBalance?.amount);
     },

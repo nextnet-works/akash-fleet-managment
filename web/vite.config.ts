@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      '@codemirror/state': path.resolve(__dirname, 'node_modules/@codemirror/state'),
     },
   },
 });

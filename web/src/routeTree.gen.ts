@@ -11,9 +11,15 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SdlEditorImport } from './routes/sdl-editor'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const SdlEditorRoute = SdlEditorImport.update({
+  path: '/sdl-editor',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
@@ -31,11 +37,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/sdl-editor': {
+      id: '/sdl-editor'
+      path: '/sdl-editor'
+      fullPath: '/sdl-editor'
+      preLoaderRoute: typeof SdlEditorImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexRoute })
+export const routeTree = rootRoute.addChildren({ IndexRoute, SdlEditorRoute })
 
 /* prettier-ignore-end */

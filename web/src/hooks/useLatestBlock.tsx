@@ -9,7 +9,7 @@ export const useLatestBlock = () => {
     queryFn: async () => {
       try {
         const { data } = await axios.get<BlockData>(
-          `${MAIN_NET}/cosmos/base/tendermint/v1beta1/blocks/latest`
+          `${MAIN_NET}/cosmos/base/tendermint/v1beta1/blocks/latest`,
         );
         const currentHeight = Number(data.block.header.height);
         return currentHeight;

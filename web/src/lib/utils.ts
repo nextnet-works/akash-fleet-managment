@@ -12,7 +12,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export const getLeaseActiveTimeInMinutes = (
   firstBlock: number,
-  currentBlock: number
+  currentBlock: number,
 ) => {
   return ((currentBlock - firstBlock) * BLOCK_TIME_MS) / 1000 / 60;
 };
