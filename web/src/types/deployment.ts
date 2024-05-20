@@ -11,20 +11,20 @@ interface Resource {
   id: number;
   cpu: {
     units: ResourceQuantity;
-    attributes: any[];
+    attributes: unknown[];
   };
   memory: {
     quantity: ResourceQuantity;
-    attributes: any[];
+    attributes: unknown[];
   };
   storage: {
     name: string;
     quantity: ResourceQuantity;
-    attributes: any[];
+    attributes: unknown[];
   }[];
   gpu: {
     units: ResourceQuantity;
-    attributes: any[];
+    attributes: unknown[];
   };
   endpoints: {
     kind: string;
@@ -39,7 +39,7 @@ interface GroupSpec {
       all_of: string[];
       any_of: string[];
     };
-    attributes: any[];
+    attributes: unknown[];
   };
   resources: {
     resource: Resource;

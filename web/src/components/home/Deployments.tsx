@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 
 import {
   Select,
@@ -9,13 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ProviderResources } from "@/types/akash";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { PlusIcon } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { sdls } from "@/lib/consts";
+import { createDeployment } from "@/akash-js/createDeployment";
 
 export const Deployments = () => {
   const [sdlID, setSdlID] = useState<string>("");
@@ -40,21 +39,13 @@ export const Deployments = () => {
           return;
         }
 
-        const response = await axios.post<ProviderResources[]>(
-          `${import.meta.env.VITE_NODE_SERVER_API}/deploy/create`,
-          {
-            body: {
-              sdlFile: sdlFile.file,
-            },
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "ngrok-skip-browser-warning": "true",
-            },
-          }
+        const { tx, owner } = await createDeployment(
+          JSON.stringify(sdlFile.file)
         );
-        return response.data;
+        toast({
+          title: "Deployment Created",
+          description: `Deployment created with tx: ${tx.height} and owner: ${owner}`,
+        });
       },
     });
 

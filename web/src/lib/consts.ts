@@ -28,7 +28,7 @@ export const sdls = [
   {
     name: "grafana-cpu-2vcpu-4gram-small",
     file: {
-      version: "2.0",
+      version: 2.0,
       profiles: {
         compute: {
           grafana: {
