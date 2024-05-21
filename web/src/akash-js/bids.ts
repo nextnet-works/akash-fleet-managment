@@ -10,7 +10,7 @@ import { RPC_ENDPOINT } from "./lib/consts";
 export async function fetchBids(
   dseq: number,
   owner: string,
-  minAttempts = 3
+  minAttempts = 3,
 ): Promise<QueryBidsResponse["bids"]> {
   const rpc = await getRpc(RPC_ENDPOINT);
   const client = new QueryMarketClient(rpc);

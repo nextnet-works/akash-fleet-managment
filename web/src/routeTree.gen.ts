@@ -10,45 +10,45 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as SdlEditorImport } from './routes/sdl-editor'
-import { Route as IndexImport } from './routes/index'
+import { Route as rootRoute } from "./routes/__root";
+import { Route as SdlEditorImport } from "./routes/sdl-editor";
+import { Route as IndexImport } from "./routes/index";
 
 // Create/Update Routes
 
 const SdlEditorRoute = SdlEditorImport.update({
-  path: '/sdl-editor',
+  path: "/sdl-editor",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const IndexRoute = IndexImport.update({
-  path: '/',
+  path: "/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 // Populate the FileRoutesByPath interface
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/sdl-editor': {
-      id: '/sdl-editor'
-      path: '/sdl-editor'
-      fullPath: '/sdl-editor'
-      preLoaderRoute: typeof SdlEditorImport
-      parentRoute: typeof rootRoute
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/sdl-editor": {
+      id: "/sdl-editor";
+      path: "/sdl-editor";
+      fullPath: "/sdl-editor";
+      preLoaderRoute: typeof SdlEditorImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexRoute, SdlEditorRoute })
+export const routeTree = rootRoute.addChildren({ IndexRoute, SdlEditorRoute });
 
 /* prettier-ignore-end */

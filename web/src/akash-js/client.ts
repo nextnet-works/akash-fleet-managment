@@ -49,7 +49,7 @@ export async function getClient() {
           Certificate.fromPartial({
             cert,
             pubkey,
-          })
+          }),
         ).finish();
         const encoded = Buffer.from(buf);
         return encoded.toString("base64");
@@ -84,7 +84,7 @@ export async function getClient() {
     {
       registry: myRegistry,
       aminoTypes: customAminoTypes,
-    }
+    },
   );
 
   return { client, offlineSigner };

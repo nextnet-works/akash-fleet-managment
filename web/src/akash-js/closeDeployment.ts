@@ -35,7 +35,7 @@ export async function closeDeployment(dseq: string) {
       account.address,
       [msgAny],
       fee,
-      "take down deployment"
+      "take down deployment",
     );
 
     if (signedMessage.code === 200) {

@@ -29,6 +29,6 @@ export async function createLease(bids: QueryBidResponse["bid"][]) {
     accounts[0].address,
     leasesMessage,
     fee,
-    "create lease"
+    "create lease",
   );
 }

@@ -4,7 +4,7 @@ import { MsgCreateDeployment } from "@akashnetwork/akash-api/akash/deployment/v1
 
 import { getClient } from "./client";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
-import { manifestVersion } from "./estimateGas";
+import { manifestVersion } from "./lib/utils";
 
 export async function createDeployment(sdlData: string) {
   const { client, offlineSigner } = await getClient();
@@ -46,7 +46,7 @@ export async function createDeployment(sdlData: string) {
     accounts[0].address,
     [msg],
     fee,
-    "create deployment"
+    "create deployment",
   );
 
   if (tx.code !== undefined && tx.code === 0) {

@@ -17,7 +17,7 @@ export const handleSdlFlow = async (sdlFile: Record<string, unknown>) => {
   gseqArray.forEach((gseq) => {
     const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
     const sortedBids = gseqBids.sort(
-      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount)
+      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount),
     );
 
     if (!sortedBids[0]?.bid) {
@@ -55,3 +55,20 @@ export const deployAllBiddersSDL = async (respondersLength: number) => {
 
   return { bids, owner };
 };
+
+async function computeSHA256(input: string): Promise<Uint8Array> {
+  // Convert the input string to a Uint8Array
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+
+  // Compute the SHA-256 hash
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+  // Convert the ArrayBuffer to Uint8Array
+  return new Uint8Array(hashBuffer);
+}
+
+export async function manifestVersion() {
+  const versionString = "2.0";
+  return await computeSHA256(versionString);
+}
