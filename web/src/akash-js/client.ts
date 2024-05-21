@@ -10,7 +10,6 @@ import {
   getAkashTypeRegistry,
   Message,
 } from "@akashnetwork/akashjs/build/stargate";
-import { RPC_ENDPOINT } from "./lib/consts";
 import { CHAIN_ID } from "@/lib/consts";
 import {
   MsgCloseDeployment,
@@ -39,7 +38,7 @@ export async function getClient() {
   }
   await window.keplr.enable(CHAIN_ID);
 
-  const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+  const offlineSigner = window.keplr.getOfflineSignerOnlyAmino(CHAIN_ID);
 
   const customAminoTypes = new AminoTypes({
     "/akash.cert.v1beta2.MsgCreateCertificate": {
@@ -49,7 +48,7 @@ export async function getClient() {
           Certificate.fromPartial({
             cert,
             pubkey,
-          }),
+          })
         ).finish();
         const encoded = Buffer.from(buf);
         return encoded.toString("base64");
@@ -79,13 +78,13 @@ export async function getClient() {
   const myRegistry = new Registry(map);
 
   const client = await SigningStargateClient.connectWithSigner(
-    RPC_ENDPOINT,
+    "https://rpc.akashnet.net:443",
     offlineSigner,
     {
       registry: myRegistry,
       aminoTypes: customAminoTypes,
-    },
+    }
   );
 
-  return { client, offlineSigner };
+  return { client, offlineSigner, kepler: window.keplr };
 }

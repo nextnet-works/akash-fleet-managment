@@ -14,14 +14,14 @@ export const useDashboardSummary = () => {
     queryKey: [queryKeys.dashboard, "summary"],
     queryFn: async () => {
       const res = await axios.get(
-        `${RPC_ENDPOINT}/market/v1beta4/leases/list`,
+        `${RPC_ENDPOINT}/akash/market/v1beta4/leases/list`,
         {
           params: {
             "filters.owner": akashKey,
             "pagination.limit": 200,
             "pagination.count_total": true,
           },
-        },
+        }
       );
 
       return res.data.leases as LeaseResponse[];

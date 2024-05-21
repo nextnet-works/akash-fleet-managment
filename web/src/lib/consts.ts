@@ -22,81 +22,85 @@ export const red =
 
 export const CHAIN_ID = "akashnet-2";
 
-export const RPC_ENDPOINT = "https://akash-api.polkachu.com/akash";
+export const RPC_ENDPOINT = "https://akash-api.polkachu.com";
 
 export const sdls = [
   {
-    name: "grafana-cpu-2vcpu-4gram-small",
-    file: {
-      version: 2.0,
-      profiles: {
-        compute: {
-          grafana: {
-            resources: {
-              cpu: { units: 2 },
-              memory: { size: "4Gi" },
-              storage: [{ size: "64GB" }],
-            },
-          },
-        },
-        placement: {
-          akash: {
-            pricing: { grafana: { denom: "uakt", amount: 10000 } },
-            attributes: { host: "akash" },
-          },
-        },
-      },
-      services: {
-        grafana: {
-          image: "grafana/grafana",
-          expose: [{ as: 80, to: [{ global: true }], port: 3000 }],
-        },
-      },
-      deployment: { grafana: { akash: { count: 1, profile: "grafana" } } },
-    },
-  },
-  {
-    name: "mining-rig-cpu-16vcpu-24gram-small",
+    name: "mor-1",
     file: {
       version: "2.0",
+      services: {
+        node: {
+          image: "ghcr.io/akash-network/cosmos-omnibus:v0.4.16-akash-v0.34.1",
+          env: [
+            "MONIKER=my-moniker-1",
+            "CHAIN_JSON=https://raw.githubusercontent.com/akash-network/net/main/mainnet/meta.json",
+            "MINIMUM_GAS_PRICES=0.025uakt",
+            "FASTSYNC_VERSION=v0",
+            "P2P_POLKACHU=1",
+            "STATESYNC_POLKACHU=1",
+          ],
+          expose: [
+            {
+              port: 26657,
+              as: 80,
+              to: [
+                {
+                  global: true,
+                },
+              ],
+            },
+            {
+              port: 26656,
+              to: [
+                {
+                  global: true,
+                },
+              ],
+            },
+          ],
+        },
+      },
       profiles: {
         compute: {
-          "miner-xmrig": {
+          node: {
             resources: {
-              cpu: { units: 16 },
-              memory: { size: "24Gi" },
-              storage: { size: "64Gi" },
+              cpu: {
+                units: 4,
+              },
+              memory: {
+                size: "8Gi",
+              },
+              storage: {
+                size: "100Gi",
+              },
             },
           },
         },
         placement: {
-          akash: {
-            pricing: { "miner-xmrig": { denom: "uakt", amount: 10000 } },
+          dcloud: {
+            attributes: {
+              host: "akash",
+            },
+            signedBy: {
+              anyOf: ["akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63"],
+            },
+            pricing: {
+              node: {
+                denom: "uakt",
+                amount: 1000,
+              },
+            },
           },
-        },
-      },
-      services: {
-        "miner-xmrig": {
-          env: [
-            "ALGO=rx/0",
-            "POOL=gulf.moneroocean.stream:20032",
-            "WALLET=ZEPHYR2fAsLTnJG9v94FeHF6JaiZhnxH3bq5YkYYfQM8T7gfRW34T81jJPwNJtPyvPHhRsgFdbkGtcaNeGX4HiYH2d84FzMGcwv1y",
-            "WORKER=akash",
-            "PASS=x",
-            "TLS=true",
-            "TLS_FINGERPRINT=",
-            "RANDOMX_MODE=fast",
-            "CUSTOM_OPTIONS=",
-            "AKASH_PROVIDER_STARTUP_CHECK=true",
-          ],
-          image: "cryptoandcoffee/akash-xmrig:40",
-          expose: [
-            { as: 80, to: [{ global: true }], port: 8080, proto: "tcp" },
-          ],
         },
       },
       deployment: {
-        "miner-xmrig": { akash: { count: 1, profile: "miner-xmrig" } },
+        node: {
+          dcloud: {
+            profile: "node",
+            count: 1,
+          },
+        },
       },
     },
   },

@@ -12,7 +12,6 @@ import {
   convertToReadableTime,
   getLeaseActiveTimeInMinutes,
 } from "@/lib/utils";
-import { Lease_State } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { addRanking, getPricePerHour, getRankingColor } from "./utils";
 
 import { useCoinPrice } from "@/hooks/useCoinPrice";
@@ -76,16 +75,15 @@ export const DashboardTable = ({
                   $
                   {getPricePerHour(
                     Number(lease.lease.price.amount),
-                    coinPrice,
+                    coinPrice
                   ).toFixed(2)}
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge
                     className={
-                      lease.lease.state === Lease_State.active.toString()
+                      lease.lease.state === "active"
                         ? green
-                        : lease.lease.state ===
-                            Lease_State.UNRECOGNIZED.toString()
+                        : lease.lease.state !== "closed"
                           ? yellow
                           : red
                     }
@@ -98,18 +96,18 @@ export const DashboardTable = ({
                   {convertToReadableTime(
                     getLeaseActiveTimeInMinutes(
                       Number(lease.lease.created_at),
-                      currentBlock,
+                      currentBlock
                     ) +
-                      (lease.lease.state === Lease_State.active.toString()
+                      (lease.lease.state === "active"
                         ? (secondsPassed / 60) * 60 * 1000
-                        : 0),
+                        : 0)
                   )}
                 </TableCell>
                 <TableCell className="text-center">
                   <span
                     className={getRankingColor(
                       lease.rank,
-                      leasesWithRanking.length,
+                      leasesWithRanking.length
                     )}
                   >
                     {lease.rank} / {leasesWithRanking.length}
@@ -120,7 +118,7 @@ export const DashboardTable = ({
                 </TableCell>
 
                 <TableCell className="text-center">
-                  {lease.lease.state !== Lease_State.active.toString() ? (
+                  {lease.lease.state === "active" ? (
                     <Button
                       size="sm"
                       variant="destructive"
@@ -131,8 +129,17 @@ export const DashboardTable = ({
                       Close
                     </Button>
                   ) : (
-                    <Button size="sm" variant="secondary" disabled>
-                      Extend
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => {
+                        toast({
+                          title: "Deployment logs",
+                          description: "Deployment logs are not available",
+                        });
+                      }}
+                    >
+                      Show Logs
                     </Button>
                   )}
                 </TableCell>

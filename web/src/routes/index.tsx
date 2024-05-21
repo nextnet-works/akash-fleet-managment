@@ -29,18 +29,20 @@ function Home() {
     queryKey: [queryKeys.dashboard],
     queryFn: async () => {
       const res = await axios.get(
-        `${RPC_ENDPOINT}/market/v1beta4/leases/list`,
+        `${RPC_ENDPOINT}/akash/market/v1beta4/leases/list`,
         {
           params: {
             "filters.owner": akashKey,
-            "pagination.limit": 200,
+            "pagination.limit": 1000,
+            "filters.state": "active",
             "pagination.count_total": true,
           },
-        },
+        }
       );
 
       return res.data.leases as LeaseResponse[];
     },
+    refetchInterval: 10000,
     enabled: !!akashKey,
   });
 
