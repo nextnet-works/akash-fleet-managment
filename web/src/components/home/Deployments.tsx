@@ -14,7 +14,8 @@ import { useToast } from "../ui/use-toast";
 import { PlusIcon } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { sdls } from "@/lib/consts";
-import { createDeployment } from "@/akash-js/createDeployment";
+import { handleSdlFlow } from "@/akash-js/lib/utils";
+import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 export const Deployments = () => {
   const [sdlID, setSdlID] = useState<string>("");
@@ -39,31 +40,37 @@ export const Deployments = () => {
           return;
         }
 
-        const { tx, owner } = await createDeployment(
-          JSON.stringify(sdlFile.file)
-        );
-        toast({
-          title: "Deployment Created",
-          description: `Deployment created with tx: ${tx.height} and owner: ${owner}`,
-        });
+        let isBidsEmpty = false;
+        const leasesResponses: BidID[] = [];
+        let successfulLeaseCount = 0;
+        while (!isBidsEmpty) {
+          const leasesIds = await handleSdlFlow(sdlFile.file);
+          toast({
+            title: "Leases fulfilled",
+            description: `${leasesIds.length} leases fulfilled`,
+          });
+          if (leasesIds.length === 0) {
+            isBidsEmpty = true;
+            return;
+          }
+
+          for (const lease of leasesIds) {
+            if (successfulLeaseCount >= 5) {
+              isBidsEmpty = true;
+              return;
+            }
+
+            successfulLeaseCount++;
+            if (!lease) {
+              continue;
+            }
+            leasesResponses.push(lease);
+          }
+        }
       },
     });
 
   const localSDL = localStorage.getItem("sdl");
-  // const { mutateAsync: handleStopDeployments, isPending: isStopping } =
-  // useMutation({
-  //   mutationFn: async (sdlID: string) => {
-  //     const response = await axios.post<ProviderResources[]>(
-  //       `${import.meta.env.VITE_NODE_SERVER_API}/deploy/stop`,
-  //       {
-  //         body: {
-  //           deployment: sdlID,
-  //         },
-  //       }
-  //     );
-  //     return response.data;
-  //   },
-  // });
 
   return (
     <div className="flex flex-col items-center justify-between gap-4">

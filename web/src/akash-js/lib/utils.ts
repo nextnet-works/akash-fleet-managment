@@ -2,13 +2,8 @@ import { generateYamlWithWebs } from "./yaml";
 import { createDeployment } from "../../akash-js/createDeployment";
 import { fetchBids } from "../../akash-js/bids";
 import { createLease } from "../../akash-js/lease";
-import * as fs from "fs";
 import * as YAML from "yaml";
-import {
-  QueryBidResponse,
-  QueryLeaseResponse,
-} from "@akashnetwork/akash-api/akash/market/v1beta4";
-import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 export const handleSdlFlow = async (sdlFile: Record<string, unknown>) => {
   const respondersLength = await deployGenericSDL(sdlFile);
@@ -34,27 +29,17 @@ export const handleSdlFlow = async (sdlFile: Record<string, unknown>) => {
 
   await new Promise((resolve) => setTimeout(resolve, 15000));
 
-  const nodes = await createLease(filteredBids);
+  await createLease(filteredBids);
 
-  const activeNodes = nodes.filter((lease) => lease.bidId) as {
-    bidId: BidID;
-    serviceUris: string[];
-    uri: string;
-    lease?: QueryLeaseResponse;
-    ports: string[];
-  }[];
-
-  // TODO: add rejected leases to a blacklist of providers
-  const leasedRejected = nodes.filter((lease) => !lease.bidId);
-
-  return { activeNodes, leasedRejected };
+  return filteredBids.map((bid) => bid?.bidId);
 };
 
 export const deployGenericSDL = async (sdlFile: Record<string, unknown>) => {
   const yamlStr = YAML.stringify(sdlFile);
 
-  fs.writeFileSync(RAW_SDL_T1, yamlStr, "utf8");
-  const { owner, tx } = await createDeployment(RAW_SDL_T1);
+  const { owner, tx } = await createDeployment(yamlStr);
+
+  console.log("Deployment tx", tx);
 
   const bids = await fetchBids(tx.height, owner);
 
@@ -62,9 +47,9 @@ export const deployGenericSDL = async (sdlFile: Record<string, unknown>) => {
 };
 
 export const deployAllBiddersSDL = async (respondersLength: number) => {
-  generateYamlWithWebs(respondersLength);
+  const yamlStr = generateYamlWithWebs(respondersLength);
 
-  const { owner, tx } = await createDeployment(RAW_SDL_T1);
+  const { owner, tx } = await createDeployment(yamlStr);
 
   const bids = await fetchBids(tx.height, owner, 6);
 

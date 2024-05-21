@@ -20,26 +20,26 @@ export type Bid = {
           units: {
             val: string;
           };
-          attributes: Array<any>;
+          attributes: Array<unknown>;
         };
         memory: {
           quantity: {
             val: string;
           };
-          attributes: Array<any>;
+          attributes: Array<unknown>;
         };
         storage: Array<{
           name: string;
           quantity: {
             val: string;
           };
-          attributes: Array<any>;
+          attributes: Array<unknown>;
         }>;
         gpu: {
           units: {
             val: string;
           };
-          attributes: Array<any>;
+          attributes: Array<unknown>;
         };
         endpoints: Array<{
           kind: string;

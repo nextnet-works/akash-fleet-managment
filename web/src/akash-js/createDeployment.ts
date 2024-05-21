@@ -12,7 +12,7 @@ export async function createDeployment(sdlData: string) {
   const groups = sdl.groups();
   const accounts = await offlineSigner.getAccounts();
 
-  const deployment = MsgCreateDeployment.fromPartial({
+  const deployment = MsgCreateDeployment.create({
     id: {
       owner: accounts[0].address,
       dseq: blockHeight,
@@ -22,7 +22,7 @@ export async function createDeployment(sdlData: string) {
       denom: "uakt",
       amount: "1000000",
     },
-    version: new Uint8Array([2]),
+    version: new Uint8Array(2),
     depositor: accounts[0].address,
   });
 
@@ -38,7 +38,7 @@ export async function createDeployment(sdlData: string) {
 
   const msg = {
     typeUrl: getTypeUrl(MsgCreateDeployment),
-    value: MsgCreateDeployment.fromPartial(deployment),
+    value: deployment,
   };
 
   const tx = await client.signAndBroadcast(
