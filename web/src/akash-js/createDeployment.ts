@@ -4,10 +4,11 @@ import { MsgCreateDeployment } from "@akashnetwork/akash-api/akash/deployment/v1
 
 import { getClient } from "./client";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
+import { manifestVersion } from "./estimateGas";
 
 export async function createDeployment(sdlData: string) {
   const { client, offlineSigner } = await getClient();
-  const sdl = SDL.fromString(sdlData);
+  const sdl = SDL.fromString(sdlData, "beta3");
   const blockHeight = await client.getHeight();
   const groups = sdl.groups();
   const accounts = await offlineSigner.getAccounts();
@@ -22,7 +23,7 @@ export async function createDeployment(sdlData: string) {
       denom: "uakt",
       amount: "1000000",
     },
-    version: new Uint8Array(2),
+    version: await manifestVersion(),
     depositor: accounts[0].address,
   });
 
