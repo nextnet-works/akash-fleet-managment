@@ -17,7 +17,7 @@ export const handleSdlFlow = async (sdlFile: Record<string, unknown>) => {
   gseqArray.forEach((gseq) => {
     const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
     const sortedBids = gseqBids.sort(
-      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount),
+      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount)
     );
 
     if (!sortedBids[0]?.bid) {
@@ -37,11 +37,9 @@ export const handleSdlFlow = async (sdlFile: Record<string, unknown>) => {
 export const deployGenericSDL = async (sdlFile: Record<string, unknown>) => {
   const yamlStr = YAML.stringify(sdlFile);
 
-  const { owner, tx } = await createDeployment(yamlStr);
+  const { owner, height } = await createDeployment(yamlStr);
 
-  console.log("Deployment tx", tx);
-
-  const bids = await fetchBids(tx.height, owner);
+  const bids = await fetchBids(height, owner);
 
   return bids.length;
 };
@@ -49,9 +47,9 @@ export const deployGenericSDL = async (sdlFile: Record<string, unknown>) => {
 export const deployAllBiddersSDL = async (respondersLength: number) => {
   const yamlStr = generateYamlWithWebs(respondersLength);
 
-  const { owner, tx } = await createDeployment(yamlStr);
+  const { owner, height } = await createDeployment(yamlStr);
 
-  const bids = await fetchBids(tx.height, owner, 6);
+  const bids = await fetchBids(height, owner, 6);
 
   return { bids, owner };
 };

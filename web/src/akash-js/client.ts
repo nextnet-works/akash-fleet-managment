@@ -38,7 +38,7 @@ export async function getClient() {
   }
   await window.keplr.enable(CHAIN_ID);
 
-  const offlineSigner = window.keplr.getOfflineSignerOnlyAmino(CHAIN_ID);
+  const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
 
   const customAminoTypes = new AminoTypes({
     "/akash.cert.v1beta2.MsgCreateCertificate": {

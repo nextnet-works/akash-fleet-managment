@@ -5,6 +5,8 @@ import { MsgCreateDeployment } from "@akashnetwork/akash-api/akash/deployment/v1
 import { getClient } from "./client";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
 import { manifestVersion } from "./lib/utils";
+import { broadcastTxSync, createTxRaw } from "./closeDeployment";
+import { AkashChainInfo } from "./lib/chain";
 
 export async function createDeployment(sdlData: string) {
   const { client, offlineSigner } = await getClient();
@@ -34,7 +36,7 @@ export async function createDeployment(sdlData: string) {
         amount: "20000",
       },
     ],
-    gas: "800000",
+    gas: "900000",
   };
 
   const msg = {
@@ -42,16 +44,28 @@ export async function createDeployment(sdlData: string) {
     value: deployment,
   };
 
-  const tx = await client.signAndBroadcast(
+  const signedMessage = await client.sign(
     accounts[0].address,
     [msg],
     fee,
-    "create deployment",
+    "create deployment"
   );
 
-  if (tx.code !== undefined && tx.code === 0) {
-    return { tx, owner: accounts[0].address };
+  const txBytes = createTxRaw(
+    signedMessage.bodyBytes,
+    signedMessage.authInfoBytes,
+    signedMessage.signatures
+  );
+
+  if (!window.keplr) {
+    throw new Error("Please install keplr extension");
   }
 
-  throw new Error(`Could not create deployment: ${tx.rawLog} `);
+  const txHash = await broadcastTxSync(
+    window.keplr,
+    AkashChainInfo.chainId,
+    txBytes
+  );
+
+  return { owner: accounts[0].address, tx: txHash, height: blockHeight };
 }

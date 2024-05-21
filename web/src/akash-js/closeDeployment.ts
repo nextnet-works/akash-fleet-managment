@@ -1,13 +1,36 @@
 import { getTypeUrl } from "@akashnetwork/akashjs/build/stargate/index";
 import { MsgCloseDeployment } from "@akashnetwork/akash-api/akash/deployment/v1beta3";
-
 import { getClient } from "./client";
-import { CHAIN_ID } from "@/lib/consts";
-import { ChainInfo } from "@keplr-wallet/types";
-import axios from "axios";
+import { BroadcastMode, Keplr } from "@keplr-wallet/types";
 import { AkashChainInfo } from "./lib/chain";
-import Long from "long";
+import protobuf from "protobufjs";
 
+/**
+ * Create a TxRaw object and encode it to Uint8Array.
+ * @param {Uint8Array} bodyBytes - The body bytes of the transaction.
+ * @param {Uint8Array} authInfoBytes - The auth info bytes of the transaction.
+ * @param {Uint8Array} signature - The signature bytes of the transaction.
+ * @returns {Uint8Array} - The encoded TxRaw object as Uint8Array.
+ */
+export function createTxRaw(
+  bodyBytes: Uint8Array,
+  authInfoBytes: Uint8Array,
+  signatures: Uint8Array[]
+): Uint8Array {
+  const TxRaw = root.lookupType("cosmos.tx.v1beta1.TxRaw");
+
+  // Create the TxRaw message
+  const message = TxRaw.create({
+    bodyBytes: bodyBytes,
+    authInfoBytes: authInfoBytes,
+    signatures,
+  });
+
+  // Encode the message to Uint8Array
+  const buffer = TxRaw.encode(message).finish();
+
+  return buffer;
+}
 export async function closeDeployment(dseq: string) {
   try {
     const { offlineSigner, client } = await getClient();
@@ -33,7 +56,7 @@ export async function closeDeployment(dseq: string) {
           amount: "20000",
         },
       ],
-      gas: "80000",
+      gas: "800000",
     };
 
     const signedMessage = await client.sign(
@@ -43,46 +66,28 @@ export async function closeDeployment(dseq: string) {
       "take down deployment"
     );
 
-    const accountInfo = await fetchAccountInfo(AkashChainInfo, account.address);
+    const txBytes = createTxRaw(
+      signedMessage.bodyBytes,
+      signedMessage.authInfoBytes,
+      signedMessage.signatures
+    );
 
-    debugger;
-    if (accountInfo === undefined) {
-      return "Account not found. Please send some tokens to this account first.";
+    if (!window.keplr) {
+      return "Please install keplr extension";
     }
 
-    const res = await offlineSigner.signDirect(CHAIN_ID, {
-      bodyBytes: signedMessage.bodyBytes,
-      authInfoBytes: signedMessage.authInfoBytes,
-      chainId: CHAIN_ID,
-      accountNumber: Long.fromString(accountInfo.account_number),
-    });
-    console.log(res);
+    const txHash = await broadcastTxSync(
+      window.keplr,
+      AkashChainInfo.chainId,
+      txBytes
+    );
 
-    // if (res.signed. === 200) {
-    //   return "Deployment closed successfully";
-    // }
-    return "Deployment close failed";
+    return txHash;
   } catch (e) {
+    console.log(e);
     return e;
   }
 }
-
-export const fetchAccountInfo = async (
-  chainInfo: ChainInfo,
-  address: string
-) => {
-  try {
-    const uri = `${chainInfo.rest}/cosmos/auth/v1beta1/accounts/${address}`;
-    const response = await axios.get<AccountResponse>(uri);
-
-    return response.data.account;
-  } catch (e) {
-    console.error(
-      "This may be a new account. Please send some tokens to this account first."
-    );
-    return undefined;
-  }
-};
 
 export type AccountResponse = {
   account: Account;
@@ -97,3 +102,45 @@ export type Account = {
     key: string;
   };
 };
+
+export const broadcastTxSync = async (
+  keplr: Keplr,
+  chainId: string,
+  tx: Uint8Array
+): Promise<Uint8Array> => {
+  return keplr.sendTx(chainId, tx, "sync" as BroadcastMode);
+};
+
+const root = protobuf.Root.fromJSON({
+  nested: {
+    cosmos: {
+      nested: {
+        tx: {
+          nested: {
+            v1beta1: {
+              nested: {
+                TxRaw: {
+                  fields: {
+                    bodyBytes: {
+                      type: "bytes",
+                      id: 1,
+                    },
+                    authInfoBytes: {
+                      type: "bytes",
+                      id: 2,
+                    },
+                    signatures: {
+                      rule: "repeated",
+                      type: "bytes",
+                      id: 3,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+});
