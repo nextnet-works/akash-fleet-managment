@@ -1,6 +1,4 @@
-import * as fs from "fs";
 import * as YAML from "yaml";
-import { RAW_SDL_T2 } from "../../akash-js/lib/consts";
 
 type WebService = {
   image: string;
@@ -59,7 +57,7 @@ type YamlData = {
   deployment: { [key: string]: { [key: string]: WebDeployment } };
 };
 
-export function generateYamlWithWebs(count: number): void {
+export function generateYamlWithWebs(count: number): string {
   const data: YamlData = {
     version: "2.0",
     services: {},
@@ -143,7 +141,5 @@ export function generateYamlWithWebs(count: number): void {
 
   const yamlStr = YAML.stringify(data);
 
-  fs.writeFileSync(RAW_SDL_T2, yamlStr, "utf8");
-
-  console.log(`Generated YAML file with ${count} web entries.`);
+  return yamlStr;
 }

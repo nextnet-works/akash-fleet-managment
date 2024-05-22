@@ -1,5 +1,4 @@
 // @ts-nocheck
-
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import YamlEditor from "@focus-reactive/react-yaml";
 import { useRef, useState } from "react";
@@ -29,10 +28,11 @@ function SdlEditor() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const actions = useRef<{
-    replaceValue: ({ json }: { json: any }) => void;
+    replaceValue: ({ json }: { json: unknown }) => void;
   }>(null);
 
-  const handleChange = ({ json }: { json: any; text: string }) => setYaml(json);
+  const handleChange = ({ json }: { json: unknown; text: string }) =>
+    setYaml(json);
 
   const handleSave = () => {
     localStorage.setItem("sdl", JSON.stringify(yaml));
@@ -50,7 +50,7 @@ function SdlEditor() {
     });
   };
 
-  const handleError = (error: {}) => {
+  const handleError = (error: unknown) => {
     if (error) {
       toast({
         title: "Error",

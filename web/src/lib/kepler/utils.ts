@@ -38,5 +38,6 @@ export const getKeplerAccounts = async () => {
   }
   await window.keplr.enable(CHAIN_ID);
   const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+
   return await offlineSigner.getAccounts();
 };

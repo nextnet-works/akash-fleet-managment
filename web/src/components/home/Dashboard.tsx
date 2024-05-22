@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InfoTooltip } from "../InfoTooltip";
 import { useLatestBlock } from "@/hooks/useLatestBlock";
-import { Lease_State } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
 import { Loader } from "../Loader";
 import { ErrorUI } from "../Error";
@@ -26,9 +25,7 @@ export const Dashboard = () => {
 
   if (error || !leases) return <ErrorUI message={error?.message} />;
 
-  const activeNodes = leases.filter(
-    (node) => node.lease.state === Lease_State.active.toString(),
-  );
+  const activeNodes = leases.filter((node) => node.lease.state === "active");
 
   const leftBlock = getLeftBlock(activeNodes, currentBlock, secondsPassed);
   const rightBlock = getRightBlock(leases, totalInUSD, currentBlock, coinPrice);

@@ -65,7 +65,7 @@ type Data = {
 };
 
 type Evidence = {
-  evidence: any[];
+  evidence: unknown[];
 };
 
 type Signature = {

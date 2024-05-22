@@ -1,10 +1,13 @@
 import { getTypeUrl } from "@akashnetwork/akashjs/build/stargate/index";
 import { MsgCreateDeployment } from "@akashnetwork/akash-api/akash/deployment/v1beta3";
-import { loadPrerequisites } from "./client";
+import { getClient } from "./client";
+import { SDL } from "@akashnetwork/akashjs/build/sdl";
+import { manifestVersion } from "./lib/utils";
 
-export async function estimateGas() {
-  const { wallet, client, sdl } = await loadPrerequisites();
-  const accounts = await wallet.getAccounts();
+export async function estimateGas(sdlData: string) {
+  const { client, offlineSigner } = await getClient();
+  const accounts = await offlineSigner.getAccounts();
+  const sdl = SDL.fromString(sdlData, "beta3");
   const groups = sdl.groups();
   const blockheight = await client.getHeight();
 
@@ -18,7 +21,7 @@ export async function estimateGas() {
       denom: "uakt",
       amount: "1000000",
     },
-    version: await sdl.manifestVersion(),
+    version: await manifestVersion(),
     depositor: accounts[0].address,
   };
 

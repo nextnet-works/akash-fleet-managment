@@ -22,7 +22,7 @@ function Root() {
       const accounts = await getKeplerAccounts();
       setAkashKey(accounts[0].address);
     })();
-  }, []);
+  }, [setAkashKey]);
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Header />
