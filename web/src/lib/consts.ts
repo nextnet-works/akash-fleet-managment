@@ -1,3 +1,5 @@
+import { GenericYaml } from "@/akash-js/lib/yaml";
+
 export const queryKeys = {
   deployments: "deployments",
   close_deployment: "close_Deployment",
@@ -24,7 +26,12 @@ export const CHAIN_ID = "akashnet-2";
 
 export const RPC_ENDPOINT = "https://akash-api.polkachu.com";
 
-export const sdls = [
+type SDL = {
+  name: string;
+  file: GenericYaml;
+};
+
+export const sdls: SDL[] = [
   {
     name: "mor-1",
     file: {
@@ -71,9 +78,11 @@ export const sdls = [
               memory: {
                 size: "8Gi",
               },
-              storage: {
-                size: "100Gi",
-              },
+              storage: [
+                {
+                  size: "100Gi",
+                },
+              ],
             },
           },
         },

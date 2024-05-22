@@ -27,8 +27,6 @@ export async function fetchBids(
     );
 
     attempts++;
-
-    console.log(bids);
     // If bids are found and minimum attempts have been met
     if (
       bids.data.bids.length > 0 &&

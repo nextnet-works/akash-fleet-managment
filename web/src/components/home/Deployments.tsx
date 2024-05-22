@@ -16,6 +16,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { sdls } from "@/lib/consts";
 import { handleSdlFlow } from "@/akash-js/lib/utils";
 import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
+import { createCert } from "@/akash-js/cert";
 
 export const Deployments = () => {
   const [sdlID, setSdlID] = useState<string>("");
@@ -103,6 +104,7 @@ export const Deployments = () => {
         >
           <PlusIcon />
         </Button>
+        <Button onClick={createCert}>Create Cert</Button>
       </div>
       <div>
         {isCreating && (

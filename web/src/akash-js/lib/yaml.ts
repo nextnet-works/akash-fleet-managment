@@ -4,12 +4,12 @@ type WebService = {
   image: string;
   expose: Array<{
     port: number;
-    as: number;
+    as?: number;
     proto?: string;
     to: { global: boolean }[];
   }>;
   env: string[];
-  params: {
+  params?: {
     storage: {
       data: {
         mount: string;
@@ -51,14 +51,37 @@ type YamlData = {
   profiles: {
     compute: { [key: string]: WebProfile };
     placement: {
-      [key: string]: { pricing: { [key: string]: PlacementPricing } };
+      [key: string]: {
+        pricing: { [key: string]: PlacementPricing };
+        attributes?: { host: string };
+      };
     };
   };
   deployment: { [key: string]: { [key: string]: WebDeployment } };
 };
 
-export function generateYamlWithWebs(count: number): string {
-  const data: YamlData = {
+export type GenericYaml = {
+  version: string;
+  services: { node: WebService };
+  profiles: {
+    compute: { node: WebProfile };
+    placement: {
+      [key: string]: {
+        pricing: {
+          [key: string]: PlacementPricing;
+        };
+        attributes?: { host: string };
+        signedBy?: { anyOf: string[] };
+      };
+    };
+  };
+  deployment: { [key: string]: { [key: string]: WebDeployment } };
+};
+
+export function generateYamlWithWebs(count: number, data: GenericYaml): string {
+  count = Math.min(count, 5);
+
+  const output: YamlData = {
     version: "2.0",
     services: {},
     profiles: {
@@ -70,63 +93,14 @@ export function generateYamlWithWebs(count: number): string {
 
   for (let i = 1; i <= count; i++) {
     const key = `web-${i}`;
-    data.services[key] = {
-      image: "linuxserver/webtop:amd64-ubuntu-xfce",
-      expose: [
-        { port: 3000, as: 3000, to: [{ global: true }] },
-        { port: 22, as: 22, proto: "tcp", to: [{ global: true }] },
-        { port: 11434, as: 11434, to: [{ global: true }] },
-      ],
-      env: ["OLLAMA_DEBUG=1"],
-      params: {
-        storage: {
-          data: {
-            mount: "/mnt/data",
-            readOnly: false,
-          },
-        },
-      },
-    };
+    output.services[key] = data.services.node;
+    output.profiles.compute[key] = data.profiles.compute.node;
 
-    data.profiles.compute[key] = {
-      resources: {
-        cpu: { units: 4 },
-        memory: { size: "16Gi" },
-        storage: [
-          { size: "64Gi" },
-          {
-            name: "data",
-            size: "10Gi",
-            attributes: { persistent: true, class: "beta3" },
-          },
-        ],
-        gpu: {
-          units: 1,
-          attributes: {
-            vendor: {
-              nvidia: [
-                { model: "h100" },
-                { model: "a100" },
-                { model: "rtx4090" },
-                { model: "rtx8000" },
-                { model: "p100" },
-                { model: "a6000" },
-                { model: "v100" },
-                { model: "rtx3090" },
-                { model: "t4" },
-                { model: "p40" },
-              ],
-            },
-          },
-        },
-      },
-    };
-
-    data.profiles.placement[`global${i}`] = {
+    output.profiles.placement[`global${i}`] = {
       pricing: {
         [key]: {
           denom: "uakt",
-          amount: 10000,
+          amount: 1000,
         },
       },
     };

@@ -1,13 +1,13 @@
-import { generateYamlWithWebs } from "./yaml";
+import { GenericYaml, generateYamlWithWebs } from "./yaml";
 import { createDeployment } from "../../akash-js/createDeployment";
 import { fetchBids } from "../../akash-js/bids";
 import { createLease } from "../../akash-js/lease";
 import * as YAML from "yaml";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
 
-export const handleSdlFlow = async (sdlFile: Record<string, unknown>) => {
+export const handleSdlFlow = async (sdlFile: GenericYaml) => {
   const respondersLength = await deployGenericSDL(sdlFile);
-  const { bids } = await deployAllBiddersSDL(respondersLength);
+  const { bids } = await deployAllBiddersSDL(respondersLength, sdlFile);
 
   const filteredBids: QueryBidResponse["bid"][] = [];
   const gseqArray = [
@@ -34,7 +34,7 @@ export const handleSdlFlow = async (sdlFile: Record<string, unknown>) => {
   return filteredBids.map((bid) => bid?.bidId);
 };
 
-export const deployGenericSDL = async (sdlFile: Record<string, unknown>) => {
+export const deployGenericSDL = async (sdlFile: GenericYaml) => {
   const yamlStr = YAML.stringify(sdlFile);
 
   const { owner, height } = await createDeployment(yamlStr);
@@ -44,8 +44,11 @@ export const deployGenericSDL = async (sdlFile: Record<string, unknown>) => {
   return bids.length;
 };
 
-export const deployAllBiddersSDL = async (respondersLength: number) => {
-  const yamlStr = generateYamlWithWebs(respondersLength);
+export const deployAllBiddersSDL = async (
+  respondersLength: number,
+  sdlFile: GenericYaml
+) => {
+  const yamlStr = generateYamlWithWebs(respondersLength, sdlFile);
 
   const { owner, height } = await createDeployment(yamlStr);
 
