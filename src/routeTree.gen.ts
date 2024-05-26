@@ -52,3 +52,23 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({ IndexRoute, SdlEditorRoute })
 
 /* prettier-ignore-end */
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/sdl-editor"
+      ]
+    },
+    "/": {
+      "filePath": "index.tsx"
+    },
+    "/sdl-editor": {
+      "filePath": "sdl-editor.tsx"
+    }
+  }
+}
+ROUTE_MANIFEST_END */
