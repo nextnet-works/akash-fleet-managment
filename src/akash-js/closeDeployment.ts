@@ -4,6 +4,7 @@ import { getClient } from "./client";
 import { BroadcastMode, Keplr } from "@keplr-wallet/types";
 import { AkashChainInfo } from "./lib/chain";
 import protobuf from "protobufjs";
+import { getFees } from "./lib/utils";
 
 /**
  * Create a TxRaw object and encode it to Uint8Array.
@@ -44,24 +45,16 @@ export async function closeDeployment(dseq: string) {
       },
     });
 
-    const msgAny = {
+    const msg = {
       typeUrl: getTypeUrl(MsgCloseDeployment),
       value: message,
     };
 
-    const fee = {
-      amount: [
-        {
-          denom: "uakt",
-          amount: "20000",
-        },
-      ],
-      gas: "800000",
-    };
+    const fee = await getFees(client, account.address, [msg]);
 
     const signedMessage = await client.sign(
       account.address,
-      [msgAny],
+      [msg],
       fee,
       "take down deployment"
     );

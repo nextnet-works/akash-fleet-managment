@@ -4,7 +4,8 @@ import { fetchBids } from "../../akash-js/bids";
 import { createLease } from "../../akash-js/lease";
 import * as YAML from "yaml";
 import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
-
+import { SigningStargateClient } from "@cosmjs/stargate";
+import { StdFee } from "@keplr-wallet/types";
 export const handleSdlFlow = async (sdlFile: GenericYaml) => {
   const respondersLength = await deployGenericSDL(sdlFile);
   const { bids } = await deployAllBiddersSDL(respondersLength, sdlFile);
@@ -72,4 +73,21 @@ async function computeSHA256(input: string): Promise<Uint8Array> {
 export async function manifestVersion() {
   const versionString = "2.0";
   return await computeSHA256(versionString);
+}
+
+export async function getFees(
+  client: SigningStargateClient,
+  address: string,
+  msg: { typeUrl: string; value: unknown }[]
+): Promise<StdFee> {
+  const gasNeeded = await client.simulate(address, msg, "simulate");
+  return {
+    amount: [
+      {
+        denom: "uakt",
+        amount: "1000000",
+      },
+    ],
+    gas: gasNeeded.toString(),
+  };
 }

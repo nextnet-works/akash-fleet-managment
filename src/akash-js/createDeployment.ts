@@ -4,7 +4,7 @@ import { MsgCreateDeployment } from "@akashnetwork/akash-api/akash/deployment/v1
 
 import { getClient } from "./client";
 import { SDL } from "@akashnetwork/akashjs/build/sdl";
-import { manifestVersion } from "./lib/utils";
+import { getFees, manifestVersion } from "./lib/utils";
 import { broadcastTxSync, createTxRaw } from "./closeDeployment";
 import { AkashChainInfo } from "./lib/chain";
 
@@ -29,20 +29,12 @@ export async function createDeployment(sdlData: string) {
     depositor: accounts[0].address,
   });
 
-  const fee = {
-    amount: [
-      {
-        denom: "uakt",
-        amount: "20000",
-      },
-    ],
-    gas: "900000",
-  };
-
   const msg = {
     typeUrl: getTypeUrl(MsgCreateDeployment),
     value: deployment,
   };
+
+  const fee = await getFees(client, accounts[0].address, [msg]);
 
   const signedMessage = await client.sign(
     accounts[0].address,

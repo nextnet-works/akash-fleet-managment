@@ -5,6 +5,7 @@ import { broadcastTxSync, createTxRaw } from "./closeDeployment";
 import { AkashChainInfo } from "./lib/chain";
 import { createCertificate } from "@akashnetwork/akashjs/build/certificates";
 import { toBase64 } from "pvutils";
+import { getFees } from "./lib/utils";
 
 export async function createCert() {
   const { client, offlineSigner, kepler } = await getClient();
@@ -25,15 +26,8 @@ export async function createCert() {
     }),
   };
 
-  const fee = {
-    amount: [
-      {
-        denom: "uakt",
-        amount: "20000",
-      },
-    ],
-    gas: "900000",
-  };
+  const fee = await getFees(client, accounts[0].address, [certificateMessage]);
+
   const signedCertificateMessage = await client.sign(
     accounts[0].address,
     [certificateMessage],

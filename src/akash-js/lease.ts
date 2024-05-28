@@ -7,6 +7,7 @@ import { broadcastTxSync, createTxRaw } from "./closeDeployment";
 import { AkashChainInfo } from "./lib/chain";
 import { getTypeUrl } from "@akashnetwork/akashjs/build/stargate";
 import { MsgCreateCertificate } from "@akashnetwork/akash-api/akash/cert/v1beta3";
+import { getFees } from "./lib/utils";
 
 export async function createLease(bids: QueryBidResponse["bid"][]) {
   const { client, offlineSigner } = await getClient();
@@ -19,15 +20,7 @@ export async function createLease(bids: QueryBidResponse["bid"][]) {
     };
   });
 
-  const fee = {
-    amount: [
-      {
-        denom: "uakt",
-        amount: "50000",
-      },
-    ],
-    gas: "2000000",
-  };
+  const fee = await getFees(client, accounts[0].address, leasesMessage);
 
   const signedMessage = await client.sign(
     accounts[0].address,
