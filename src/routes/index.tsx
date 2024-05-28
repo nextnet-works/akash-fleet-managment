@@ -15,8 +15,6 @@ import { LeaseResponse } from "@/types/akash";
 import { useStore } from "@/store";
 export const Route = createFileRoute("/")({
   component: Home,
-  loader: Loader,
-  errorComponent: ErrorUI,
 });
 
 function Home() {

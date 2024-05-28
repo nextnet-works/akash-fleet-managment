@@ -10,7 +10,7 @@ export const Header = () => {
         <Link to="/">Dashboard</Link>
       </Button>
       <Button asChild variant="ghost">
-        <Link to="/">History</Link>
+        <Link to="/">Deployments</Link>
       </Button>
       <Button asChild variant="ghost">
         <Link to="/sdl-editor">SDL Editor</Link>

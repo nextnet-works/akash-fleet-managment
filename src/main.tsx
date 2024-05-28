@@ -2,31 +2,39 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./index.css";
 
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-
-// Import the generated route tree
+import { Loader } from "./components/Loader";
 import { routeTree } from "./routeTree.gen";
+import { ErrorUI } from "./components/Error";
 
-// Create a new router instance
-const router = createRouter({ routeTree });
+const queryClient = new QueryClient();
 
-// Register the router instance for type safety
+const router = createRouter({
+  routeTree,
+  defaultPendingComponent: () => <Loader />,
+  defaultErrorComponent: ({ error }) => <ErrorUI message={error.message} />,
+  context: {
+    queryClient,
+  },
+  defaultPreload: "intent",
+  // Since we're using React Query, we don't want loader calls to ever be stale
+  // This will ensure that the loader is always called when the route is preloaded or visited
+  defaultPreloadStaleTime: 0,
+});
+
+// Register things for typesafety
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
 
-const queryClient = new QueryClient();
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );

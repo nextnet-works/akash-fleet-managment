@@ -11,16 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader } from "@/components/Loader";
-import { ErrorUI } from "@/components/Error";
 import { sdls } from "@/lib/consts";
 import { ToastAction } from "@/components/ui/toast";
 import { GenericYaml } from "@/akash-js/lib/yaml";
 
 export const Route = createFileRoute("/sdl-editor")({
   component: SdlEditor,
-  loader: Loader,
-  errorComponent: ErrorUI,
 });
 
 function SdlEditor() {
