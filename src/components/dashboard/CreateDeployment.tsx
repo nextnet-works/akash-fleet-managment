@@ -18,7 +18,7 @@ import { handleSdlFlow } from "@/akash-js/lib/utils";
 // import { createCert } from "@/akash-js/rpc/cert";
 import { BidAPI } from "@/types/akash";
 
-export const Deployments = () => {
+export const CreateDeployment = () => {
   const [sdlID, setSdlID] = useState<string>("");
   const { toast } = useToast();
   const navigate = useNavigate();

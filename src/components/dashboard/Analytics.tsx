@@ -11,7 +11,7 @@ import { useDashboardSummary } from "@/hooks/queries/useDashboardSummary";
 import { useTimer } from "@/hooks/useTimer";
 import { useStore } from "@/store";
 
-export const Dashboard = () => {
+export const Analytics = () => {
   const currentBlock = useLatestBlock();
   const akashKey = useStore((state) => state.akashKey);
   const totalBalance = useBalance(akashKey);
@@ -33,7 +33,7 @@ export const Dashboard = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Dashboard</CardTitle>
+        <CardTitle>Analytics</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
