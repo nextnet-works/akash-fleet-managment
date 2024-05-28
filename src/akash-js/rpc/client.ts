@@ -10,7 +10,7 @@ import {
   getAkashTypeRegistry,
   Message,
 } from "@akashnetwork/akashjs/build/stargate";
-import { CHAIN_ID } from "@/lib/consts";
+import { CHAIN_ID, CLIENT_RPC } from "@/lib/consts";
 import {
   MsgCloseDeployment,
   MsgCloseGroup,
@@ -78,7 +78,7 @@ export async function getClient() {
   const myRegistry = new Registry(map);
 
   const client = await SigningStargateClient.connectWithSigner(
-    "https://rpc.akashnet.net:443",
+    CLIENT_RPC,
     offlineSigner,
     {
       registry: myRegistry,

@@ -23,7 +23,7 @@ export const red =
   "bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400";
 
 export const CHAIN_ID = "akashnet-2";
-
+export const CLIENT_RPC = "https://rpc.akashnet.net:443";
 export const RPC_ENDPOINT = "https://akash-api.polkachu.com";
 
 type SDL = {

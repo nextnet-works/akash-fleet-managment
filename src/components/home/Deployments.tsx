@@ -15,7 +15,7 @@ import { PlusIcon } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { sdls } from "@/lib/consts";
 import { handleSdlFlow } from "@/akash-js/lib/utils";
-import { createCert } from "@/akash-js/rpc/cert";
+// import { createCert } from "@/akash-js/rpc/cert";
 import { BidAPI } from "@/types/akash";
 
 export const Deployments = () => {
@@ -74,7 +74,7 @@ export const Deployments = () => {
   const localSDL = localStorage.getItem("sdl");
 
   return (
-    <div className="flex flex-col items-center justify-between gap-4">
+    <div className="flex flex-col items-center justify-between gap-4 min-w-96">
       <div className="flex items-center justify-between gap-4 w-full">
         <Select onValueChange={(value) => setSdlID(value)}>
           <SelectTrigger>
@@ -94,17 +94,26 @@ export const Deployments = () => {
             </SelectGroup>
           </SelectContent>
         </Select>{" "}
-        <Button onClick={() => handleCreateDeployment(sdlID)}>
-          {isCreating ? "Processing.." : "Deploy"}
+      </div>
+      <div className="flex gap-4 w-full">
+        <Button
+          className="w-full"
+          variant={"outline"}
+          onClick={async (e) => {
+            e.stopPropagation();
+            await navigate({ to: "/sdl-editor" });
+          }}
+        >
+          Create A New SDL
+          <PlusIcon className="ml-2" />
         </Button>
         <Button
-          onClick={() => navigate({ to: "/sdl-editor" })}
-          size="icon"
-          variant="secondary"
+          onClick={() => handleCreateDeployment(sdlID)}
+          className="w-full"
         >
-          <PlusIcon />
+          {isCreating ? "Processing.." : "Deploy"}
         </Button>
-        <Button onClick={createCert}>Create Cert</Button>
+        {/* <Button onClick={createCert}>Create Cert</Button> */}
       </div>
       <div>
         {isCreating && (
