@@ -98,3 +98,18 @@ export type LeaseResponse = {
   lease: Lease;
   escrow_payment: EscrowPayment;
 };
+
+export type BidAPI = {
+  bid_id: {
+    owner: string;
+    dseq: string;
+    gseq: number;
+    oseq: number;
+    provider: string;
+  };
+  state: string;
+  price: {
+    denom: string;
+    amount: string;
+  };
+};

@@ -15,8 +15,8 @@ import { PlusIcon } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { sdls } from "@/lib/consts";
 import { handleSdlFlow } from "@/akash-js/lib/utils";
-import { BidID } from "@akashnetwork/akash-api/akash/market/v1beta4";
-import { createCert } from "@/akash-js/cert";
+import { createCert } from "@/akash-js/rpc/cert";
+import { BidAPI } from "@/types/akash";
 
 export const Deployments = () => {
   const [sdlID, setSdlID] = useState<string>("");
@@ -42,7 +42,7 @@ export const Deployments = () => {
         }
 
         let isBidsEmpty = false;
-        const leasesResponses: BidID[] = [];
+        const leasesResponses: BidAPI["bid_id"][] = [];
         let successfulLeaseCount = 0;
         while (!isBidsEmpty) {
           const leasesIds = await handleSdlFlow(sdlFile.file);

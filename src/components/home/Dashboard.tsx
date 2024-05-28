@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InfoTooltip } from "../InfoTooltip";
-import { useLatestBlock } from "@/hooks/useLatestBlock";
+import { useLatestBlock } from "@/hooks/queries/useLatestBlock";
 
 import { Loader } from "../Loader";
 import { ErrorUI } from "../Error";

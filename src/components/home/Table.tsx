@@ -18,7 +18,7 @@ import { useCoinPrice } from "@/hooks/useCoinPrice";
 import { useTimer } from "@/hooks/useTimer";
 import { LeaseResponse } from "@/types/akash";
 import { Button } from "../ui/button";
-import { closeDeployment } from "@/akash-js/closeDeployment";
+import { closeDeployment } from "@/akash-js/rpc/closeDeployment";
 import { useToast } from "../ui/use-toast";
 
 type DashboardTableProps = {

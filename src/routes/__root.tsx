@@ -7,7 +7,7 @@ import { ErrorUI } from "@/components/Error";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useEffect } from "react";
 import { useStore } from "@/store";
-import { getKeplerAccounts } from "@/lib/kepler/utils";
+import { getKeplerAccounts } from "@/lib/kepler";
 
 export const Route = createRootRoute({
   component: Root,

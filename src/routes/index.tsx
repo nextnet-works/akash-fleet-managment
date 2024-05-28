@@ -4,7 +4,7 @@ import { Loader } from "@/components/Loader";
 import { ErrorUI } from "@/components/Error";
 import { RPC_ENDPOINT, queryKeys } from "@/lib/consts";
 import { useQuery } from "@tanstack/react-query";
-import { useLatestBlock } from "@/hooks/useLatestBlock";
+import { useLatestBlock } from "@/hooks/queries/useLatestBlock";
 import { Dashboard } from "@/components/home/Dashboard";
 
 import { DashboardTable } from "@/components/home/Table";

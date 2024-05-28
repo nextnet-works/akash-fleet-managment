@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import { getKeplerAccounts } from "@/lib/kepler/utils";
+import { getKeplerAccounts } from "@/lib/kepler";
 import { useStore } from "@/store";
 import { LogOutIcon, LucideProps, UserIcon } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";

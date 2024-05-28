@@ -1,4 +1,5 @@
 import { ChainInfo } from "@keplr-wallet/types";
+import protobuf from "protobufjs";
 
 export const AkashChainInfo: ChainInfo = {
   chainId: "akashnet-2",
@@ -42,3 +43,37 @@ export const AkashChainInfo: ChainInfo = {
   },
   features: ["stargate", "ibc-transfer"],
 };
+
+export const ROOT_PROTO = protobuf.Root.fromJSON({
+  nested: {
+    cosmos: {
+      nested: {
+        tx: {
+          nested: {
+            v1beta1: {
+              nested: {
+                TxRaw: {
+                  fields: {
+                    bodyBytes: {
+                      type: "bytes",
+                      id: 1,
+                    },
+                    authInfoBytes: {
+                      type: "bytes",
+                      id: 2,
+                    },
+                    signatures: {
+                      rule: "repeated",
+                      type: "bytes",
+                      id: 3,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+});

@@ -1,14 +1,12 @@
 import { getTypeUrl } from "@akashnetwork/akashjs/build/stargate";
 import { getClient } from "./client";
 import { MsgCreateCertificate } from "@akashnetwork/akash-api/akash/cert/v1beta3";
-import { broadcastTxSync, createTxRaw } from "./closeDeployment";
-import { AkashChainInfo } from "./lib/chain";
 import { createCertificate } from "@akashnetwork/akashjs/build/certificates";
 import { toBase64 } from "pvutils";
-import { getFees } from "./lib/utils";
+import { signAndBroadcast } from "../lib/utils";
 
 export async function createCert() {
-  const { client, offlineSigner, kepler } = await getClient();
+  const { client, offlineSigner } = await getClient();
   const accounts = await offlineSigner.getAccounts();
 
   const certificate = await createCertificate(accounts[0].address);
@@ -26,20 +24,10 @@ export async function createCert() {
     }),
   };
 
-  const fee = await getFees(client, accounts[0].address, [certificateMessage]);
-
-  const signedCertificateMessage = await client.sign(
+  await signAndBroadcast(
+    client,
     accounts[0].address,
     [certificateMessage],
-    fee,
     "create certificate"
   );
-
-  const certificateTxBytes = createTxRaw(
-    signedCertificateMessage.bodyBytes,
-    signedCertificateMessage.authInfoBytes,
-    signedCertificateMessage.signatures
-  );
-
-  await broadcastTxSync(kepler, AkashChainInfo.chainId, certificateTxBytes);
 }

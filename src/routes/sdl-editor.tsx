@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import YamlEditor from "@focus-reactive/react-yaml";
 import { useRef, useState } from "react";
@@ -16,6 +15,7 @@ import { Loader } from "@/components/Loader";
 import { ErrorUI } from "@/components/Error";
 import { sdls } from "@/lib/consts";
 import { ToastAction } from "@/components/ui/toast";
+import { GenericYaml } from "@/akash-js/lib/yaml";
 
 export const Route = createFileRoute("/sdl-editor")({
   component: SdlEditor,
@@ -28,11 +28,11 @@ function SdlEditor() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const actions = useRef<{
-    replaceValue: ({ json }: { json: unknown }) => void;
+    replaceValue: ({ json }: { json: GenericYaml }) => void;
   }>(null);
 
   const handleChange = ({ json }: { json: unknown; text: string }) =>
-    setYaml(json);
+    setYaml(json as GenericYaml);
 
   const handleSave = () => {
     localStorage.setItem("sdl", JSON.stringify(yaml));
@@ -74,6 +74,7 @@ function SdlEditor() {
         <YamlEditor
           json={yaml}
           onChange={handleChange}
+          // @ts-expect-error actions is not a prop
           ref={actions}
           onError={handleError}
         />

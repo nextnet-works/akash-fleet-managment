@@ -1,38 +1,40 @@
 import { GenericYaml, generateYamlWithWebs } from "./yaml";
-import { createDeployment } from "../../akash-js/createDeployment";
-import { fetchBids } from "../../akash-js/bids";
-import { createLease } from "../../akash-js/lease";
+import { createDeployment } from "../rpc/createDeployment";
+import { fetchBids } from "../api/bids";
+import { createLease } from "../rpc/lease";
 import * as YAML from "yaml";
-import { QueryBidResponse } from "@akashnetwork/akash-api/akash/market/v1beta4";
 import { SigningStargateClient } from "@cosmjs/stargate";
-import { StdFee } from "@keplr-wallet/types";
+import { BroadcastMode, Keplr, StdFee } from "@keplr-wallet/types";
+import { BidAPI } from "@/types/akash";
+import { AkashChainInfo, ROOT_PROTO } from "./consts";
+
 export const handleSdlFlow = async (sdlFile: GenericYaml) => {
   const respondersLength = await deployGenericSDL(sdlFile);
   const { bids } = await deployAllBiddersSDL(respondersLength, sdlFile);
 
-  const filteredBids: QueryBidResponse["bid"][] = [];
+  const filteredBids: BidAPI[] = [];
   const gseqArray = [
-    ...new Set(bids.filter((gseq) => gseq).map((bid) => bid?.bid?.bidId?.gseq)),
+    ...new Set(bids.filter((gseq) => gseq).map((bid) => bid?.bid_id?.gseq)),
   ];
 
   gseqArray.forEach((gseq) => {
-    const gseqBids = bids.filter((bid) => bid?.bid?.bidId?.gseq === gseq);
+    const gseqBids = bids.filter((bid) => bid?.bid_id?.gseq === gseq);
     const sortedBids = gseqBids.sort(
-      (a, b) => Number(a?.bid?.price?.amount) - Number(b?.bid?.price?.amount)
+      (a, b) => Number(a?.price?.amount) - Number(b?.price?.amount)
     );
 
-    if (!sortedBids[0]?.bid) {
+    if (!sortedBids[0]?.bid_id) {
       return;
     }
 
-    filteredBids.push(sortedBids[0].bid);
+    filteredBids.push(sortedBids[0]);
   });
 
   await new Promise((resolve) => setTimeout(resolve, 15000));
 
   await createLease(filteredBids);
 
-  return filteredBids.map((bid) => bid?.bidId);
+  return filteredBids.map((bid) => bid?.bid_id);
 };
 
 export const deployGenericSDL = async (sdlFile: GenericYaml) => {
@@ -75,12 +77,14 @@ export async function manifestVersion() {
   return await computeSHA256(versionString);
 }
 
-export async function getFees(
+async function getFees(
   client: SigningStargateClient,
   address: string,
   msg: { typeUrl: string; value: unknown }[]
 ): Promise<StdFee> {
-  const gasNeeded = await client.simulate(address, msg, "simulate");
+  // The 20% buffer is added to the gas estimate to ensure that the transaction does not fail due to insufficient gas.
+  const gasNeeded = (await client.simulate(address, msg, "simulate")) * 1.2;
+
   return {
     amount: [
       {
@@ -88,6 +92,64 @@ export async function getFees(
         amount: "1000000",
       },
     ],
-    gas: gasNeeded.toString(),
+    gas: Math.round(gasNeeded).toString(),
   };
+}
+
+/**
+ * Create a TxRaw object and encode it to Uint8Array.
+ * @param {Uint8Array} bodyBytes - The body bytes of the transaction.
+ * @param {Uint8Array} authInfoBytes - The auth info bytes of the transaction.
+ * @param {Uint8Array} signature - The signature bytes of the transaction.
+ * @returns {Uint8Array} - The encoded TxRaw object as Uint8Array.
+ */
+function createTxRaw(
+  bodyBytes: Uint8Array,
+  authInfoBytes: Uint8Array,
+  signatures: Uint8Array[]
+): Uint8Array {
+  const TxRaw = ROOT_PROTO.lookupType("cosmos.tx.v1beta1.TxRaw");
+
+  // Create the TxRaw message
+  const message = TxRaw.create({
+    bodyBytes: bodyBytes,
+    authInfoBytes: authInfoBytes,
+    signatures,
+  });
+
+  // Encode the message to Uint8Array
+  const buffer = TxRaw.encode(message).finish();
+
+  return buffer;
+}
+
+const broadcastTxSync = async (
+  keplr: Keplr,
+  chainId: string,
+  tx: Uint8Array
+): Promise<Uint8Array> => {
+  return keplr.sendTx(chainId, tx, "sync" as BroadcastMode);
+};
+
+export async function signAndBroadcast(
+  client: SigningStargateClient,
+  address: string,
+  msg: { typeUrl: string; value: unknown }[],
+  message: string
+): Promise<Uint8Array> {
+  const fees = await getFees(client, address, msg);
+  const signedMessage = await client.sign(address, msg, fees, message);
+  const txBytes = createTxRaw(
+    signedMessage.bodyBytes,
+    signedMessage.authInfoBytes,
+    signedMessage.signatures
+  );
+
+  if (!window.keplr) {
+    throw new Error("Please install keplr extension");
+  }
+
+  await broadcastTxSync(window.keplr, AkashChainInfo.chainId, txBytes);
+
+  return txBytes;
 }
