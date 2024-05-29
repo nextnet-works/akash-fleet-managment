@@ -20,7 +20,7 @@
   "dependencies": {
     "@akashnetwork/akash-api": "^1.4.0",
     "@codemirror/state": "^6.4.1",
-    "@cosmos-kit/keplr": "^2.9.0",
+    "@cosmos-kit/keplr": "^2.10.1",
     "@focus-reactive/react-yaml": "^1.1.2",
     "@hookform/resolvers": "^3.4.2",
     "@keplr-wallet/cosmos": "^0.12.95",
@@ -54,7 +54,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-query": "^5.40.0",
     "@tanstack/react-query-devtools": "^5.40.0",
-    "@tanstack/react-router": "^1.34.3",
+    "@tanstack/react-router": "^1.34.5",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -89,7 +89,7 @@
   },
   "devDependencies": {
     "@keplr-wallet/types": "^0.12.95",
-    "@tanstack/router-devtools": "^1.34.4",
+    "@tanstack/router-devtools": "^1.34.5",
     "@tanstack/router-vite-plugin": "^1.34.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.12.12",
