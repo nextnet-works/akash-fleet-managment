@@ -12,9 +12,6 @@ export const Header = () => {
       <Button asChild variant="ghost">
         <Link to="/">Deployments</Link>
       </Button>
-      <Button asChild variant="ghost">
-        <Link to="/sdl-editor">SDL Editor</Link>
-      </Button>
     </div>
   );
 };
