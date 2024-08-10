@@ -13,7 +13,6 @@ function Root() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Header />
-      <hr />
       <div className="p-4 flex flex-col gap-4 items-center min-h-[calc(100vh-56px)]">
         <Outlet />
         <Toaster />

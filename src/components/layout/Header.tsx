@@ -1,17 +1,11 @@
-import { Link } from "@tanstack/react-router";
-import { Button } from "../ui/button";
-import { AvatarMenu } from "./AvatarMenu";
+import Logo from "@/assets/logo.svg?react";
 
 export const Header = () => {
   return (
-    <div className="p-4 flex gap-4">
-      <AvatarMenu />
-      <Button asChild variant="ghost">
-        <Link to="/">Dashboard</Link>
-      </Button>
-      <Button asChild variant="ghost">
-        <Link to="/">Deployments</Link>
-      </Button>
-    </div>
+    <header>
+      <nav className="p-4 flex gap-4 h-[64px] max-w-7xl mx-auto">
+        <Logo className="h-full w-auto" />
+      </nav>
+    </header>
   );
 };
