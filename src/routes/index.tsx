@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   return (
     <div className="flex flex-col gap-64 max-w-7xl mx-auto py-12">
-      <p className="flex text-center">
+      <p className="flex text-center justify-center">
         <div>
           <h1>
             Developing infrastructure technologies for the <br />{" "}
@@ -31,8 +31,8 @@ function Home() {
         </div>
       </p>
       <p className="flex gap-4 flex-wrap">
-        <Card className="bg-blue-700 flex gap-4 p-4 items-center max-w-xl mx-auto">
-          <BoxIcon className="h-72 w-72" />
+        <Card className="bg-blue-700 flex gap-4 p-4 items-center max-w-xl mx-auto ">
+          <BoxIcon className="h-72 w-72 hidden lg:block" />
           <div className="flex flex-col h-full">
             <CardHeader>
               <CardTitle className="text-orange-500">
@@ -52,7 +52,7 @@ function Home() {
             </CardContent>
           </div>
         </Card>
-        <Card className="bg-red-50 flex gap-4 p-4 items-center max-w-xl mx-auto">
+        <Card className="bg-red-50 flex gap-4 p-4 items-center max-w-xl mx-auto ">
           <div className="flex flex-col h-full">
             <CardHeader>
               <CardTitle className="text-red-500">Join Us</CardTitle>
@@ -75,7 +75,7 @@ function Home() {
               </Button>
             </CardFooter>
           </div>
-          <MountainIcon className="w-[480px] h-auto" />
+          <MountainIcon className="w-[480px] h-auto hidden lg:block" />
         </Card>
       </p>
       <p className="text-center flex flex-col gap-24">
@@ -84,16 +84,16 @@ function Home() {
           <h4>This is our lead projects</h4>
         </div>
         <div className="flex justify-around gap-4">
-          <div className="flex flex-col gap-4 items-center w-72">
-            <SantaIcon className="h-24 w-24 ml-5" />
+          <div className="flex flex-col gap-4 items-center max-w-72 flex-1">
+            <SantaIcon className="max-h-24 max-w-24 ml-5" />
             <h4>Santa Cloud</h4>
           </div>
-          <div className="flex flex-col gap-4 items-center w-72">
-            <CosmosIcon className="h-24 w-24" />
+          <div className="flex flex-col gap-4 items-center max-w-72 flex-1">
+            <CosmosIcon className="max-h-24 max-w-24" />
             <h4>Cosmos Validator </h4>
           </div>
-          <div className="flex flex-col gap-4 items-center w-72">
-            <BlocksIcon className="h-24 w-24" />
+          <div className="flex flex-col gap-4 items-center max-w-72 flex-1">
+            <BlocksIcon className="max-h-24 max-w-24" />
             <h4>Cloud & Blockchain services</h4>
           </div>
         </div>
