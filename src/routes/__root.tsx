@@ -4,6 +4,7 @@ import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Toaster } from "@/components/ui/toaster";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { Footer } from "@/components/layout/Footer";
 
 export const Route = createRootRoute({
   component: Root,
@@ -13,7 +14,7 @@ function Root() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Header />
-      <div className="p-4 flex flex-col gap-4 items-center min-h-[calc(100vh-56px)]">
+      <main className="p-4 flex flex-col gap-4 items-center min-h-[calc(100vh-56px)]">
         <Outlet />
         <Toaster />
         {import.meta.env.DEV && (
@@ -21,7 +22,8 @@ function Root() {
             <TanStackRouterDevtools position="bottom-right" />
           </>
         )}
-      </div>
+      </main>
+      <Footer />
     </ThemeProvider>
   );
 }
