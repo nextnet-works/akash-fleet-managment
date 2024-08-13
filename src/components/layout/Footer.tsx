@@ -2,7 +2,6 @@ import Logo from "@/assets/logos/logo.svg?react";
 import {
   DiscordLogoIcon,
   GitHubLogoIcon,
-  LinkedInLogoIcon,
   NotionLogoIcon,
 } from "@radix-ui/react-icons";
 import XLogoIcon from "@/assets/companies/x.svg?react";
@@ -16,19 +15,34 @@ export const Footer = () => {
           <Logo className="h-6 w-auto" />
         </div>
         <div className="flex gap-4 flex-1 items-center justify-center">
-          <Button size="icon" variant="ghost">
-            <NotionLogoIcon className="h-6 w-auto" color="#000" />
+          <Button size="icon" variant="ghost" asChild>
+            <a
+              href="https://x.com/nextnet_works?s=21&t=1xBtmNSuUOq-DmX0qkYNdA"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <NotionLogoIcon className="h-6 w-auto" color="#000" />
+            </a>
           </Button>
-          <Button size="icon" variant="ghost">
-            <XLogoIcon className="h-6 w-6" />
+          <Button size="icon" variant="ghost" asChild>
+            <a
+              href="https://x.com/nextnet_works?s=21&t=1xBtmNSuUOq-DmX0qkYNdA"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <XLogoIcon className="h-6 w-6" />
+            </a>
           </Button>
-          <Button size="icon" variant="ghost">
-            <LinkedInLogoIcon className="h-6 w-6" color="#0077b5" />
+          <Button size="icon" variant="ghost" asChild>
+            <a
+              href="https://x.com/nextnet_works?s=21&t=1xBtmNSuUOq-DmX0qkYNdA"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GitHubLogoIcon className="h-6 w-6" color="#5c6bc0" />
+            </a>
           </Button>
-          <Button size="icon" variant="ghost">
-            <GitHubLogoIcon className="h-6 w-6" color="#5c6bc0" />
-          </Button>
-          <Button size="icon" variant="ghost">
+          <Button size="icon" variant="ghost" asChild disabled>
             <DiscordLogoIcon className="h-6 w-6" color="#7289da" />
           </Button>
         </div>
