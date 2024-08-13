@@ -6,28 +6,40 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
-import BoxIcon from "@/assets/box.svg?react";
-import MountainIcon from "@/assets/mountain.svg?react";
-import SantaIcon from "@/assets/santa.svg?react";
-import CosmosIcon from "@/assets/cosmos.svg?react";
-import BlocksIcon from "@/assets/blocks.svg?react";
+import BoxIcon from "@/assets/icons/box.svg?react";
+import MountainIcon from "@/assets/icons/mountain.svg?react";
+import SantaIcon from "@/assets/companies/santa.svg?react";
+import CosmosIcon from "@/assets/companies/cosmos.svg?react";
+import BlocksIcon from "@/assets/icons/blocks.svg?react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import SantaCloudsLogo from "@/assets/logos/clouds.svg?react";
+
+import { useRef } from "react";
+import { EmailForm } from "@/components/home/EmailForm";
+
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
+  const fullNameInputRef = useRef<HTMLInputElement>(null);
+
+  const scrollToContact = () => {
+    fullNameInputRef.current?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => fullNameInputRef.current?.focus(), 1000); // Delay focus to ensure scroll is complete
+  };
+
   return (
     <div className="flex flex-col gap-64 max-w-7xl mx-auto py-12">
-      <p className="flex text-center justify-center">
-        <div>
-          <h1>
+      <p className="flex  justify-center">
+        <div className="flex gap-4 flex-wrap justify-center items-center">
+          <h1 className="max-w-3xl">
             Developing infrastructure technologies for the <br />{" "}
             <span className="text-orange-500">
               next generation abstracted clouds
             </span>
           </h1>
+          <SantaCloudsLogo className="h-96 w-96 max-w-[90dvw]" />
         </div>
       </p>
       <p className="flex gap-4 flex-wrap">
@@ -58,20 +70,25 @@ function Home() {
               <CardTitle className="text-red-500">Join Us</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>
+              <p className="text-gray-800">
                 Are you ready to shape the future of cloud technology? Whether
                 you're an innovator looking to join a dynamic team or an
                 investor eager to support groundbreaking projects, we invite you
                 to be part of our journey.
               </p>
-              <p>
+              <p className="text-gray-800">
                 Explore career opportunities, discover our cutting-edge
                 solutions, and learn how you can contribute to our mission.
               </p>
             </CardContent>
             <CardFooter>
-              <Button variant="destructive" size="lg" className="w-36 ml-auto">
-                Lets Go
+              <Button
+                variant="destructive"
+                size="lg"
+                className="w-36 ml-auto"
+                onClick={scrollToContact}
+              >
+                Let's Go
               </Button>
             </CardFooter>
           </div>
@@ -86,7 +103,7 @@ function Home() {
         <div className="flex justify-around gap-4">
           <div className="flex flex-col gap-4 items-center max-w-72 flex-1">
             <SantaIcon className="max-h-24 max-w-24 ml-5" />
-            <h4>Santa Cloud</h4>
+            <h4>Santa Cloud pink</h4>
           </div>
           <div className="flex flex-col gap-4 items-center max-w-72 flex-1">
             <CosmosIcon className="max-h-24 max-w-24" />
@@ -98,20 +115,7 @@ function Home() {
           </div>
         </div>
       </p>
-      <p className="text-center flex flex-col gap-24">
-        <div>
-          <h2 className="text-blue-500">Contact Us</h2>
-          <h4>
-            Contact us to Join our journey of changing the way look at clouds
-          </h4>
-        </div>
-        <div className="flex justify-between gap-4">
-          <Input placeholder="Full name" type="text" className="flex-1" />
-          <Input placeholder="Phone number" type="tel" className="flex-1" />
-          <Input placeholder="Email" type="email" className="flex-1" />
-          <Button className="flex-1">Send</Button>
-        </div>
-      </p>
+      <EmailForm ref={fullNameInputRef} />
     </div>
   );
 }

@@ -12,7 +12,7 @@ export const Route = createRootRoute({
 
 function Root() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider storageKey="vite-ui-theme" defaultTheme="light">
       <Header />
       <main className="p-4 flex flex-col gap-4 items-center min-h-[calc(100vh-56px)]">
         <Outlet />
