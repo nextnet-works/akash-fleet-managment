@@ -4,7 +4,7 @@ import { AvatarMenu } from "./AvatarMenu";
 
 export const Header = () => {
   return (
-    <div className="p-4 flex gap-4">
+    <div className="flex gap-4 p-4">
       <AvatarMenu />
       <Button asChild variant="ghost">
         <Link to="/">Dashboard</Link>
