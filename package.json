@@ -69,6 +69,7 @@
     "eslint-plugin-react-compiler": "^0.0.0-experimental-f8a5409-20240829",
     "eslint-plugin-react-refresh": "^0.4.11",
     "input-otp": "^1.2.4",
+    "json-stable-stringify": "^1.1.1",
     "knip": "^5.29.1",
     "lucide-react": "^0.438.0",
     "next-themes": "^0.3.0",
